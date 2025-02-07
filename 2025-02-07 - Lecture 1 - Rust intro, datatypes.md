@@ -1,4 +1,4 @@
-# 2024-02-15
+# 2025-02-07 - Lecture 1 (Rust intro, datatypes)
 
 ## Today's plan
 
@@ -24,6 +24,7 @@ Integer v = a + 3;
 b = b + f(4);
 if b % 2 == 0 {
     start_query(name, password);
+}
 printf("Hello!", compute_data(b, extract_info(data), "192.168.0.1:8080"));
 ```
 
@@ -42,17 +43,17 @@ We will particularly focus on expressions rather than statements in Rust, becaus
 ```rust
 // We write comments like this.
 
-// This defines a new function called add_three, with 
+// This defines a new function called add_three, with
 // one argument called x which is an integer, returning an integer.
 // Note that no return keyword is needed.
-fn add_three(x: i32) -> i32 { 
-    x + 3 
+fn add_three(x: i32) -> i32 {
+    x + 3
 }
-fn is_even(a: i32) -> bool { 
-    a % 2 == 0 
+fn is_even(a: i32) -> bool {
+    a % 2 == 0
 }
-fn is_valid_grade(n: i32) -> bool { 
-    n <= 5     
+fn is_valid_grade(n: i32) -> bool {
+    n <= 5
 }
 
 // New variables are defined using let.
@@ -72,7 +73,7 @@ fn example(a: i32) -> i32 {
 }
 fn example_mut(a: i32) -> i32 {
     let mut n = add_three(a);
-    n = n + 1; 
+    n = n + 1;
     2 * n
 }
 
@@ -96,7 +97,7 @@ fn odd_or_even(a: i32) -> i32 {
     a + 127
 }
 
-// When the last thing a function does is a statement, there is 
+// When the last thing a function does is a statement, there is
 // """no return type""", and we simply omit the ->.
 fn example_no_return(a: i32) {
     if a % 2 == 0 {
@@ -107,16 +108,16 @@ fn example_no_return(a: i32) {
 }
 
 // In Rust, if-then-else statements evaluate.
-fn bool_to_int(a: bool) -> i32 { 
+fn bool_to_int(a: i32) {
     let c: &str = if a % 2 { "Even" } else { "Odd" };
     println!("Result {}", c);
 }
-fn is_even(a: bool) -> i32 { 
-    if a % 2 == 0 { 1 } else { 0 } 
+fn is_even(a: bool) -> i32 {
+    if a % 2 == 0 { 1 } else { 0 }
 }
 
 // Rust has methods, which are basically functions.
-fn twice_length(s: &str) -> usize { 
+fn twice_length(s: &str) -> usize {
     2 * s.len() // is basically the same as 2 * len(s)
 }
 
@@ -145,7 +146,7 @@ fn main() {
     // The constructor has the same name of the type.
     let gerry: Employee = Employee { name: "Gerry", age: 23, salary: 3.23 };
     let mike:  Employee = Employee { name: "Michael", age: 21, salary: 4.21 };
-    
+
     println!("The employees: {}, {}", gerry, mike);
 
     let a: i32 = gerry.age;
@@ -176,14 +177,14 @@ This is an important example that we will come back later in the course.
 
 ```rust
 struct NoFields {
-    
+
 }
 
 fn main() {
     // We use the constructor NoFields by providing data for each field...
     // ...of which there are none.
-    let a: NoFields = NoFields {} 
-    let b: NoFields = NoFields {} 
+    let a: NoFields = NoFields {}
+    let b: NoFields = NoFields {}
 
     println!("Here are two examples with that type: {} {}", a, b);
 }
@@ -209,7 +210,7 @@ fn color_height(a: Semaphore) -> i32 {
         Red => 100,
         Yellow => 50,
         Green => 10,
-    } 
+    }
 }
 fn main() {
     // We construct something of type Semaphore
@@ -224,10 +225,10 @@ This is good for programming, since it ensures that you program will never crash
 (e.g., in Haskell this is not the case)
 */
 // These are expressions, so they can be used whenever an expression can be used.
-fn color_nickname(a: Semaphore) -> i32 {
-    let prompt = match a { 
-        Semaphore::Red => "r", 
-        Semaphore::Yellow => "y", 
+fn color_nickname(a: Semaphore) {
+    let prompt = match a {
+        Semaphore::Red => "r",
+        Semaphore::Yellow => "y",
         Semaphore::Green => "g" };
     println!("The color was: {}", prompt);
 }
@@ -238,10 +239,10 @@ fn can_you_go(a: Semaphore) {
         Semaphore::Red => {
             println!("Stop!!");
         },
-        Semaphore::Green => { 
+        Semaphore::Green => {
             println!("Go ahead");
         },
-        Semaphore::Yellow => { 
+        Semaphore::Yellow => {
             println!("Caution");
         }
     }
@@ -266,9 +267,9 @@ fn is_red(a: Semaphore) -> bool {
     }
 }
 fn is_red(a: Semaphore) -> bool {
-    match a {
+    match do_something_complicated(a) {
         Red => true
-        b => { 
+        b => {
             println!("The color supplied was: {}", b);
             b == Blue
         }
@@ -322,7 +323,7 @@ fn login(username: String, is_admin: MyBool) {
     match is_admin {
         MyBool::True => {
             println("Administrator login...");
-        } 
+        }
         MyBool::False => {
             println("User login...");
         }
@@ -339,22 +340,22 @@ Administrator login...
 ## Algebraic data types
 
 Is there a way to "combine" enums with structs?
-Yes! The name given to this language construct is "ADT", or  
+Yes! The name given to this language construct is "ADT", or
 algebraic data types. Why algebraic? We will learn it later during the course.
 
 ```rust
 /*
 Enum and struct types can be combined together.
 In particular, Enums can contain data in each of their cases.
-The intuition is that an Employee is *either* constructed 
+The intuition is that an Employee is *either* constructed
 using the Student constructor, or using the Teacher constructor.
 
-Each constructor needs to be called with some data, which can then be 
+Each constructor needs to be called with some data, which can then be
 extracted using match.
 */
 // This creates the type Employee, with two constructors Student and Teacher.
 enum Employee {
-    Student { surname: String, avg: f32 }
+    Student { surname: String, avg: f32 },
     Teacher { name: String }
 }
 
@@ -363,26 +364,26 @@ enum Employee {
 fn main() {
     let satoshi: Employee = Student { surname: "Nakamoto", avg: 4.53 }
     let mark: Employee = Student { surname: "Uustalu", avg: 3.21 }
-    let me: Employee = Teacher { "Andrea" }
-    let fosco: Employee = Teacher("Fosco")
+    let me: Employee = Teacher { name: "Andrea" }
+    let fosco: Employee = Teacher { name: "Fosco" }
 
     println!("People in the class: {} {} {}", satoshi, mark, me, fosco);
 }
 fn get_teacher_name(e: Employee) -> String {
     match e {
-        Employee::Student { surname: s, avg: a } => 
+        Employee::Student { surname: s, avg: a } =>
             // In this branch I can use the surname s: String and the average a: f32.
             format!("Error! The employee provided is a student! Their surname is {}", s),
-        Employee::Teacher { name: n } => 
+        Employee::Teacher { name: n } =>
             // In this branch I can use the name n: String.
-            n 
+            n
     }
 }
 // Minor point: If you're a true programmer you're lazy! You can instead write:
-//    1. You can write 
-//              Employee::Student { surname, avg } 
-//       instead of 
-//              Employee::Student { surname: surname, avg: avg } 
+//    1. You can write
+//              Employee::Student { surname, avg }
+//       instead of
+//              Employee::Student { surname: surname, avg: avg }
 //    2. You can use `_` to avoid having to think of names to fields that you do not need.
 
 // Examples:
@@ -395,11 +396,11 @@ fn get_teacher_name(e: Employee) -> String {
 
 // Another small example: capturing the state of an application
 enum AppState {
-    Login { 
-        textbox: String, 
+    Login {
+        textbox: String,
         passbox: String
     },
-    Main { 
+    Main {
         user_id: i32,
         counter_state: i32,
         is_button_pressed: bool,
@@ -417,9 +418,9 @@ enum AppState {
 // For example, we can omit certain field names, or combine them with standard.
 // Why would you want to do this?
 // 1. Your types are well-specified
-// 2. 
+// 2.
 #[derive(Debug)]
-enum Transaction {
+enum Request {
     Deposit(String, f64),
     Withdrawal(String, f64),
     Transfer { from: String, to: String, f64 },
@@ -427,7 +428,7 @@ enum Transaction {
     PingMessage,
 }
 
-fn process_transaction(transaction: Transaction) {
+fn process_transaction(transaction: Request) {
     match transaction {
         Transaction::Deposit(account, amount) => {
             println!("Depositing ${} into account {}", amount, account);
@@ -449,7 +450,7 @@ fn main() {
     let withdrawal = Transaction::Withdrawal("Bob456", 200.0);
     let transfer = Transaction::Transfer("Alice123", "Bob456", 150.0);
     let balance_check = Transaction::CheckBalance("Alice123");
-    
+
     process_transaction(deposit);
     process_transaction(withdrawal);
     process_transaction(transfer);
@@ -466,6 +467,12 @@ enum IntOrString {
 // This is an important example that we will come back later in the course.
 enum NoCases {
 
+}
+
+fn special(a: NoCases) -> A {
+    match a {
+
+    }
 }
 
 // Untyped languages are essentially typed languages!! (for example: Javascript, Python)
@@ -485,6 +492,14 @@ enum MaybeInteger {
     Yes(i32),
     Nothing,
 }
+
+fn try(a: MaybeInteger) {
+    let v: i32 = match a {
+        Nothing => 42,
+        Yes(i) => i,
+    }
+    ...
+}
 ```
 
 ## Recursive algebraic data types
@@ -492,7 +507,7 @@ enum MaybeInteger {
 Most programming languages will offer enums and structs, in one form or another.
 But these two are not very expressive, since all they do is:
 1. Create *combinations*, by packaging things together: to create something of type `struct` you need some data *for each* field.
-2. Create *alternatives*, by offering alternative: to create something of type `enum` you need the data needed by *some* constructor. 
+2. Create *alternatives*, by offering alternative: to create something of type `enum` you need the data needed by *some* constructor.
 
 What if you could refer to a type *while* you're defining it at the same time?
 This is the same idea behind recursion, but with datatypes.
@@ -514,8 +529,23 @@ enum ListStrings {
 fn main() {
     // How do we create elements of these types?
     let a: ListIntegers = Empty;
-    let b: ListIntegers = Element { value: 10, tail: Element { value: 20, Empty } };
-    let c: ListIntegers = Element { value: 3, tail: Element { value: 7, Element { value: 2, tail: Empty } } };
+
+
+    let oneElement: ListIntegers =
+        Element { value: 7, tail: Empty };
+
+
+
+
+    let twoElements: ListIntegers =
+        Element { value: 10, tail: Element { value: 20, tail: Empty } };
+
+
+
+    let c: ListIntegers = Element
+      { value: 3, tail: Element
+      { value: 7, Element
+      { value: 2, tail: Empty } } };
 }
 
 // How do we use them?
@@ -525,30 +555,60 @@ fn main() {
 fn sum(a: ListIntegers) -> i32 {
     match a {
         Empty => 0,
-        Element { value, tail } => 
+        Element { value: i32, tail: ListIntegers } =>
             // This works because tail: ListInteger, so the types are correct!
             value + sum(tail)
     }
 }
+/*
+sum(c)
+= sum(Element { value: 3, tail: Element { value: 7, tail: ... } })
+= 3 + sum(Element { value: 7, tail: ... })
+= 3 + (7 + sum(...))
+...
+= 3 + (7 + (2 + sum(Empty)))
+= 3 + (7 + (2 + 0))
+*/
 // This function takes the length of the list.
 fn length(a: ListIntegers) -> i32 {
     match a {
         Empty => 0,
-        Element { tail } => 
-            // This works because tail: ListInteger, so the types are correct!
-            1 + sum_every_element(tail)
+        Element { tail } =>
+            1 + length(tail)
     }
 }
 fn get_tail(a: ListIntegers) -> ListIntegers {
     match a {
         Element { value, tail } => tail,
-        Empty => ...? // we cannot put anything here! should we crash...?
+        Empty => panic!("No tail!"),
     }
 }
+fn get_tail_opt2(a: ListIntegers) -> ListIntegers {
+    match a {
+        Element { value, tail } => tail,
+        Empty => Empty,
+    }
+}
+fn get_value(a: ListIntegers) -> i32 {
+    match a {
+        Element { value, tail } => value,
+        Empty => -1,
+    }
+}
+fn get_value(a: ListIntegers) -> MaybeInteger {
+    match a {
+        Element { value, tail } => Yes(value),
+        Empty => Nothing,
+    }
+}
+
+// TODO: Notation for lists
+// [] = Empty
+
 // Given a number n: i32, create the list [n, n-1, ..., 3, 2, 1]
 // For example, enumerate(4) = [4,3,2,1]
 fn enumerate(n: i32) -> ListInteger {
-    if n >= 0 {
+    if n <= 0 {
         Empty
     } else {
         Element {
@@ -568,8 +628,8 @@ Another example of datatypes: *trees!*
 
 ```rust
 enum BinaryTreeString {
-    EmptyTree 
-    Node { 
+    EmptyTree,
+    Node {
         left: BinaryTreeString,
         value: String,
         right: BinaryTreeString
@@ -578,20 +638,20 @@ enum BinaryTreeString {
 /*
                       <none>  <none>
                          |       |
-                         +---+---+   
-                             |    
+                         +---+---+
+                             |
          <none>    <none>   Emily   <none>
-           |         |       |         |    
-           +----+----+       +----+----+    
+           |         |       |         |
+           +----+----+       +----+----+
                 |                 |
               Anna              Mark
-                |                 |        
+                |                 |
                 +--------+--------+
                          |
                        Gerry
 */
 fn main() {
-    let my_family = 
+    let my_family: BinaryTreeStrings =
         Node {
             value: "Gerry",
             left: Node { value: "Anna", left: EmptyTree, right: EmptyTree },
@@ -601,13 +661,13 @@ fn main() {
                 right: EmptyTree
             }
         };
-} 
+}
 
 // This function combines all the names in a genealogy tree.
 fn all_names_together(a: BinaryTreeString) -> String {
     match a {
         Empty => "",
-        Node { left, value, right } => 
+        Node { left, value, right } =>
             all_names_together(left) + value + "," + all_names_together(right)
     }
 }
@@ -620,22 +680,22 @@ fn all_names_together(a: BinaryTreeString) -> String {
 fn sum_tree(a: BinaryTreeIntegers) -> i32 {
     match a {
         Empty => 0,
-        Node { left, value, right } => 
+        Node { left, value, right } =>
             value + sum_tree(left) + sum_tree(right)
     }
 }
 // Something a bit more complicated: print the tree but also show the depth
-fn all_names_together(a: BinaryTreeString, depth: i32) -> String {
+fn all_names_with_depth(a: BinaryTreeString, depth: usize) -> String {
     match a {
         Empty => "",
-        Node { left, value, right } => 
-            all_names_together(left, depth + 1) +
-            value + " (" + depth + ")," + 
-            all_names_together(right, depth + 1)
+        Node { left, value, right } =>
+            all_names_with_depth(left, depth + 1) +
+            value + " (" + depth + ")," +
+            all_names_with_depth(right, depth + 1)
     }
 }
 /*
-> all_names_with_depth(my_family)
+> all_names_with_depth(my_family, 0)
 "Anna (1), Gerry (0), Emily (2), Mark (1),"
 */
 ```
@@ -649,6 +709,7 @@ enum PosInt {
 }
 
 fn main() {
+    let zero: PosInt = Zero;
     let one: PosInt = Succ { next: Zero };
     let two: PosInt = Succ { next: Succ { next: Zero } };
     let three: PosInt = Succ { next: Succ { next: Succ { next: Zero } } };
@@ -660,8 +721,9 @@ enum Integer {
 }
 ```
 
-## Parametric types
+## Parametric/polymorphic types
 
+In Java they are called "generics".
 The types we gave before can be defined "parametrically" for any type `A`, instead of giving them just for strings or integers:
 
 ```rust
@@ -685,16 +747,15 @@ enum Either<A,B> {
 
 struct Both<A,B> {
     left: A,
-    right: A
+    right: B,
 }
 
-enum Maybe<A> {
+enum Option<A> {
     None,
     Some(A)
 }
 ```
 
 Functions also have to be defined parametrically with respect to any type.
-Minor point: How does this work under the hood? Rust uses "monomorphic specialization", i.e., different 
+Minor point: How does this work under the hood? Rust uses "monomorphic specialization", i.e., different
 machine code is generated for each possible version of the function that gets used in your program.
-
