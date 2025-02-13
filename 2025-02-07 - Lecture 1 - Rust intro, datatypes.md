@@ -68,12 +68,17 @@ fn example_let(a: i32) -> i32 {
 fn example(a: i32) -> i32 {
     // You can omit the type when it can be inferred from the context.
     let n = add_three(a);
-    let n = n + 1; // Error: trying to change `n` (you can declare `n` as `mut`)
+    n = n + 1; // Error: trying to change `n` (you can declare `n` as `mut`)
     2 * n
 }
 fn example_mut(a: i32) -> i32 {
     let mut n = add_three(a);
     n = n + 1;
+    2 * n
+}
+fn example_let_let(a: i32) -> i32 {
+    let n = add_three(a);
+    let n = n + 1; // This is okay! The previous `n` cannot be accessed anymore.
     2 * n
 }
 
@@ -602,8 +607,17 @@ fn get_value(a: ListIntegers) -> MaybeInteger {
     }
 }
 
-// TODO: Notation for lists
-// [] = Empty
+// We will use the following notation for lists:
+//   The list with no elements:
+//       [] = Empty
+//   The list with a single element a:
+//       [a] = Element { value: a, tail: Empty }
+//   A list with three elements a,b,c:
+//       [a,b,c] = Element { value: a, tail: Element { value: b, tail: ... }}
+// The convention we will use throughout the rest of the course is that the top-most
+// use of the Element constructor adds the *first* element of the list.
+// Another perfectly valid convention is that one considers the value `a` in
+// `Element { value: a, tail ... } theto be thought as begin at the end of the list instead.
 
 // Given a number n: i32, create the list [n, n-1, ..., 3, 2, 1]
 // For example, enumerate(4) = [4,3,2,1]
