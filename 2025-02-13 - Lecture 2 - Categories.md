@@ -169,6 +169,15 @@ fn compose_Int_Bool_Int(f: Arr_Int_Bool, g: Arr_Bool_Int): Arr_Int_Int {
   }
 }
 
+fn compose_Int_Bool_Int(f: Arr_Int_Bool, g: Arr_Bool_Int): Arr_Int_Int {
+  IntIdentity
+}
+
+
+
+
+
+
 fn compose_Bool_Int_Int(f: Arr_Bool_Int, g: Arr_Int_Int): Arr_Bool_Int {
   match f {
 
@@ -188,14 +197,15 @@ fn compose_Bool_Int_Bool(f: Arr_Bool_Int, g: Arr_Int_Bool): Arr_Bool_Bool {
 fn compose_Bool_Int_Bool(f: Arr_Bool_Int, g: Arr_Int_Bool): Arr_Bool_Bool {
   BoolIdentity
 }
-
-// Answer in https://rot13.com/: obgu pubvprf jbex orpnhfr jr zhfg purpx havgnyvgl/nffbpvngvivgl sbe rirel inyhr bs Nee_Obby_Vag, bs juvpu gurer ner abar! Fb gurer vf abguvat gb purpx.
-
 fn compose_Bool_Int_Bool(f: Arr_Bool_Int, g: Arr_Int_Bool): Arr_Bool_Bool {
   match f { }
 }
+
+// Answer in https://rot13.com/: obgu pubvprf jbex orpnhfr jr zhfg purpx havgnyvgl/nffbpvngvivgl sbe rirel inyhr bs Nee_Obby_Vag, bs juvpu gurer ner abar! Fb gurer vf abguvat gb purpx.
+
 ```
 
+In general, for the choices above (not for this last example),
 Now we have to show that these choices satisfy the category laws!
 1. I must check that whenever f is `BoolIdentity` the function `compose` returns g.
 2. I must check that whenever f is `IntIdentity` the function `compose` returns g.
@@ -206,12 +216,32 @@ Now we have to show that these choices satisfy the category laws!
 # Example of category: a programming language with pairs
 
 ```rust
+
+// Intuition for the type Pair<Int,Bool>
+//   struct IntAndBool {
+//     a: Int,
+//     b: Bool,
+//   }
+//   enum EitherIntBool {
+//     Int(i32),
+//     Bool(bool),
+//   }
+//   struct IntAndInt {
+//     a: Int,
+//     b: Int,
+//   }
+
 // Recursive algebraic data type
 enum Obj {
   Int,
   Bool,
-  Pair<Obj,Obj>
+  Pair(Obj,Obj),
+  Either(Obj,Obj),
 }
+// Pair(Int, Int)
+// Pair(Int, Pair(Int, Int))
+// Pair(Int, Bool)
+// Either(Bool, Bool)
 
 enum Arr_Int_Bool {
   IsEven,
@@ -226,6 +256,11 @@ enum Arr_Int_PairIntInt {
   Duplicate,
   ...
 }
+/*
+fn duplicate(n: i32) -> Pair<Int,Int> {
+  Pair { a: n, b: n }
+}
+*/
 ```
 
 # Example of category: natural numbers and monoid structures
@@ -320,11 +355,64 @@ Some examples:
 
 Composition corresponds to syntactic substitution of programs: this is achieved by replacing the input variable of the second program with the entire body of the first program:
 ```rust
-fn program2(b: B) -> C {
-  ... b ...
-  ........ b ...
+fn program1(a: A) -> B {
+  ...... a ....... a ....... a ...
 }
 
+fn program2(b: B) -> C {
+  ... b .......... b ...
+}
+
+fn program3(c: C) -> D {
+  ... c ...
+  .. c ...
+}
+```
+
+
+```rust
+// Composite program, semantically:
+fn composition123(a: A) -> D {
+  program3(program2(program1(a)))
+}
+
+fn composition23(b: B) -> D {
+  program3(program2(b))
+}
+fn composition23_then_1(a: A) -> D {
+  composition23(program1(a))
+}
+fn composition23_then_1(a: A) -> D {
+  program3(program2(program1(a)))
+}
+
+/////////////////////////////////////
+// Composite program, syntactically:
+fn composition123_syn(a: A) -> D {
+  ... program2(program1(a)) ...
+  .. program2(program1(a)) ...
+}
+
+// First, take the code of program3, and put program2(program1(a))
+fn composition123_syn(a: A) -> D {
+  ... (... program1(a) .......... program1(a) ...) ...
+  .. (... program1(a) .......... program1(a) ...) ...
+}
+
+fn composition32(b: B) -> D {
+  ... (... b .......... b ...) ...
+  .. (... b .......... b ...) ...
+}
+fn composition32_then_1(a: A) -> D {
+  ... (... program1(a) .......... program1(a) ...) ...
+  .. (... program1(a) .......... program1(a) ...) ...
+}
+
+
+```
+
+
+```
 // replace each occurrence of b with the entirety of the first program:
 
 fn composite(a: A) -> C {
