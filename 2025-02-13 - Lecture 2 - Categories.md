@@ -479,4 +479,5 @@ fn compose_One_One_One(f: Arr_One_One, g: Arr_One_One) -> Arr_One_One {
 
 ## Conclusion: a category with one object is the same thing as a monoid.
 
-## Other important takeaway: objects are not always """types in a programming language""" and arrows are not always """programs in a programming language""": they *can* be thought of such, but that need not be the case. T
+## Other important takeaway: objects are not always """types in a programming language""" and arrows are not always """programs in a programming language""": they *can* be thought of such, but that need not be the case.
+- In one of the examples for monoids, we saw that a program is a number!! Very strange. A number surely does not represent a process, nor a function, nor a transformation.
