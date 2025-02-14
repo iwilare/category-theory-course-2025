@@ -632,9 +632,13 @@ fn enumerate(n: i32) -> ListInteger {
     }
 }
 
-// WARNING: complicated example!
+// WARNING: complicated example/exercise!
 fn append(a: ListIntegers, b: ListIntegers) -> ListIntegers {
-
+    match a {
+        Empty => b,
+        Element { value: v, tail: t } =>
+          Element { value: v, tail: append(t, b) }
+    }
 }
 ```
 
