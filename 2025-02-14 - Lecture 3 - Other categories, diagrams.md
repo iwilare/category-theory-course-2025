@@ -1,4 +1,4 @@
-# 2025-02-13 - Lecture 2 (Other categories, diagrams, string diagrams)
+# 2025-02-13 - Lecture 3 (Other categories, diagrams, string diagrams)
 
 ## Today's plan
 
