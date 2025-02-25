@@ -1,13 +1,23 @@
-# 2025-02-13 - Lecture 3 (Other categories, diagrams, string diagrams)
+# 2025-02-13 - Lecture 3 (Other categories)
 
 ## Today's plan
 
-- We will see other examples of categories
-- Introduce some sound and complete graphical languages to talk about any category:
+- We will see other examples of categories:
+    - Prog, the category of programs
+    - The free category on a graph
 
 ## The category $\textsf{Prog}$
 
 - *(Objects.)* One object symbol for each possible type you can write in Rust. (this is essentialy `str` but only considering those types that are valid Rust types)
+
+```rust
+enum Obj {
+    A, // a symbol for a certain Rust program,
+    B, // a symbol for a another Rust program,
+    ...
+}
+```
+
 - *(Arrows.)* One arrow symbol from `A` to `B` for each possible program, with a single argument, that can be written in Rust. Same thing here for programs, only strings that are valid Rust programs.
 - *(Identities.)* We pick the arrow
 ```rust
@@ -185,173 +195,73 @@ The category of programs can be thought of in many different ways.
 - Trips for the free graph, trips under the equality "have the same price".
 - Trips for the free graph, trips under the equality "take the same length".
 
-# Categories as languages
+The free category has a special property: it identifies the least amount of things together.
+We will talk about this again when we talk about adjunctions.
 
-Example of an equation between programs (e.g., in Rust):
+# Other categories: the generic span, the interval, the square, the unit category
 
-## Algebraic language for categories
-
-If we have a category, we can write something like this:
-
-Assume $f : A \to B, g : B \to B, h : B \to C$, $k : A \to R, m: R \to C$:
-
-$$f \,; g \,; g \,; \textsf{id}_a \,; h = k \,; m$$
-
-One says that this is an "algebraic" perspective on categories. The connection to algebra comes from the monoid examples that we saw in the previous lecture, where the composition symbol $;$ represents addition of numbers and you are literally adding numbers together ($id_a$ is zero.)
-
-## Graphical language for categories - Pasting diagrams
-
-Examples of pasting diagrams: https://www.google.com/search?q=commutative+diagrams
-
-A website to draw pasting diagrams: https://q.uiver.app/
-
-Pasting diagrams are precisely pieces of the drawings that we did in the past to represent the entire category: the only difference is that now we only take *some* objects, *some* arrows, and draw *some* equations with a small = symbol whenever it makes sense to do that. Moreover, we simply remove the dot below the label for the type (which you typically put in a graph).
-
-So, the graph you obtain is this:
-- *Nodes:* types,
-- *Edges:* programs from one type to the other.
-
-Equalities between calls of `compose` are represented by the fact that you might have multiple paths that start and end in the same place.
-
-Example:
-
+- The interval:
 ```
-       f
-  A ------> B
-  |         |
-h |         | g
-  |         |
-  v         v
-  C ------> D
-       i
+    f
+A ----> B
 ```
-
-If `compose(f,g) = compose(h,i)` we say that the diagram "commutes" (stupid name). And we write it like this:
-
+- The generic span:
 ```
-       f
-  A ------> B
-  |         |
-h |    =    | g
-  |         |
-  v         v
-  C ------> D
-       i
+    f       g
+A <---- B ----> C
 ```
-
-*Equalities in a pasting diagram are represented in space*: if you say that a diagram commutes, the compositions from every possible start and every possible end are indeed equal (i.e., the calls to the compose function are equal).
-
-## Graphical language for categories - String diagrams
-
-This is what a string diagram looks like:
-https://arxiv.org/pdf/1803.05316
-
-This is how you draw the expression `compose(f,g)`:
-
+- The "non-commutative" square:
 ```
- A   +-------+  B  +-------+   D
------|   f   |-----|   g   |------
-     +-------+     +-------+
+      f
+  A ----> B
+  |       |
+h |       | g
+  |       |
+  v       v
+  C ----> D
+      i
 ```
-
-This is how you draw the expression `compose(h, id[C]), compose(g)` another one:
-
-```
- A   +-------+        C        +-------+   D
------|   h   |-----------------|   k   |------
-     +-------+                 +-------+
-```
-
-This is how you draw the identity on the object `A`:
-
-```
-        A
------------------
-```
-
-String diagrams automatically hide the fact that composition is associative, given $f:A \to B,g:B \to C,h:C \to D$
-
-```
- A   +-------+  B  +-------+  C     C  +-------+   D
------|   f   |-----|   g   |---     ----|   h   |------
-     +-------+     +-------+           +-------+
-
-                          =
-
- A   +-------+  B     B  +-------+   C  +-------+   D
------|   f   |---     ---|   g   |------|   h   |------
-     +-------+           +-------+      +-------+
-
-                          =
-
- A   +-------+  B   +-------+   C  +-------+   D
------|   f   |------|   g   |------|   h   |------
-     +-------+      +-------+      +-------+
-
-```
-
-
-*Equalities in a commutative diagram are represented in time*: you can unambiguously only draw one diagram at a time; then you typically say that one and the one that you drew after are equal.
-
-## Term language for categories
-At the same time you have programs. Given *ANY* category whatsoever, one can construct a *canonical* corresponding programming language:
-
-- *(Types).* type of of your prorgamming language are exactly the types of the category.
-- *(Programs).* are the arrows.
 
 ```rust
-// This looks like Rust, but it's really a new programming language that was created from thin air from the data of the category that you gave me!
-fn program1(a: A) {
-    f(g(h))
+enum Arr_A_D {
+    FG,
+    HI,
 }
-fn program2(a: A) {
-    h(k(h))
+fn composeABD(a: Arr_A_B, b: Arr_B_D) -> Arr_A_D {
+    FG
 }
+fn composeACD(a: Arr_A_C, b: Arr_C_D) -> Arr_A_D {
+    HI
+}
+
 ```
 
-- We must have that a certain sequence of program
+- The "commutative" square:
+```
+      f
+  A ----> B
+  |       |
+h |       | g
+  |       |
+  v       v
+  C ----> D
+      i
+```
+such that $f \,; g = h \,; i$.
 
 
 
+```rust
+enum Arr_A_D {
+    K,
+}
+fn composeABD(a: Arr_A_B, b: Arr_B_D) -> Arr_A_D {
+    K
+}
+fn composeACD(a: Arr_A_C, b: Arr_C_D) -> Arr_A_D {
+    K
+}
 
-### Theorem. Reasoning with string diagrams, reasoning with pasting diagrams, reasoning with the term language and program equivalence, and reasoning with are all equivalent/equiexpressive.
+```
 
-This means that whatever equation you can derive using string diagrams you can derive using the algebraic language (which is, really, the only one that exists and has been defined formally.)
-
-# Functors
-
-Idea behind functors: functors embody the idea of interpreting types and programs of a programming language into another category.
-
-Given two categories, $C,D$, a functor $F$ amounts to the following choices:
-- *(Function on objects)* a choice of a Rust program `F_obj` with the following signature:
-    ```rust
-    fn F_obj(a: C.Obj): D.Obj {
-        ...
-    }
-    ```
-- *(Function on arrows)* for every value `a:C.Obj`, `b:C.Obj` a choice of a Rust program `F_arrows[a][b]`
-    ```rust
-    fn F_arrows[a][b](f: C.Arr[a,b]) -> D.Arr[F_obj(a), F_obj(b)] {
-        ...
-    }
-    ```
-
-- *(`F_arrows` respects identities)*: for every `a:C.Obj`, we know that thers is a value `id[a]:C.Arr[a,a]`. Calling `F_arrows[a][a]` on that value must give you exactly the identity in the corresponding type `D.Arr[F_obj(a), F_obj(a)]`, i.e., this equation holds:
-    ```rust
-    F_arrows[a][a](C.id[a]) = D.id[F_obj(a)]
-    ```
-
-- *(`F_arrows` respects compositions)*: for every `a,b,c:C.Obj` and every `f:C.Arr[a,b]`, `g:Arr[b,c]`, this equation holds:
-    ```rust
-    F_arrows[a][b](C.compose(f, g)) =
-    D.compose(F_arrows[a][b](f), F_arrows[b][c](g))
-    ```
-
-## Notation
-
-Again, we can often omit the indices if we know the types of the arrows involved.
-
-| Math notation | Rust notation |
-|---|---|
-| $F(a)$ | `F_obj(a)` |
-| $F(f)$ | `F_arrows(f)` |
+Commutative comes from vertical and then horizontal or horizontal and then vertical (think of commutativiy of addition: $a+b = b+a$)
