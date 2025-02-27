@@ -24,8 +24,13 @@ These are perfectly equivalent ways of expressing function application: the firs
 - *(Objects.)* One object symbol for each possible type you can write in Rust. (this is essentialy `str` but only considering those types that are valid Rust types)
     ```rust
     enum Obj {
-        A, // a symbol for a certain Rust program,
-        B, // a symbol for a another Rust program,
+        A, // a symbol for a certain Rust type,
+        B, // a symbol for a another Rust type,
+        ...
+    }
+    enum Arr_a_b {
+        C, // a symbol for a certain Rust program,
+        D, // a symbol for a another Rust program,
         ...
     }
     ```

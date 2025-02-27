@@ -1,8 +1,8 @@
-# 2025-02-21 - Lecture 4 (Products, isomorphisms)
+# 2025-02-27 - Lecture 4 (Products)
 
 ## Today's plan
 
-This lecture marks the end of introductory/preliminary material for category theory. From this lecture onwards, the real category theory begins and we to actually start applying the power of categorical reasoning to show general properties of categories "out of nowhere".
+This lecture marks the end of introductory/preliminary material for category theory. From this lecture onwards, the real category theory begins, and we can start applying the power of categorical reasoning to show general properties of categories "for free".
 
 - Introduce other important examples of categories (the preorder of natural numbers under two, the preorder of deductions),
 - Define the notion of product.
@@ -32,8 +32,8 @@ Let's work with the type of boolean expressions, i.e., expressions that I can pu
 
 ```rust
 enum BExpr {
-    LessEq(String, Nat),
-    GreaterEq(String, Nat),
+    LessEq(String, i32),
+    GreaterEq(String, i32),
     And(BExpr, BExpr),
     Or(BExpr, BExpr),
     Not(BExpr),
@@ -43,7 +43,7 @@ enum BExpr {
 ```
 Some examples:
 - `x ≤ 7` (i.e., formally, `LessEq("x", 7)`).
-- `!(x ≤ 3 && x ≥ 4)` (i.e., formally, `Not(And(LessEq("x", 3), GreaterEq("x", 4)))`).
+- `!(y ≤ 3 && x ≥ 4)` (i.e., formally, `Not(And(LessEq("y", 3), GreaterEq("x", 4)))`).
 - `!(x ≥ 0 || false)` (i.e., formally, `Not(Or(GreaterEq("x", 0), F))`).
 
 We define the following category $\textsf{BExpr}$.
@@ -80,8 +80,8 @@ An object $P$ is said to be *a product of $A$ and $B$* if the following conditio
     - $\textsf{snd} : P \to B,$
 2. *(Existence of pairs.)* if someone gives you the following data,
     - another object $H$,
-    - two arrows $f : H \to A,$
-    - two arrows $g : H \to B,$
+    - an arrow $f : H \to A,$ and
+    - an arrow $g : H \to B,$
 
     then you must pick an arrow
     - $p : H \to P$,
@@ -135,7 +135,7 @@ Moreover, remember that we will consider equivalence of programs as *behavioural
 
 **For the rest of this lecture, we consider Rust with these restrictions:**
 
-- `Int`, `String`, `Bool` types
+- `i32`, `String`, `bool` types
 - Functions only take one argument, and as always never loop/crash, etc. and always terminate (this is what total means.)
 - The `Pair<A,B>` type for any two types `A`, `B`, defined like this:
     ```rust
@@ -144,9 +144,11 @@ Moreover, remember that we will consider equivalence of programs as *behavioural
         right: B,
     }
     ```
-(In particular, these are also types: `Pair<Int,Pair<String,Int>>`, `Pair<Pair<String,String>,Bool>`, etc...!)
+(In particular, these are also types: `Pair<i32,Pair<String,i32>>`, `Pair<Pair<String,String>,bool>`, etc...!)
 
-Let's show that $\text{Prog}$ has all products, where now `Prog` takes as objects all the types we just listed and all total programs between as arrows.
+## Let's show that $\text{Prog}$ has all products, where now `Prog` takes as objects all the types we just listed and all total programs between as arrows.
+
+What does it mean to have "all products"? For any `A,B` types, I will give you a choice `P` of a type, and I'm going to tell you that this `P` that I chose really is a product.
 
 *Proof.*
 
@@ -158,26 +160,28 @@ Let's show that $\text{Prog}$ has all products, where now `Prog` takes as object
         match p {
             Pair(left, right) => left
         }
+        // p.left
     }
 
     fn snd(p: Pair<A,B>) -> B {
         match p {
             Pair(left, right) => right
         }
+        // p.right
     }
     ```
 
-- *(Existence of pairing.)* Take any type `X`, and assume we are given two programs
+- *(Existence of pairing.)* Take any type `H`, and assume we are given two programs
 
     ```rust
-    fn l(v: X) -> A => ...
-    fn r(v: X) -> B => ...
+    fn l(v: H) -> A => ...
+    fn r(v: H) -> B => ...
     ```
 
     The pairing  arrow `pairing_l_r` for `l` and `r` is defined as follows:
 
     ```rust
-    fn pairing_l_r(v: X) -> Pair<A,B> {
+    fn pairing_l_r(v: H) -> Pair<A,B> {
         Pair(l(v), r(v))
         // equivalently: Pair { left: l(v), right: r(v) }
     }
@@ -190,11 +194,11 @@ Let's show that $\text{Prog}$ has all products, where now `Prog` takes as object
 
         The first arrow is this program:
         ```rust
-            fn compose_(pairing_l_r)_fst(v: X) -> A {
+            fn compose_(pairing_l_r)_fst(v: H) -> A {
                 v.pairing_l_r().fst()
             }
         ```
-        Let's reason by program equivalence, for some argument `v: X`:
+        Let's reason by program equivalence, for some argument `v: H`:
         ```rust
             v.pairing_l_r().fst()          // (Function expansion.)
             = Pair(l(v), r(v)).fst()       // (Function expansion.)
@@ -203,16 +207,16 @@ Let's show that $\text{Prog}$ has all products, where now `Prog` takes as object
               })              // (Match evaluation.)
             = l(v)
         ```
-        which is exactly the definition of ```fn l(v: X) -> A```.
+        which is exactly the definition of ```fn l(v: H) -> A```.
 
     - $\lang l,r \rang\,;\text{snd} = r$
 
         The first arrow is this program:
         ```rust
-            fn compose_(pairing_l_r)_snd(v: X) -> A =>
+            fn compose_(pairing_l_r)_snd(v: H) -> A =>
             v.pairing_l_r().snd()
         ```
-        Let's reason by program equivalence, for some argument `v: X`:
+        Let's reason by program equivalence, for some argument `v: H`:
         ```rust
             v.pairing_l_r().snd()          // (Function expansion.)
             = Pair(l(v), r(v)).snd()       // (Function expansion.)
@@ -221,18 +225,18 @@ Let's show that $\text{Prog}$ has all products, where now `Prog` takes as object
               })              // (Match evaluation.)
             = r(v)
         ```
-        which is exactly the definition of ```fn r(v: X) -> A```.
+        which is exactly the definition of ```fn r(v: H) -> A```.
 
 - *(Pair expansion)*
 
-    Assume to have a arrow `fn p(v: X) -> Pair<A,B>` which also satisfies the *product equalities*. We show that is program equivalent to `pairing_(compose_p_fst)_(compose_p_snd)`.
+    Assume to have a arrow `fn p(v: H) -> Pair<A,B>` which also satisfies the *product equalities*. We show that is program equivalent to `pairing_(compose_p_fst)_(compose_p_snd)`.
 
-    Assume to have a value `v: X`.
+    Assume to have a value `v: H`.
     and let's assume that when we call `p` on this value we get a result `Pair(v1,v2)` for some values `v1: A` and `v2: B`.
     ```rust
            v.p()
          = Pair(v1, v2)        // (General principle.)
-                               // Assumpution that the result of this function is given
+                               // Assumption that the result of this function is given
                                // by combining some values `v1`, `v2`.
     ```
     ```rust
@@ -278,18 +282,13 @@ struct Pair_Two_Three {
     right: Three,
 }
 
-// Pair_Three_Four { left: A1, right: B1 }
-// Pair_Three_Four { left: A1, right: B2 }
-// Pair_Three_Four { left: A1, right: B3 }
+// Pair_Two_Three { left: A1, right: B1 }
+// Pair_Two_Three { left: A1, right: B2 }
+// Pair_Two_Three { left: A1, right: B3 }
 
-// Pair_Three_Four { left: A2, right: B1 }
-// Pair_Three_Four { left: A2, right: B2 }
-// Pair_Three_Four { left: A2, right: B3 }
-
-// Pair_Three_Four { left: A3, right: B1 }
-// Pair_Three_Four { left: A3, right: B2 }
-// Pair_Three_Four { left: A3, right: B3 }
-
+// Pair_Two_Three { left: A2, right: B1 }
+// Pair_Two_Three { left: A2, right: B2 }
+// Pair_Two_Three { left: A2, right: B3 }
 ```
 
 So, given two types `A,B`, such that
@@ -304,6 +303,13 @@ Now, the product of numbers (i.e., the size of types) is associative, commutativ
 Take the term language of some category $C$.
 
 > If you tell me that $C$ has a product $A \times B$ for every object $A,B$, then the term language can assume to have a type `Pair<A,B>`, a pair constructor `Pair { left: ..., right: ... } `,  and `match` constructs.
+
+```rust
+struct Pair<A,B> {
+    left: A,
+    right: B
+}
+```
 
 These choices are "well-behaved" because of the properties of products.
 
@@ -338,7 +344,7 @@ These choices are "well-behaved" because of the properties of products.
     For example:
 
     ```rust
-    fn isAdultWithNameLength(p: Pair<Int, String>) -> Pair<Bool, Int> {
+    fn isAdultWithNameLength(p: Pair<i32, String>) -> Pair<bool, i32> {
         match p {
             Pair(age,name) => Pair(age >= 18, name.length())
         }
@@ -348,7 +354,7 @@ These choices are "well-behaved" because of the properties of products.
     is program equivalent to
 
     ```rust
-    fn isAdultWithNameLength(p: Pair<Int, String>) -> Pair<Bool, Int> {
+    fn isAdultWithNameLength(p: Pair<i32, String>) -> Pair<bool, i32> {
         Pair(p.fst() >= 18, p.snd().length())
     }
     ```
@@ -358,6 +364,12 @@ These choices are "well-behaved" because of the properties of products.
     ```rust
     let (a,b) = p
     return Pair(a,b)
+    ```
+
+    ```rust
+    match p {
+        Pair(a,b) => Pair(a,b)
+    }
     ```
 
     really is the same as just avoiding decomposition and recomposition
@@ -431,6 +443,46 @@ Idea: a "product" of two propositions `A` and `B` always exists, and it's the pr
 
     ~~such that these equations hold:~~ (this does not need to be checked since we are in a preorder!)
     - ...
+
+---
+
+## TODO: correctness, no garbage
+
+1. *(Existence of projections.)* you must pick two arrows
+    - $\textsf{fst} : P \to A, \qquad$ the implication `A && B && true` $\to$ `A`
+    - $\textsf{snd} : P \to B, \qquad$ the implication `A && B && true` $\to$ `B`
+
+    Intuitively, this works! If `A && B && true` is true then certainly `A` is true.
+2. *(Existence of pairs.)* if someone gives you the following data,
+    - another object (proposition) `H`,
+    - two arrows $f : H \to A, \qquad$ the implication `H` $\to$ `A`,
+    - two arrows $g : H \to B, \qquad$ the implication `H` $\to$ `B`,
+
+    then you must pick an arrow
+    - $p : H \to P$,  $\quad$ i.e., I must show that `H` $\to$ `A && B && true`.
+
+    ~~such that these equations hold:~~ (this does not need to be checked since we are in a preorder!)
+    - ...
+
+---
+
+1. *(Existence of projections.)* you must pick two arrows
+    - $\textsf{fst} : P \to A, \qquad$ the implication `A && B && x == 0` $\to$ `A`
+    - $\textsf{snd} : P \to B, \qquad$ the implication `A && B && x == 0` $\to$ `B`
+
+    Intuitively, this works! If `A && B && x == 0` is true then certainly `A` is true.
+2. *(Existence of pairs.)* if someone gives you the following data,
+    - another object (proposition) `H`,
+    - two arrows $f : H \to A, \qquad$ the implication `H` $\to$ `A`,
+    - two arrows $g : H \to B, \qquad$ the implication `H` $\to$ `B`,
+
+    then you must pick an arrow
+    - $p : H \to P$,  $\quad$ i.e., I must show that `H` $\to$ `A && B && x == 0`.
+
+    ~~such that these equations hold:~~ (this does not need to be checked since we are in a preorder!)
+    - ...
+
+
 
 
 
