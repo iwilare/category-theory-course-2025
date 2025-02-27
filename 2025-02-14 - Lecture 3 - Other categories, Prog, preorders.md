@@ -6,49 +6,153 @@
     - Prog, the category of programs
     - The free category on a graph
 
+## Small remark on the notation for method chaining
+
+We sometimes use method chaining instead of function application:
+
+|  |  |  |
+|-|-|-|
+`f(g(x))` | = | `x.g().f()`
+`f(g(x, b, c), k, m)` | = | `x.g(b, c).f(k, m)`
+
+These are perfectly equivalent ways of expressing function application: the first is the usual one. The second is the order in which `compose` is defined in the definition of category.
+
+(This cannot be done in Rust all the time like this! One would have to use `impl` to be able to use method calls.)
+
 ## The category $\textsf{Prog}$
 
 - *(Objects.)* One object symbol for each possible type you can write in Rust. (this is essentialy `str` but only considering those types that are valid Rust types)
+    ```rust
+    enum Obj {
+        A, // a symbol for a certain Rust program,
+        B, // a symbol for a another Rust program,
+        ...
+    }
+    ```
+
+    - *(Arrows.)* One arrow symbol from `A` to `B` for each possible program, with a single argument, that can be written in Rust. Same thing here for programs, only strings that are valid Rust programs.
+
+
+## Before finishing the definition: equality of programs
+
+Important: We define equality in this category to be **program equivalence**: we say that two strings/symbols `f: Arr[A][B]` and `g: Arr[A][B]`, we consider these two strings to be the same when they are equivalent programs:
+
+> **Program equivalence:** given two types `A` and `B` two programs `fn f(x: A) -> B` and `fn g(x: A) -> B`, we say that they are *equal* (written `f = g`) when: *for every value `x` of type `A`, the two calls `f(x)` and `g(x)` return the same value*.
+
+For example, these two programs are not syntactically the same!
 
 ```rust
-enum Obj {
-    A, // a symbol for a certain Rust program,
-    B, // a symbol for a another Rust program,
-    ...
-}
+fn addv1(n: i32) -> i32 { 4 + (n + 3) }
+fn addv2(n: i32) -> i32 { n + 7 }
 ```
 
-- *(Arrows.)* One arrow symbol from `A` to `B` for each possible program, with a single argument, that can be written in Rust. Same thing here for programs, only strings that are valid Rust programs.
+However, they are clearly equivalent, because they always return the same value.
+
+Similarly, these two programs are going to be defined very differently, and they are going to be compiled to different machine codes.
+
+```rust
+fn quicksort(l: List<i32>) -> List<i32> => ...
+fn mergesort(l: List<i32>) -> List<i32> => ...
+```
+However, they are equivalent, since they return equal values for any list `l: List<i32>`.
+
+**How do we establish program equivalence?**
+
+In order to say when two functions are equal we introduce the notion of *symbolic reasoning*. This is an heuristic: it works to prove equality most of the times, but sometimes a stronger argument might be needed.
+
+> *Symbolic reasoning* to establish `f = g`:
+> 1. Assume to have a "symbolic" variable `x: A` with the type of the input.
+> 2. Start with the expression `f(x)` and with the expression `g(x)`.
+> 3. Repeat the following rules on any of the two expressions as long as necessary:
+>    1. **(Function evaluation)** *Given a function `fn f(x: A) -> B => ...` and a value `v: A`, we can evaluate the expression `f(v)` by taking the body of the function and replacing the variable `x` with the value `v`. For example, the expression `addA(42)` can be unfolded to `4 + (42 + 3)`.*
+>    2. **(General rule.)** Apply any equivalence which is valid because of general reasons. For example, given `a, b: Int`, we can replace `a + b` with `b + a` because addition is commutative.
+>    3. **(Match evaluation.)** *(Not needed for now.)* ...
+>    4. **(Case analysis.)** *(Not needed for now.)* ...
+> 4. Repeat step 3. until the two expressions match *syntactically*.
+
+### Example:
+
+`addv1 = addv2`:
+```rust
+  addv1(x)      (Function evaluation.)
+= 4 + (x + 3)   (General rule: commutativity of addition)
+= 4 + (3 + x)   (General rule: associativity of addition)
+= (4 + 3) + x   (General rule: evaluation of addition)
+= 7 + x
+
+  addv2(x)      (Function evaluation.)
+= 7 + x
+```
+
+## Continuing the definition...
+
 - *(Identities.)* We pick the arrow
-```rust
-fn idA(a: A) -> A {
-    a
-}
-```
-So we picked a string, which is also a valid program.
+    ```rust
+    fn idA(a: A) -> A {
+        a
+    }
+    ```
+    So we picked a string, which is also a valid program.
 - *(Composition.)*
     Given two programs `fn f(a: A) -> B`, `fn g(b: B) -> C`
-    for the composition I give you
+    for the composition I give you the valid Rust program:
     ```rust
-    fn composefg(a: A) -> C {
+    fn compose_f_g(a: A) -> C {
         g(f(a))
     }
     ```
-- (Right identity.) `compose(f, id[A]) = f`.
+- (Identity left.) `compose(f, id[A]) = f`. These two clearly have the same behaviour:
     ```rust
     fn f(a: A) -> B {
         ...
     }
     =
-    fn composefg(a: A) -> B {
+    fn compose_f_g(a: A) -> B {
         id(f(a))
     }
     ```
+    More formally: for any program `fn f(x: A) -> B`, we have that `compose_identityA_f = f`.
+    ```
+      compose_identityA_f(x)   (Function evaluation.)
+    = x.identityA().f()        (Function evaluation.)
+    = x.f()                    (General rule: method calls are just function calls.)
+    = f(x)
+    ```
 
-1. *Behaviour. (default meaning of equality)* For every possible input value `a:A`, then the above function, called on a, `f(a) = composefg(a)` between values of type B.
-2. *Runtime behaviour.* For every possible input value `a:A`, then the above function, called on a, `f(a)` and `composefg(a)` take exactly the same amount of CPU cycles.
+- *(Identity right)*  For any program `fn f(x: A) -> B`, we have that `compose_id_identityB = f`.
+    ```
+      compose_f_identityB(x)   (Function evaluation.)
+    = x.f().identityA()        (General rule: method calls are just function calls.)
+    = identityA(x.f())         (Function evaluation.)
+    = x.f()
+    ```
 
-## The free category on a multi-edged graph
+- *(Associativity)*  For any program `fn f(x: A) -> B`, `fn g(x: B) -> C`, `fn h(x: C) -> D` we have that the two programs `compose_compose_f_g_h = compose_f_compose_g_h` are equivalent.
+
+    The signature of the two morphisms is `fn f(x: A) -> D`, so it makes sense to ask whether they are equivalent or not.
+
+    *Proof.*
+    ```
+      compose_compose_f_g_h(x)   (Function evaluation.)
+    = x.compose_f_g().h()        (Function evaluation.)
+    = (x.f().g()).h()            (General rule: convention selected for method chaining.)
+    = x.f().g().h()
+
+      compose_f_compose_g_h(x)   (Function evaluation.)
+    = x.f().compose_g_h()        (Function evaluation.)
+    = (x.f()).g().h()            (General rule: convention selected for method chaining.)
+    = x.f().g().h()
+    ```
+
+# Categories where one picks a different notion of equality
+
+The category of programs can be thought of in many different ways. Here are some possibilities:
+
+1. *Syntactic equivalence* Two program symbols are equal when they are syntactically the same, i.e., they have the same source code.
+2. *Temporal equivalence.* For every possible input value `a:A`, then the above function, called on a, `f(a)` and `compose_f_g(a)` take exactly the same amount of CPU cycles.
+1. *Behavioural equivalence. (this is the default meaning of equality)* For every possible input value `a:A`, the two functions `f,g`, when called on a, give you two equal values of type `B`, i.e., one has that `f(a) = g(a)` between values of type `B`.
+
+# The free category on a multi-edged graph
 
 There are also some recipes which, given some data that you can pick, it constructs a new category for you.
 
@@ -173,7 +277,9 @@ Subject to the following laws:
     ```
     This always holds!
 7. *(Associativity.)* For every value `a,b,c,d: Obj`, and every value `f:Arr[a,b], g:Arr[b,c], h:Arr[c,d]`
+    This always holds!
 
+### Important takeaway: in a preorder, every equation holds, i.e., any two elements of `Arr[a][b]` are equal, simply because there is at most one possible element in each `Arr[a][b]`.
 
 ## Example: the preorder of cities reachable by a flight
 
@@ -181,14 +287,6 @@ Subject to the following laws:
 - *(Arrows).* A type with one element when a city can be reached by a series of Finnair flights.
 - *(Identities.)* Staying in the same city counts as a series of flights.
 - *(Composition).*
-
-# Categories where one picks a different notion of equality
-
-The category of programs can be thought of in many different ways.
-
-- Programs under syntactic equivalence: two program symbols are equal when they have the same source code.
-- Programs under temporal equivalence: two program symbols are equal when they have the
-- Programs under behavioural equivalence: two programs symbols are ...
 
 ### Other examples of categories:
 

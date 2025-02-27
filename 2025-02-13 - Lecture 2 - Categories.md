@@ -155,6 +155,10 @@ In the Rust notation, note that one can often remove the square brackets, becaus
 
 The associativity law is extremely important! It means that any way I put the brackets it does matter, so one can simply write $f \,; g \,; h$ and there cannot be any confusion.
 
+## Terminology
+
+You will often hear other books use the work "morphism" instead of arrow, and "hom-set" intead of "type of arrows" (for some objects $A$,$B$). Morphism can be a bit of a misleading word: not every arrow in a category represents a "transformation", or a process. We will later see during this lecture an example where arrows are just numbers.
+
 # Example of category: a programming language with Int, Bool
 
 In order to define a new category, I must make all the choices above; after that, I have to make sure that my choices satisfy the category laws.
