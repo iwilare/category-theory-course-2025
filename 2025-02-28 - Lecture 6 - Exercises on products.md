@@ -1,4 +1,4 @@
-# 2025-02-27 - Lecture 5 (Exercises on products)
+# 2025-02-28 - Lecture 6 (Exercises on products)
 
 ## Today's plan
 
@@ -364,12 +364,16 @@ $$
 \end{array}
 $$
 
-
 # EXERCISES
 
-## Exercise: show that $A \times B \cong B \times A$
-## Exercise: show that $A \times (B \times C) \cong (A \times B) \times C$
-## Exercise: among the examples that we have seen in the previous lecture, find a category where $A \not \cong A \times A$ and one where $A \cong A \times A$.
+### Exercise 6.1
+Show that $A \times B \cong B \times A$.
+### Exercise 6.2
+Show that $A \times (B \times C) \cong (A \times B) \times C$.
+### Exercise 6.3
+Show that given $f : A \to C$ and $g : B \to D$ then there is an arrow $f \times g : A \times B \to C \times D$.
+### Exercise 6.4
+Among the examples that we have seen in the previous lecture, find a category where $A \not \cong A \times A$ and one where $A \cong A \times A$.
 
 
 
