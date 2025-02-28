@@ -1,4 +1,4 @@
-# 2025-02-27 - Lecture 4 (Products)
+# 2025-02-27 - Lecture 5 (Products)
 
 ## Today's plan
 
@@ -6,6 +6,8 @@ This lecture marks the end of introductory/preliminary material for category the
 
 - Introduce other important examples of categories (the preorder of natural numbers under two, the preorder of deductions),
 - Define the notion of product.
+
+Here are three more examples of categories (preorders, actually) that we will use today for examples of products.
 
 # Example of category: the preorder $(\N,\le)$ of natural numbers using $\le$
 
@@ -80,8 +82,8 @@ An object $P$ is said to be *a product of $A$ and $B$* if the following conditio
     - $\textsf{snd} : P \to B,$
 2. *(Existence of pairs.)* if someone gives you the following data,
     - another object $H$,
-    - an arrow $f : H \to A,$ and
-    - an arrow $g : H \to B,$
+    - an arrow $l : H \to A,$ and
+    - an arrow $r : H \to B,$
 
     then you must pick an arrow
     - $p : H \to P$,
@@ -91,7 +93,7 @@ An object $P$ is said to be *a product of $A$ and $B$* if the following conditio
     - $p \,; \textsf{snd} = g$.
 
     Since the choice of $p$ depends on the $f$ and $g$ that you gave me, we will instead write the arrow $p$ that *you* must pick as
-    $$\langle f , g \rangle : H \to P.$$
+    $$\langle l , r \rangle : H \to P.$$
     A less-mathy notation for this is just $\textsf{pairing}_{f,g} : H \to P.$
 
 3. *(Pair expansion.)* the choice for $\langle \cdots , \cdots \rangle$ that you gave above must satisfy the following equation for every arrow $h : H \to P$:
@@ -140,8 +142,8 @@ Moreover, remember that we will consider equivalence of programs as *behavioural
 - The `Pair<A,B>` type for any two types `A`, `B`, defined like this:
     ```rust
     struct Pair<A,B> {
-        left: A,
-        right: B,
+        first: A,
+        second: B,
     }
     ```
 (In particular, these are also types: `Pair<i32,Pair<String,i32>>`, `Pair<Pair<String,String>,bool>`, etc...!)
@@ -153,25 +155,45 @@ What does it mean to have "all products"? For any `A,B` types, I will give you a
 *Proof.*
 
 - *(Choice of $P$.)* For any two types `A`, `B`, we say that there is an object which satisfies the property of being a product of `A`, `B`. The object we select for $P$ is `Pair<A,B>`.
-- *(Existence of projections.)* We need to provide two arrows $\texttt{fst}:\text{Prog}(\texttt{Pair<A,B>},\texttt A), \texttt{snd}:\text{Prog}(\texttt{Pair<A,B>},\texttt B)$. We define them like this:
+
+> RECALL:
+> 1. *(Existence of projections.)* you must pick two arrows
+>     - $\textsf{fst} : P \to A,$
+>     - $\textsf{snd} : P \to B,$
+
+- *(Existence of projections.)* We need to provide two arrows $\texttt{fst}:\text{Prog}(\texttt{Pair<A,B>},\texttt A), \texttt{snd}:\text{Prog}(\texttt{Pair<A,B>},\texttt B)$, i.e., construct certain Rust programs with the given signature. We define them like this:
 
     ```rust
     fn fst(p: Pair<A,B>) -> A {
         match p {
-            Pair(left, right) => left
+            Pair(first, second) => first
         }
-        // p.left
+        // Alternatively: p.first
     }
 
     fn snd(p: Pair<A,B>) -> B {
         match p {
-            Pair(left, right) => right
+            Pair(first, second) => second
         }
-        // p.right
+        // Alternatively: p.second
     }
     ```
 
-- *(Existence of pairing.)* Take any type `H`, and assume we are given two programs
+> RECALL:
+>
+> 2. *(Existence of pairs.)* if someone gives you the following data,
+>     - another object $H$,
+>     - an arrow $l : H \to A,$ and
+>     - an arrow $r : H \to B,$
+>
+>     then you must pick an arrow
+>     - $\langle l , r \rangle  : H \to P$,
+>
+>     such that these equations hold:
+>     - $\langle l , r \rangle  \,; \textsf{fst} = l$,
+>     - $\langle l , r \rangle  \,; \textsf{snd} = r$.
+
+- *(Existence of pairing.)* Assume someone comes up to us and gives us a type `H` and two programs
 
     ```rust
     fn l(v: H) -> A => ...
@@ -183,7 +205,7 @@ What does it mean to have "all products"? For any `A,B` types, I will give you a
     ```rust
     fn pairing_l_r(v: H) -> Pair<A,B> {
         Pair(l(v), r(v))
-        // equivalently: Pair { left: l(v), right: r(v) }
+        // equivalently: Pair { first: l(v), second: r(v) }
     }
     ```
 
@@ -253,65 +275,25 @@ What does it mean to have "all products"? For any `A,B` types, I will give you a
          = Pair(v1, v2)
     ```
 
-# Why are they called products?
-
-Consider the category $\text{FinProg}$, which is just the ""sub-category"" (we have not defined this yet precisely) where the types are only the finite ones.
-
-```rust
-// Recall: general definition of the product, for any types `A`, `B`
-struct Pair<A,B> {
-    left: A,
-    right: B
-}
-```
-
-```rust
-// Consider these two types:
-enum Two {
-    A1, A2
-}
-
-enum Three {
-    B1, B2, B3
-}
-
-// Why are products called like this?
-// How many possible ways are there to construct elements of this type?
-struct Pair_Two_Three {
-    left: Two,
-    right: Three,
-}
-
-// Pair_Two_Three { left: A1, right: B1 }
-// Pair_Two_Three { left: A1, right: B2 }
-// Pair_Two_Three { left: A1, right: B3 }
-
-// Pair_Two_Three { left: A2, right: B1 }
-// Pair_Two_Three { left: A2, right: B2 }
-// Pair_Two_Three { left: A2, right: B3 }
-```
-
-So, given two types `A,B`, such that
-- $\textsf{size}(A) = n$, and
-- $\textsf{size}(B) = m$, then
-- $\textsf{size}(\texttt{Pair}(A,B)) = n * m$.
-
-Now, the product of numbers (i.e., the size of types) is associative, commutative, etc... we will return back to this in the next lecture.
-
 # Products in a category corresponds to pairs in a programming language.
 
-Take the term language of some category $C$.
+Take the **term language** of some category $C$.
 
-> If you tell me that $C$ has a product $A \times B$ for every object $A,B$, then the term language can assume to have a type `Pair<A,B>`, a pair constructor `Pair { left: ..., right: ... } `,  and `match` constructs.
+> *Claim*: If you tell me that $C$ has a product $A \times B$ for every object $A,B$, then,
+> the term language of $C$ is extended to have a type `Pair<A,B>` for every type `A,B`, a pair constructor `Pair { first: ..., second: ... } `,  and `match` constructs, that behave in the correct way.
+> - Moreover, every program that can be created in this language corresponds with the arrows of the category $C$.
+> - Moreover, every program equivalence that can be shown in this language corresponds exactly with the equalities of the category $C$.
 
 ```rust
 struct Pair<A,B> {
-    left: A,
-    right: B
+    first: A,
+    second: B
 }
 ```
 
 These choices are "well-behaved" because of the properties of products.
+
+We sketch the above idea that allows you to translate between programs and arrows, (and viceversa!):
 
 - > *Being able to construct elements of a pair is the same as the existence of the pairing arrow.*
 
@@ -324,10 +306,9 @@ These choices are "well-behaved" because of the properties of products.
     can be replaced by
 
     ```rust
-      pairing_expr1_expr2[x]
-    = Pair(<expr1>[x], <expr2>[x]) // (Our definition of `pairing_l_r`)
+    pairing_expr1_expr2[x]
     ```
-    (we need to consider `expr1` and `expr2` as "functions" which take their free variables as arguments.)
+    (we consider `expr1` and `expr2` as "functions" which take their free variables as arguments.)
 
 - > *Being able to `match` is the same as having `fst` and `snd` as functions of our language.*
 
@@ -345,7 +326,7 @@ These choices are "well-behaved" because of the properties of products.
 
     ```rust
     fn isAdultWithNameLength(p: Pair<i32, String>) -> Pair<bool, i32> {
-        match p {
+        match process_data(p) {
             Pair(age,name) => Pair(age >= 18, name.length())
         }
     }
@@ -355,16 +336,22 @@ These choices are "well-behaved" because of the properties of products.
 
     ```rust
     fn isAdultWithNameLength(p: Pair<i32, String>) -> Pair<bool, i32> {
-        Pair(p.fst() >= 18, p.snd().length())
+        Pair(process_data(p).fst() >= 18, process_data(p).snd().length())
     }
     ```
-- > The product equalities of the pairing arrow say how the `fst` and `snd` functions behave, and allows us to use the *(Match evaluation)* rule when running a program and in our program equalities. (Remember that `fst` and `snd` were defined by match evaluation.)
-- > The pair expansion property for the pairing arrow says that pairs are determined by their `fst` and `snd`, and nothing else.
+- > The product equalities of the pairing arrow say how the `fst` and `snd` functions behave on pairs (i.e., they give you exactly the argument that you ask for), and allows us to use the *(Match evaluation)* rule when running a program and in our program equalities. (Remember that `fst` and `snd` were defined by match evaluation.)
+- > The pair expansion property for the pairing arrow says that pairs are determined by their `fst` and `snd`, and nothing else:
+    *If I take a pair $p$, destructure it into its two components and then recombine it back using pairs it's just the same as giving the pair directly.*
+
+    The pair expansion equation translates to the fact that, intuitively, for every `p: Pair`:
 
     ```rust
-    let (a,b) = p
-    return Pair(a,b)
+    Pair(p.first, p.second) = p
     ```
+
+     **(this is not precise! In category theory we talk about arrows, not about ""elements of a type"", which does not make any sense!! Objects of a category are just symbols, they are not types, in general.)**
+
+    Similarly, using `match`, this expression is just the same as `p`:
 
     ```rust
     match p {
@@ -372,11 +359,57 @@ These choices are "well-behaved" because of the properties of products.
     }
     ```
 
-    really is the same as just avoiding decomposition and recomposition
+# Why are they called products?
 
-    ```rust
-    p
-    ```
+Consider the category $\text{FinProg}$, which is just the ""sub-category"" (we have not defined this yet precisely) where the types are only the finite ones.
+
+```rust
+// Recall: general definition of the product, for any types `A`, `B`
+struct Pair<A,B> {
+    first: A,
+    second: B
+}
+```
+
+```rust
+// Consider these two types:
+enum Two {
+    A1, A2
+}
+
+enum Three {
+    B1, B2, B3
+}
+
+// Why are products called like this?
+// How many possible ways are there to construct elements of this type?
+struct Pair_Two_Three {
+    first: Two,
+    second: Three,
+}
+
+// There are all possibilities:
+
+// Pair_Two_Three { first: A1, second: B1 }
+// Pair_Two_Three { first: A1, second: B2 }
+// Pair_Two_Three { first: A1, second: B3 }
+
+// Pair_Two_Three { first: A2, second: B1 }
+// Pair_Two_Three { first: A2, second: B2 }
+// Pair_Two_Three { first: A2, second: B3 }
+```
+
+As you can see,
+$\textsf{size}(\texttt{Two}) = 2$,
+$\textsf{size}(\texttt{Three}) = 3$,
+$\textsf{size}(\texttt{Pair\_Two\_Three}) = 2*3 = 6$.
+
+In general, given two types `A,B` such that
+- $\textsf{size}(A) = n$, and
+- $\textsf{size}(B) = m$, then
+- $\textsf{size}(\texttt{Pair}(A,B)) = n * m$.
+
+Now, the product of numbers (i.e., the size of types) is associative, commutative, etc... we will return back to this in the next lecture.
 
 # Examples of products: $(\N, \le)$
 
@@ -387,8 +420,8 @@ Idea: a "product" of the two numbers $A$ and $B$ always exists, and it's the num
     - $\textsf{snd} : P \to B, \qquad \min\{A,B\} \le B,$
 2. *(Existence of pairs.)* if someone gives you the following data,
     - another object (number) $H$,
-    - two arrows $f : H \to A, \quad$ i.e., I know that $H \le A,$
-    - two arrows $g : H \to B, \quad$ i.e., I know that $H \le B,$
+    - two arrows $l : H \to A, \quad$ i.e., I know that $H \le A,$
+    - two arrows $r : H \to B, \quad$ i.e., I know that $H \le B,$
 
     then you must pick an arrow
     - $p : H \to P$,  $\quad$ i.e., I must show that $H \le \min\{A,B\}.$
@@ -413,8 +446,8 @@ Then, $\gcd\{A,B\} = 4$. (Note! $2$ also divides both of them, but it's not the 
     - $\textsf{snd} : P \to B, \qquad \gcd\{A,B\} \textsf{ divides } B,$
 2. *(Existence of pairs.)* if someone gives you the following data,
     - another object (number) $H$,
-    - two arrows $f : H \to A, \quad$ i.e., I know that $H \textsf{ divides } A,$
-    - two arrows $g : H \to B, \quad$ i.e., I know that $H \textsf{ divides } B,$
+    - two arrows $l : H \to A, \quad$ i.e., I know that $H \textsf{ divides } A,$
+    - two arrows $r : H \to B, \quad$ i.e., I know that $H \textsf{ divides } B,$
 
     then you must pick an arrow
     - $p : H \to P$,  $\quad$ i.e., I must show that $H \textsf{ divides } \gcd\{A,B\}.$
@@ -435,8 +468,8 @@ Idea: a "product" of two propositions `A` and `B` always exists, and it's the pr
     Intuitively, this works! If `A && B` is true then certainly `A` is true.
 2. *(Existence of pairs.)* if someone gives you the following data,
     - another object (proposition) `H`,
-    - two arrows $f : H \to A, \qquad$ the implication `H` $\to$ `A`,
-    - two arrows $g : H \to B, \qquad$ the implication `H` $\to$ `B`,
+    - two arrows $l : H \to A, \qquad$ the implication `H` $\to$ `A`,
+    - two arrows $r : H \to B, \qquad$ the implication `H` $\to$ `B`,
 
     then you must pick an arrow
     - $p : H \to P$,  $\quad$ i.e., I must show that `H` $\to$ `A && B`.
@@ -446,23 +479,80 @@ Idea: a "product" of two propositions `A` and `B` always exists, and it's the pr
 
 ---
 
-## TODO: correctness, no garbage
+# Products are not unique
 
-1. *(Existence of projections.)* you must pick two arrows
-    - $\textsf{fst} : P \to A, \qquad$ the implication `A && B && true` $\to$ `A`
-    - $\textsf{snd} : P \to B, \qquad$ the implication `A && B && true` $\to$ `B`
+For any given category, there are many possible equivalent choices for products, they are not unique!
+All of these choices for $P$ satisfy the property of being a product (you can check this by yourself as exercise!):
 
-    Intuitively, this works! If `A && B && true` is true then certainly `A` is true.
-2. *(Existence of pairs.)* if someone gives you the following data,
+```rust
+enum Pair<A,B> {
+    first: A,
+    second: B,
+}
+enum EquivalentPair1<A,B> {
+    abc: B,
+    def: A,
+}
+
+struct NoFields {
+
+}
+enum EquivalentPair2<A,B> {
+    abc: B,
+    def: A,
+    extra: NoFields, // This was introduced in Lecture 1, we will se it again next lecture.
+}
+```
+
+In the other examples, `A && B && true` also satisfies the property of being a product.
+
+As you can see, however, all of these are intuitively "equivalent", in some sense: e.g., they contain the same data, or, in the case of predicates, one predicate is true exactly when the other one is true and viceversa. We will also make this precise in the next lecture.
+
+# Intuition: Products = correctness (arrows) + no garbage (pairing) + uniqueness (pair expansion)
+
+- The first condition *existence of projection* can be thought of as "correctness" of pairs, i.e., we truly do have two projection functions out of a pair of things.
+
+If this was the only condition, however, many other choices of product would apply.
+In the example of $\text{Prog}$, for example, there are projection maps also for this choice of type (instead of `Pair<A,B>`):
+
+```rust
+enum AlmostPair<A,B> {
+    first: A,
+    second: B,
+    extra: i32
+}
+```
+
+Certainly this choice gives us the projection arrows/programs into `A` and `B`.
+For the other examples, `A && B && x == 0` also gives us projection maps, but intuitively it gives us something "more" than just the conjunction.
+
+- The second condition *existence of pairing* can be thought of as the fact that pairs are not allowed to have any "extra" information than the one that they already have.
+NOTE! This is never captured at the level of objects, but at the level of *arrows*, by asking that certain arrows exist. (Does "8" know that it's the minimum of 10 and 8?)
+Objects in a category are just the values of a certain Rust type, so they are just symbols.
+
+Let's see why the above choices fail because of the second condition:
+
+For $\textsf{Prog}$:
+2. *(Existence of pairs/no garbage.)* if someone gives you the following data,
     - another object (proposition) `H`,
-    - two arrows $f : H \to A, \qquad$ the implication `H` $\to$ `A`,
-    - two arrows $g : H \to B, \qquad$ the implication `H` $\to$ `B`,
-
+    - two arrows $l : H \to A, \qquad$ the implication `H` $\to$ `A`,
+    - two arrows $r : H \to B, \qquad$ the implication `H` $\to$ `B`,
     then you must pick an arrow
-    - $p : H \to P$,  $\quad$ i.e., I must show that `H` $\to$ `A && B && true`.
+    - $p : H \to P$,  $\quad$ i.e., I must show that `H` $\to$ `A && B && x == 0`.
 
-    ~~such that these equations hold:~~ (this does not need to be checked since we are in a preorder!)
-    - ...
+
+For $\textsf{BExpr}$:
+2. *(Existence of pairs/no garbage.)* if someone gives you the following data,
+    - another object (proposition) `H`,
+    - two arrows $l : H \to A, \qquad$ the implication `H` $\to$ `A`,
+    - two arrows $r : H \to B, \qquad$ the implication `H` $\to$ `B`,
+    then you must pick an arrow
+    - $p : H \to P$,  $\quad$ i.e., I must show that `H` $\to$ `A && B && x == 0`.
+
+Of course this cannot be done!
+Maybe `H` explicitly states that `x != 0`, for example, if `H = A && B && x == 4` then we have the two implications at the top, but not the one at the bottom.
+
+Therefore, the real choice of product must be `A && B`, i.e., it must the predicate that contains *only* the necessary information and nothing else.
 
 ---
 
@@ -473,69 +563,11 @@ Idea: a "product" of two propositions `A` and `B` always exists, and it's the pr
     Intuitively, this works! If `A && B && x == 0` is true then certainly `A` is true.
 2. *(Existence of pairs.)* if someone gives you the following data,
     - another object (proposition) `H`,
-    - two arrows $f : H \to A, \qquad$ the implication `H` $\to$ `A`,
-    - two arrows $g : H \to B, \qquad$ the implication `H` $\to$ `B`,
+    - two arrows $l : H \to A, \qquad$ the implication `H` $\to$ `A`,
+    - two arrows $r : H \to B, \qquad$ the implication `H` $\to$ `B`,
 
     then you must pick an arrow
     - $p : H \to P$,  $\quad$ i.e., I must show that `H` $\to$ `A && B && x == 0`.
 
     ~~such that these equations hold:~~ (this does not need to be checked since we are in a preorder!)
     - ...
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-# Definition: isomorphisms
-
-Two objects $A$ and $B$ are said to be *isomorphic*, which we write as $A \cong B$, whenever the following thing happens:
-
-You provide two arrows
-- $\textsf{a2b} : A \to B,$
-- $\textsf{b2a} : B \to A,$
-
-such that the following two equations hold:
-
-$$\textsf{a2b} \,; \textsf{b2a} = \textsf{id}_A, \quad \textsf{b2a} \,; \textsf{a2b} = \textsf{id}_B.$$
-
-## Theorem: being isomorphic is a reflexive notion.
-
-For any object $A$, then $A \cong A$.
-
-## Theorem: being isomorphic is a symmetric notion.
-
-For any object $A,B$, if I know that $A \cong B$, then $B \cong A$.
-
-## Theorem: being isomorphic is a transitive notion.
-
-For any object $A,B,C$, if I know that $A \cong B$ and that $B \cong C$, then I know that $A \cong C$.
-
-# The first important idea in category theory:
-## Theorem ("Being a product" is a pairing property) -> Take $A,B$ objects. Any two products $P$ and $Q$ of the same $A$, $B$ are isomorphic.
