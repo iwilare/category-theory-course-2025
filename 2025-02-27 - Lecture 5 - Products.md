@@ -11,7 +11,7 @@ Here are three more examples of categories (preorders, actually) that we will us
 
 # Example of category: the preorder $(\N,\le)$ of natural numbers using $\le$
 
-- *(Objects.)* The type of natural numbers.
+- *(Objects.)* The type of natural numbers $\N$.
 - *(Arrows.)* There is exactly one arrow from $n$ to $m$ when $n \le m$.
 $$
 0 \to 1 \to 2 \to \cdots
@@ -21,12 +21,19 @@ $$
 
 # Example of category: the preorder $(\N,\textsf{divides})$ of natural numbers using $\textsf{divides}$
 
-- *(Objects.)* The type of natural numbers.
+- *(Objects.)* The type of natural numbers $\N$.
 - *(Arrows.)* There is exactly one arrow from $n$ to $m$ when $n$ divides $m$.
 
+    Formally: $n$ divides $m$ exactly when there exists $k:\N$ such that $m = k \cdot n$.
+
     For example: $3 \textsf{ divides } 9$, $2 \textsf{ divides } 12$, $10 \textsf{ divides } 10$, but $!(3 \textsf{ divides } 7)$, $!(4 \textsf{ divides } 2)$.
-- *(Identities.)* yes, because for every $n:\textsf{Nat}$, we have that $n \textsf{ divides } n$.
-- *(Composition.)* yes, because for every $n,m,k:\textsf{Nat}$, we have that, whenever $n \textsf{ divides } m$ and $m \textsf{ divides } k$, then $n \textsf{ divides } k$.
+- *(Identities.)* yes, because for every $n:\textsf{Nat}$, we have that $n \textsf{ divides } n$. (in this case $k=1$)
+- *(Composition.)* yes, because for every $n,m,r:\textsf{Nat}$, we have that, whenever $n \textsf{ divides } m$ and $m \textsf{ divides } r$, then $n \textsf{ divides } r$.
+Formally:
+    - suppose $m = n \cdot k_1$ for some $k_1$,
+    - suppose $r = m \cdot k_2$ for some $k_2$,
+    - I need to find $k_3$ such that $r = n \cdot k_3$. I simply pick $k_3 = k_1 \cdot k_2$.
+    This works because $r = m \cdot k_2 = (n \cdot k_1) \cdot k_2 = n \cdot (k_1 \cdot k_2) = n \cdot k_3$.
 
 # Example of category: the preorder $(\text{BExpr}, \to)$ of boolean propositions and implications between them
 
@@ -89,19 +96,19 @@ An object $P$ is said to be *a product of $A$ and $B$* if the following conditio
     - $p : H \to P$,
 
     such that these equations hold:
-    - $p \,; \textsf{fst} = f$,
-    - $p \,; \textsf{snd} = g$.
+    - $p \,; \textsf{fst} = l$,
+    - $p \,; \textsf{snd} = r$.
 
     Since the choice of $p$ depends on the $f$ and $g$ that you gave me, we will instead write the arrow $p$ that *you* must pick as
     $$\langle l , r \rangle : H \to P.$$
-    A less-mathy notation for this is just $\textsf{pairing}_{f,g} : H \to P.$
+    A less-mathy notation for this is just $\textsf{pairing}_{l,r} : H \to P.$
 
-3. *(Pair expansion.)* the choice for $\langle \cdots , \cdots \rangle$ that you gave above must satisfy the following equation for every arrow $h : H \to P$:
+3. *(Pair expansion.)* the choice for $\langle \cdots , \cdots \rangle$ that you gave above must satisfy the following equation for every object $H$ and every arrow $h : H \to P$:
 $$
     \langle h \,; \textsf{fst} , h \,; \textsf{snd} \rangle = h.
 $$
 
-**End of definition.**
+**(End of definition.)**
 
 There are other equivalent formulations for products that you might find in the wild, they are all equivalent.
 
@@ -209,10 +216,10 @@ What does it mean to have "all products"? For any `A,B` types, I will give you a
     }
     ```
 
-    Let's verify the equations $\lang l,r \rang\,;\text{fst} = l$, $\lang l,r \rang\,;\text{snd} = r$.
+    Let's verify the equations $\lang l,r \rang\,;\textsf{fst} = l$, $\lang l,r \rang\,;\textsf{snd} = r$.
     Remember that composition is "substitution" of one definition into the other, and that equality is program equivalence.
 
-    - $\lang l,r \rang\,;\text{fst} = l$
+    - $\lang l,r \rang\,;\textsf{fst} = l$
 
         The first arrow is this program:
         ```rust
@@ -231,7 +238,7 @@ What does it mean to have "all products"? For any `A,B` types, I will give you a
         ```
         which is exactly the definition of ```fn l(v: H) -> A```.
 
-    - $\lang l,r \rang\,;\text{snd} = r$
+    - $\lang l,r \rang\,;\textsf{snd} = r$
 
         The first arrow is this program:
         ```rust
@@ -248,6 +255,10 @@ What does it mean to have "all products"? For any `A,B` types, I will give you a
             = r(v)
         ```
         which is exactly the definition of ```fn r(v: H) -> A```.
+
+> RECALL:
+>
+>   *(Pair expansion.)* the choice for $\langle \cdots , \cdots \rangle$ that you gave above must satisfy the equation $\langle h \,; \textsf{fst} , h \,; \textsf{snd} \rangle = h$ holds for every arrow $h : H \to P$.
 
 - *(Pair expansion)*
 
@@ -343,7 +354,7 @@ We sketch the above idea that allows you to translate between programs and arrow
 - > The pair expansion property for the pairing arrow says that pairs are determined by their `fst` and `snd`, and nothing else:
     *If I take a pair $p$, destructure it into its two components and then recombine it back using pairs it's just the same as giving the pair directly.*
 
-    The pair expansion equation translates to the fact that, intuitively, for every `p: Pair`:
+    The pair expansion equation translates to the fact that, intuitively, for every `p: Pair<A,B>`:
 
     ```rust
     Pair(p.first, p.second) = p
@@ -461,11 +472,19 @@ Then, $\gcd\{A,B\} = 4$. (Note! $2$ also divides both of them, but it's not the 
 
 Idea: a "product" of two propositions `A` and `B` always exists, and it's the proposition `A && B`.
 
+| A | B | A && B |
+|--|--|--|
+0 | 0 | 0
+0 | 1 | 0
+1 | 0 | 0
+1 | 1 | 1
+
 1. *(Existence of projections.)* you must pick two arrows
     - $\textsf{fst} : P \to A, \qquad$ the implication `A && B` $\to$ `A`
     - $\textsf{snd} : P \to B, \qquad$ the implication `A && B` $\to$ `B`
 
     Intuitively, this works! If `A && B` is true then certainly `A` is true.
+
 2. *(Existence of pairs.)* if someone gives you the following data,
     - another object (proposition) `H`,
     - two arrows $l : H \to A, \qquad$ the implication `H` $\to$ `A`,
@@ -527,12 +546,13 @@ Certainly this choice gives us the projection arrows/programs into `A` and `B`.
 For the other examples, `A && B && x == 0` also gives us projection maps, but intuitively it gives us something "more" than just the conjunction.
 
 - The second condition *existence of pairing* can be thought of as the fact that pairs are not allowed to have any "extra" information than the one that they already have.
-NOTE! This is never captured at the level of objects, but at the level of *arrows*, by asking that certain arrows exist. (Does "8" know that it's the minimum of 10 and 8?)
+**NOTE!** This is never captured at the level of *objects*, but at the level of *arrows*, by asking that certain arrows exist. (Does "8" know that it's the minimum of 10 and 8? No! This "being the minumum fact" is determined by the fact that certain arrows (i.e., $\le$ relations) are true.)
 Objects in a category are just the values of a certain Rust type, so they are just symbols.
 
 Let's see why the above choices fail because of the second condition:
 
 For $\textsf{Prog}$:
+
 2. *(Existence of pairs/no garbage.)* if someone gives you the following data,
     - another object (proposition) `H`,
     - two arrows $l : H \to A, \qquad$ the implication `H` $\to$ `A`,
@@ -542,11 +562,12 @@ For $\textsf{Prog}$:
 
 
 For $\textsf{BExpr}$:
+
 2. *(Existence of pairs/no garbage.)* if someone gives you the following data,
     - another object (proposition) `H`,
     - two arrows $l : H \to A, \qquad$ the implication `H` $\to$ `A`,
     - two arrows $r : H \to B, \qquad$ the implication `H` $\to$ `B`,
-    then you must pick an arrow
+then you must pick an arrow
     - $p : H \to P$,  $\quad$ i.e., I must show that `H` $\to$ `A && B && x == 0`.
 
 Of course this cannot be done!
@@ -554,20 +575,4 @@ Maybe `H` explicitly states that `x != 0`, for example, if `H = A && B && x == 4
 
 Therefore, the real choice of product must be `A && B`, i.e., it must the predicate that contains *only* the necessary information and nothing else.
 
----
-
-1. *(Existence of projections.)* you must pick two arrows
-    - $\textsf{fst} : P \to A, \qquad$ the implication `A && B && x == 0` $\to$ `A`
-    - $\textsf{snd} : P \to B, \qquad$ the implication `A && B && x == 0` $\to$ `B`
-
-    Intuitively, this works! If `A && B && x == 0` is true then certainly `A` is true.
-2. *(Existence of pairs.)* if someone gives you the following data,
-    - another object (proposition) `H`,
-    - two arrows $l : H \to A, \qquad$ the implication `H` $\to$ `A`,
-    - two arrows $r : H \to B, \qquad$ the implication `H` $\to$ `B`,
-
-    then you must pick an arrow
-    - $p : H \to P$,  $\quad$ i.e., I must show that `H` $\to$ `A && B && x == 0`.
-
-    ~~such that these equations hold:~~ (this does not need to be checked since we are in a preorder!)
-    - ...
+> # (\*) The first important idea in category theory: the general concept of category and product allows you to find connections between things that were not connected before. (`Pair` and $\min$ and $\gcd$ and `&&`)
