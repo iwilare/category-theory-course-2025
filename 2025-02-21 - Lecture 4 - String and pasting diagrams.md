@@ -178,7 +178,7 @@ h |    =    | g
        i
 ```
 
-When the equals is present it means that this is a *commutative* diagram, not a pasting one.
+When the equals is present it means that this is a *commutative* diagram, not a pasting one, i.e., it's just telling that the equation $f \,; g = h \,; i$ is true.
 
 ```
        f         k        l
@@ -247,4 +247,4 @@ fn program2(a: A) {
 
 This means that whatever equation you can derive using string diagrams you can derive using the algebraic language (which is, really, the only one that exists and has been defined formally.)
 
-### Theorem (partly by Joyal and Street ~1970, partly by other people, starting from Lambek ~1970). Reasoning with string diagrams, reasoning with pasting diagrams, reasoning with the term language and program equivalence, and reasoning with are all equivalent/equiexpressive.
+### Theorem (partly by Joyal and Street ~1970, partly by other people, starting from Lambek ~1970). Reasoning with 1. string diagrams, 2.  pasting diagrams, 3. the term language and program equivalence, are all equivalent/equiexpressive.

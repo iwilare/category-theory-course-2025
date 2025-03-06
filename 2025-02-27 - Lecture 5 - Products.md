@@ -87,7 +87,7 @@ An object $P$ is said to be *a product of $A$ and $B$* if the following conditio
 1. *(Existence of projections.)* you must pick two arrows
     - $\textsf{fst} : P \to A,$
     - $\textsf{snd} : P \to B,$
-2. *(Existence of pairs.)* if someone gives you the following data,
+2. *(Existence of pairs and pair equations.)* if someone gives you the following data,
     - another object $H$,
     - an arrow $l : H \to A,$ and
     - an arrow $r : H \to B,$
@@ -95,13 +95,17 @@ An object $P$ is said to be *a product of $A$ and $B$* if the following conditio
     then you must pick an arrow
     - $p : H \to P$,
 
-    such that these equations hold:
+    such that these equations hold, which we will call the ***Pair equations***:
     - $p \,; \textsf{fst} = l$,
     - $p \,; \textsf{snd} = r$.
 
     Since the choice of $p$ depends on the $f$ and $g$ that you gave me, we will instead write the arrow $p$ that *you* must pick as
     $$\langle l , r \rangle : H \to P.$$
-    A less-mathy notation for this is just $\textsf{pairing}_{l,r} : H \to P.$
+    A less-mathy notation for this is to instead denote the map above as $\textsf{pairing}_{l,r} : H \to P.$
+
+    With this notation, the equations above are these:
+    - $\langle l , r \rangle \,; \textsf{fst} = l$,
+    - $\langle l , r \rangle \,; \textsf{snd} = r$.
 
 3. *(Pair expansion.)* the choice for $\langle \cdots , \cdots \rangle$ that you gave above must satisfy the following equation for every object $H$ and every arrow $h : H \to P$:
 $$
@@ -155,7 +159,9 @@ Moreover, remember that we will consider equivalence of programs as *behavioural
     ```
 (In particular, these are also types: `Pair<i32,Pair<String,i32>>`, `Pair<Pair<String,String>,bool>`, etc...!)
 
-## Let's show that $\text{Prog}$ has all products, where now `Prog` takes as objects all the types we just listed and all total programs between as arrows.
+## Let's show that $\text{Prog}$ has all products
+
+Recall that `Prog` has as objects all the types we just listed and all total programs between as arrows.
 
 What does it mean to have "all products"? For any `A,B` types, I will give you a choice `P` of a type, and I'm going to tell you that this `P` that I chose really is a product.
 
@@ -168,7 +174,7 @@ What does it mean to have "all products"? For any `A,B` types, I will give you a
 >     - $\textsf{fst} : P \to A,$
 >     - $\textsf{snd} : P \to B,$
 
-- *(Existence of projections.)* We need to provide two arrows $\texttt{fst}:\text{Prog}(\texttt{Pair<A,B>},\texttt A), \texttt{snd}:\text{Prog}(\texttt{Pair<A,B>},\texttt B)$, i.e., construct certain Rust programs with the given signature. We define them like this:
+- *(Existence of projections.)* We need to provide two arrows $\texttt{fst}: \texttt{Pair<A,B>} \to A, \texttt{snd}: \texttt{Pair<A,B>} \to \texttt B$, i.e., construct certain Rust programs with the given signature. We define them like this:
 
     ```rust
     fn fst(p: Pair<A,B>) -> A {

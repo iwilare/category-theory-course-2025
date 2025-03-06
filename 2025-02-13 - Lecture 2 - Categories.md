@@ -406,7 +406,7 @@ At this point we have two possible choices:
 
 ## Monoid
 
-We abstract the above situation.
+The above situation can be abstracted with the following definition:
 
 1. *(Objects.)* A choice of a Rust type `M`.
 2. *(Identity.)* A choice of a specific value `id:M` in the type `M`.
@@ -483,5 +483,5 @@ fn compose_One_One_One(f: Arr_One_One, g: Arr_One_One) -> Arr_One_One {
 
 ## Conclusion: a category with one object is the same thing as a monoid.
 
-## Other important takeaway: objects are not always """types in a programming language""" and arrows are not always """programs in a programming language""": they *can* be thought of such, but that need not be the case.
+## Important takeaway: objects are not always """types in a programming language""" and arrows are not always """programs in a programming language""": they *can* be thought of such, but that need not be the case.
 - In one of the examples for monoids, we saw that a program is a number!! Very strange. A number surely does not represent a process, nor a function, nor a transformation.

@@ -3,7 +3,7 @@
 ## Today's plan
 
 - We will see other examples of categories:
-    - Prog, the category of programs
+    - Prog, the category of types and Rust programs
     - The free category on a graph
 
 ## Small remark on the notation for method chaining
@@ -20,6 +20,10 @@ These are perfectly equivalent ways of expressing function application: the firs
 (This cannot be done in Rust all the time like this! One would have to use `impl` to be able to use method calls.)
 
 ## The category $\textsf{Prog}$
+
+*This is arguably the most important example of category we will find in the course, and is a guiding intuition for all the remaining examples in the course.*
+
+*Remark.* Unlike the very first examples of category we cannot define this category *within* Rust because it's not expressive enough. For other languages this can be done, e.g., Agda, Lean, Coq.
 
 - *(Objects.)* One object symbol for each possible type you can write in Rust. (this is essentialy `str` but only considering those types that are valid Rust types)
     ```rust
@@ -89,7 +93,7 @@ In order to say when two functions are equal we introduce the notion of *symboli
 = 7 + x
 ```
 
-## Continuing the definition...
+## Continuing the definition that shows that $\textsf{Prog}$ really is a category...
 
 - *(Identities.)* We pick the arrow
     ```rust
@@ -227,11 +231,8 @@ Idea: two types `A`, `B` are connected when the type `Arr[a,b]` has one element.
 enum Arr_A_B {
 
 }
-enum One {
+enum Arr_A_B {
     One
-}
-enum Hello {
-    World
 }
 ```
 
