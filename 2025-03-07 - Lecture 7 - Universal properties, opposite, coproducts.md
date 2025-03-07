@@ -342,6 +342,7 @@ Facts about duality:
 | $\langle -,- \rangle : H \to A \times B$ | used as constructor |
 | $[-,-] : A + B \to H$ | used for `match`ing |
 
+
 Asking for the existence of (co)products is the same as asking for the existence of these Rust programs:
 
 ```rust
@@ -353,6 +354,15 @@ fn cases[a][b][h](f: Arr[a, h], g: Arr[b, h]): Arr[a+b, h] {
     ...
 }
 ```
+
+# Coproducts in other categories
+
+| What category? |  Product | Coproduct |
+|-|-|-|
+| $\text{Prog}$ |  `Pair<A,B>` | `Either<A,B>` |
+| $(\N, \le)$ |  $\min\{a,b\}$ | $\max\{a,b\}$ |
+| $(\N, \textsf{divides})$ |  $\gcd\{a,b\}$ | $\mathop{\text{lcm}}\{a,b\}$ |
+| $(\textsf{BExpr}, \to)$ |  `A && B` | `A \|\| B` |
 
 # EXERCISES
 
@@ -393,3 +403,7 @@ Show that in every generic category $C$ that has products and coproducts you can
 $$
 \textsf{dist} : (A \times B) + (A \times C) \longrightarrow A \times (B + C)
 $$
+
+## Exercise 7.0
+
+Show that the table in the section "Coproducts in other categories" indeed describes the way products and coproducts are formed.
