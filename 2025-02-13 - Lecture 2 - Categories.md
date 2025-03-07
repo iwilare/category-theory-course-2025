@@ -20,19 +20,21 @@ This induces a graph built in the following way:
 
 # Intuition for composition
 
-Why composition? Composition corresponds to syntactic substitution of programs: this is achieved by replacing the input variable of the second program with the entire body of the first program:
+Why ask for composition? Composition corresponds to syntactic substitution of programs: this is achieved by replacing the input variable of the second program with the entire body of the first program:
 ```rust
 fn program1(a: A) -> B {
-  ...... a ....... a ....... a ...
+  ... a ...
 }
 
 fn program2(b: B) -> C {
-  ... b ........ b ...
+  b ... b
 }
 
 fn program3(c: C) -> D {
-  ..... c ...... c ...
+  ... c ... c ...
 }
+
+// program2 is the one that does not have dots at beginning at end of programs. Keep this in mind to be able to distinguish it in later examples.
 ```
 
 What does it mean to compose programs?
@@ -42,49 +44,102 @@ There are two possible ways in which one can answer this question.
 This is *syntactic substitution*. Syntactic composition is associative: this is why we will require an associativity law when combining programs together.
 
   ```rust
-  /////////////////////////////////////
-  // Composite program, syntactically:
-  fn composition123_syn(a: A) -> D {
-    ... program2(program1(a)) ...
-    .. program2(program1(a)) ...
+  ///////////////////
+  // POSSIBILITY 1
+  // First, take the code of program3, then replace each input variable with program2, then replace each input variable with program1:
+  // step 1.
+  fn program3(c: C) -> D {
+    ... c ... c ...
+  }
+  // step 2.
+  fn program2_then_3(b: B) -> D {
+    ... program2(b) ... program2(b) ...
+  }
+  // ...equivalent to, by unfolding...
+  fn program2_then_3(b: B) -> D {
+    ... (b ... b) ... (b ... b) ...
+  }
+  // step 3.
+  fn program1_then_2_then_3(a: A) -> D {
+    ... (program1(a) ... program1(a)) ... (program1(a) ... program1(a)) ...
+  }
+  // ...equivalent to, by unfolding...
+  fn program1_then_2_then_3(a: A) -> D {
+    ... ((... a ...) ... (... a ...)) ... ((... a ...) ... (... a ...)) ...
   }
 
-  // First, take the code of program3, and put program2(program1(a))
-  fn composition123_syn(a: A) -> D {
-    ... (... program1(a) .......... program1(a) ...) ...
-    .. (... program1(a) .......... program1(a) ...) ...
+  ///////////////////
+  // POSSIBILITY 2
+  // First, take the code of program2, then replace each input variable with program 1. After having done this, replace the program obtained like this into the input variable of program3.
+  // step 1.
+  fn program2(b: B) -> C {
+    b ... b
+  }
+  // step 2.
+  fn program1_then_2(a: A) -> C {
+    program1(a) ... program1(a)
+  }
+  // ...equivalent to, by unfolding...
+  fn program1_then_2(a: A) -> C {
+    (... a ...) ... (... a ...)
+  }
+  // step 3. take this program, substitute it
+  fn program(1_then_2)_then_3(a: A) -> D {
+    ... program1_then_2(a) ... program1_then_2(a) ...
+  }
+  fn program(1_then_2)_then_3(a: A) -> D {
+    ... (program1_then_2(a)) ... (program1_then_2(a)) ...
+  }
+  // ...equivalent to, by unfolding...
+  fn program(1_then_2)_then_3(a: A) -> D {
+    ... ((... a ...) ... (... a ...)) ... ((... a ...) ... (... a ...)) ...
   }
 
-  fn composition32(b: B) -> D {
-    ... (... b .......... b ...) ...
-    .. (... b .......... b ...) ...
-  }
-  fn composition32_then_1(a: A) -> D {
-    ... (... program1(a) .......... program1(a) ...) ...
-    .. (... program1(a) .......... program1(a) ...) ...
-  }
+  ///////////////////
+  // The result you obtain is the same! Because substitution for the source code of programs is associative.
   ```
+  This behaviour is exactly what the composition map for categories abstracts.
 
 - The other intuition for composition is the *semantic composition*: this is the kind of composition that happens
 at runtime, i.e., feed the *data* produced by the execution of the first into the second.
-This is typically much simpler to achieve: you just call the first function and feed its input into the second.
+This is typically much simpler to achieve/justify: you just call the first function and feed its input into the second.
 This is also associative.
 
   ```rust
+  /////////////////////////////////////
   // Composite program, semantically:
   fn composition123(a: A) -> D {
     program3(program2(program1(a)))
   }
 
+  ///////////////////
+  // POSSIBILITY 1
   fn composition23(b: B) -> D {
     program3(program2(b))
   }
-  fn composition23_then_1(a: A) -> D {
+  fn composition1_then_23(a: A) -> D {
     composition23(program1(a))
   }
-  fn composition23_then_1(a: A) -> D {
+  // ...equivalent to, by unfolding...
+  fn composition1_then_23(a: A) -> D {
     program3(program2(program1(a)))
   }
+
+  ///////////////////
+  // POSSIBILITY 2
+  fn composition12(a: A) -> C {
+    program2(program1(a))
+  }
+  fn composition12_then_3(a: A) -> D {
+    program3(composition12(a))
+  }
+  // ...equivalent to, by unfolding...
+  fn composition12_then_3(a: A) -> D {
+    program3(program2(program1(a)))
+  }
+
+  // In both cases I get the same result!
+
   ```
 
 
@@ -96,8 +151,8 @@ A good mathematical model for programming languages ought to satisfy exactly thi
 ```rust
 // The function which simply returns whatever input you have to it.
 // Note that the type of the argument matches exactly the type of the output.
-fn identity(i: i32) -> i32 {
-  i
+fn identity(a: i32) -> i32 {
+  a
 }
 ```
 

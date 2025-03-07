@@ -7,6 +7,33 @@
 
 > ## (\*) The second important idea in category theory: universal properties single out specific constructions among all the other ones, in a unique way; for instance, they allow you to talk not about being "a product" but being "the product" without essentially losing any information.
 
+Imagine that $f : A \to B$ and $g : B \to A$ are the two arrows that show that $A \cong B$, i.e., they are such that $f \,; g = \textsf{id}_{A}$ and $g \,; f = \textsf{id}_B$.
+
+Then, in a sense "$A$ and $B$ satisfy the same properties", because:
+- if $X$ is connected *to* $A$ through some morphism $h : X \to A$, then it is also connected *to* $B$ via $h\,;g$. Similarly,
+- if $Y$ is connected *from* $A$ through some morphism $j : A \to Y$ then it is also connected *from* $B$ via $f \,; j$.
+- The equalities $f \,; g = \textsf{id}_{B}$ and $g \,; f = \textsf{id}_A$, in a sense, are needed to make sure that these $f$ and $g$ do not do any thing else other than connecting $B$ and $A$, since I can cancel out every interaction between $f$ and $g$ with identities.
+```
+            ...
+             X
+             │
+             │
+             │ h
+        f    │
+    ╭──────╮ │
+    |      ↓ ↓
+    B      A
+    ↑      | │
+    ╰──────╯ │
+        g    │ j
+             │
+             │
+             ↓
+             Y
+             ...
+```
+
+
 ## Theorem ("Being a product" is a universal property)
 
 Take $A,B$ objects. Any two products $P$ and $Q$ of the same $A$, $B$ are isomorphic.
