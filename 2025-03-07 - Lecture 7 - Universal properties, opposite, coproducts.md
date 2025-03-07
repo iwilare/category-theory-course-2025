@@ -185,7 +185,9 @@ $$
         Right(v)
     }
     ```
-    Notice the reversal of arrows:
+    i.e., `inl = Left` and `inl = Right` are essentially the same maps.
+
+    Notice the reversal of arrows with respect to the definition of products:
     ```rust
     fn fst(p: Pair<A, B>) -> A {
         p.first
@@ -199,7 +201,7 @@ $$
 
     ```rust
     fn l(v: A) -> H { ... }
-    fn r(v: A) -> H { ... }
+    fn r(v: B) -> H { ... }
     ```
 
     The pairing arrow `cases_l_r` for `l` and `r` is defined as follows:
@@ -223,77 +225,111 @@ $$
 
         The first arrow is this program:
         ```rust
-        fn comp_inl_(cases_l_r)(v: A) -> X {
+        fn compose_inl_(cases_l_r)(v: A) -> H {
             v.inl().cases_l_r()
         }
         ```
-        Let's reason by program equivalence, for some argument `a: A`:
+        Let's reason by program equivalence, for some argument `v: A`:
         ```rust
-            v.inl().cases_l_r()          // (Function expansion.)
-            = Pair(l(v), r(v)).fst()       // (Function expansion.)
-            = (match Pair(l(v),r(v)) {
-                 Pair(a,b) => a
-              })              // (Match evaluation.)
+              v.inl().cases_l_r()   // (Function expansion.)
+            = Left(v).cases_l_r()   // (Function expansion.)
+            = (match Left(v) {
+                  Left(a) => l(a),
+                  Right(b) => r(b),
+              })                    // (Match evaluation.)
             = l(v)
         ```
-        which is exactly the definition of ```fn l(v: H) -> A```.
+        which is exactly the definition of ```fn l(v: A) -> H```.
 
-    - $\lang l,r \rang\,;\textsf{snd} = r$
+    - $\textsf{inr} \,; [l, r] = r$
 
         The first arrow is this program:
         ```rust
-            fn compose_(pairing_l_r)_snd(v: H) -> A =>
-            v.pairing_l_r().snd()
+        fn compose_inr_(cases_l_r)(v: B) -> H {
+            v.inr().cases_l_r()
+        }
         ```
-        Let's reason by program equivalence, for some argument `v: H`:
+        Let's reason by program equivalence, for some argument `v: B`:
         ```rust
-            v.pairing_l_r().snd()          // (Function expansion.)
-            = Pair(l(v), r(v)).snd()       // (Function expansion.)
-            = (match Pair(l(v),r(v)) {
-                Pair(a,b) => b
-              })              // (Match evaluation.)
+              v.inr().cases_l_r()   // (Function expansion.)
+            = Right(v).cases_l_r()  // (Function expansion.)
+            = (match Right(v) {
+                  Left(a) => l(a),
+                  Right(b) => r(b),
+              })                    // (Match evaluation.)
             = r(v)
         ```
         which is exactly the definition of ```fn r(v: H) -> A```.
 
-> RECALL:
->
->   *(Pair expansion.)* the choice for $\langle \cdots , \cdots \rangle$ that you gave above must satisfy the equation $\langle h \,; \textsf{fst} , h \,; \textsf{snd} \rangle = h$ holds for every arrow $h : H \to P$.
+- *(Copair expansion)*
 
-- *(Pair expansion)*
+    Assume to have a morphism `fn s(v: Either<A,B>): X`. We show that is program equivalent to `cases_(compose_left_s)_(compose_right_s)`.
 
-    Assume to have a arrow `fn p(v: H) -> Pair<A,B>` which also satisfies the *product equalities*. We show that is program equivalent to `pairing_(compose_p_fst)_(compose_p_snd)`.
+    Assume to have a value `v: Either<A,B>`.
+    There are two cases to check:
+    - **either** `v = Left(a)` for some value `a`,
+    - or `v = Right(b)` for some value `b`.
 
-    Assume to have a value `v: H`.
-    and let's assume that when we call `p` on this value we get a result `Pair(v1,v2)` for some values `v1: A` and `v2: B`.
+    In both cases, we verify that the conclusion holds, and these are only two cases we need to check.
+
+    1. case `v = Left(a)` for some value `a: A`:
     ```rust
-           v.p()
-         = Pair(v1, v2)        // (General principle.)
-                               // Assumption that the result of this function is given
-                               // by combining some values `v1`, `v2`.
+        v.cases_(compose_inl_s)_(compose_inr_s)       // (Assumption.)
+      = Left(a).cases_(compose_inl_s)_(compose_inr_s) // (Function unfolding.)
+      = match Left(a) with
+        | Left(a) => compose_inl_s(a)
+        | Right(b) => compose_inr_s(b)                  // (Match evaluation.)
+      = compose_inl_s(a)                              // (Function unfolding.)
+      = a.inl().s()                                   // (Function unfolding.)
+      = Left(a).s()                                   // (Assumption.)
+      = v.s()
     ```
+    2. case `v = Right(b)` for some value `b: B`:
     ```rust
-           v.pairing_(compose_p_fst)_(compose_p_snd)  // (Function unfolding.)
-         = Pair(v.compose_p_fst(), v.compose_p_snd()) // (Function unfolding.)
-         = Pair(v.p().fst(), v.p().snd())             // (Assumption.)
-         = Pair(Pair(v1,v2).fst(), Pair(v1,v2).snd()) // (Function unfolding.)
-         = Pair(match Pair(v1,v2) {
-                    Pair(a,b) => a
-                },
-                match Pair(v1,v2) {
-                    Pair(a,b) => b
-                })                     // (Match evaluation.)
-         = Pair(v1, v2)
+        v.cases_(compose_inl_s)_(compose_inr_s)        // (Assumption.)
+      = Right(b).cases_(compose_inl_s)_(compose_inr_s) // (Function unfolding.)
+      = match Right(b) with
+        | Left(a) => compose_inl_s(a)
+        | Right(b) => compose_inr_s(b)                 // (Match evaluation.)
+      = compose_inr_s(b)                               // (Function unfolding.)
+      = b.inr().s()                                    // (Function unfolding.)
+      = Right(b).s()                                   // (Assumption.)
+      = v.s()
     ```
-
 
 
 # Duality
 
+Facts about duality:
 
+- Coproducts in $C$ are just products in $C^\textsf{op}$.
+- Products in $C$ are just coproducts in $C^\textsf{op}$.
 
+| Map | Interpretation in Rust/the term language |
+|-|-|
+| $\textsf{fst} : A \times B \to A$ | used for `match`ing |
+| $\textsf{snd} : A \times B \to B$ | used for `match`ing |
+| $\textsf{inl} : A \to A + B$ | used as constructors |
+| $\textsf{inr} : B \to A + B$ | used as constructors |
+|-|-|
+| $\langle -,- \rangle : H \to A \times B$ | used as constructor |
+| $[-,-] : A + B \to H$ | used for `match`ing |
+
+Asking for the existence of (co)products is the same as asking for the existence of these Rust programs:
+
+```rust
+fn pairing[a][b][h](f: Arr[h, a], g: Arr[h, b]): Arr[h, axb] {
+    ...
+}
+
+fn cases[a][b][h](f: Arr[a, h], g: Arr[b, h]): Arr[a+b, h] {
+    ...
+}
+```
 
 # EXERCISES
+
+Show that the following theorems are true: whenever you find an "if", you're allowed to imagine that someone has given to you some data/arrows/objects, and you're allowed to give a name to such objects/arrows that you imagine to have. For instance, to show that "if $A \cong B$..." then you can assume that someone has given you two arrows $f : A \to B$ and $g : B \to A$ (the names are arbitrary) and they have also told you that some equation holds (and you can use these in your proof.)
 
 ## Exercise 7.1
 
@@ -303,4 +339,30 @@ Convince yourself that the category $(C^{\textsf{op}})^{\textsf{op}}$ is the "sa
 
 ## Exercise 7.2
 
-Show that if $A \iso B$ in the category $C$ then $A \iso B$ are also isomorphic in the category $C$
+Show that:
+- if $A \cong B$ in the category $C$,
+- then $A \cong B$ are also isomorphic in the category $C^{\textsf{op}}$
+- (remember! This last statement makes sense because $A,B$ can be thought of as objects of $C$ or as objects of $C^\textsf{op}$.)
+
+## Exercise 7.3
+
+Show that:
+- if $P$ is a product (for some $A$ and $B$),
+- and $P \cong P'$ for some other $P'$,
+- then $P'$ is also a product (of $A$ and $B$)
+
+## Exercise 7.5
+
+Show that:
+- if $P$ is a product of $A$ and $B$,
+- and if $A \cong A'$ for some other object $A'$,
+- and if $B \cong B'$ for some other object $B'$,
+- then $P$ also satisfies the property of being a product of $A'$ and $B'$.
+
+## Exercise 7.6
+
+Show that in every generic category $C$ that has products and coproducts you can construct an arrow with the following signature:
+
+$$
+\textsf{dist} : (A \times B) + (A \times C) \longrightarrow A \times (B + C)
+$$
