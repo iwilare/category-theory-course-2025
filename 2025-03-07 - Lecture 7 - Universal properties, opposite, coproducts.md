@@ -50,11 +50,11 @@ Solution:
 
 Remember that
 - $\textsf{fst}_{P} : P \to A$
-- $\textsf{snd}_{P} : P \to Q$
+- $\textsf{snd}_{P} : P \to B$
 - $\textsf{fst}_{Q} : Q \to A$
-- $\textsf{snd}_{Q} : Q \to Q$
-- $\langle l, r \rangle_P : H \to P$ for any $l : H \to A, r : H \to B$
-- $\langle l, r \rangle_Q : H \to Q$ for any $l : H \to A, r : H \to B$
+- $\textsf{snd}_{Q} : Q \to B$
+- $\langle l, r \rangle_P : H \to P$ for any object $H$ and arrows $l : H \to A, r : H \to B$
+- $\langle l, r \rangle_Q : H \to Q$ for any object $H$ and arrows $l : H \to A, r : H \to B$
 
 Then, the conversion arrows are the following ones:
 
@@ -99,7 +99,7 @@ In order to distinguish the choice of arrows, we write `Arr[a][b]` and `Arrop[a]
 - *(Identities)*: Since `Arrop[a][a] = Arr[a][a]`, I can simply *reuse* the original `id[a]: Arr[a][a]`.
 - *(Composition)*: I need to give a Rust function
 ```rust
-type Arrop[a][b] = Arr[a][b]
+type Arrop[a,b] = Arr[b,a]
 
 fn compose[a][b][c](f: Arrop[a,b], g: Arrop[b,c]) -> Arrop[a,c] {
     ...
@@ -144,11 +144,11 @@ Then this $C^{\textsf{op}}$ is also a category:
 
 # Definition: Coproduct of two objects $A$, $B$
 
-Given two objects $A,B$, an object $P$ is called *a coproduct* whenever $P$ is a product in the category $C^{\textsf{op}}$, where all I have done is precisely swap the arrows. (this makes sense only because $C$ and $C^{\textsf{op}}$ have exactly the same objects)
+> Given two objects $A,B$, an object $P$ is called *a coproduct* of $A$ and $B$ whenever $P$ is a product in the category $C^{\textsf{op}}$, where all I have done is precisely swap the arrows. (this makes sense only because $C$ and $C^{\textsf{op}}$ have exactly the same objects, so I can say that $A$ and $B$ are objects both of $C$ and $C^\textsf{op}$.)
 
 For comparison with the definition of product I will put on the right in gray the original definition of products.
 
-What does the definition above explicitly say? It says that given two objects $A,B$, an object $P$ is called *a coproduct* whenever the following conditions are satisfied:
+What does the definition above explicitly say? It says that given two objects $A,B$, an object $P$ is called *a coproduct* of $A$ and $B$ whenever the following conditions are satisfied:
 
 1. *(Existence of coprojections, also called injections.)* you must pick two arrows
     - $\textsf{inl} : A \to P,$ $\color{grey}{\qquad\textsf{fst} : P \to A,}$
@@ -161,25 +161,27 @@ What does the definition above explicitly say? It says that given two objects $A
     then you must pick an arrow
     - $p : P \to H$,              $\color{grey}{\quad \qquad p : H \to P,}$
 
-    such that these equations hold:
+    such that these equations, also called the *coproduct equations*, hold:
     - $\textsf{inl} \,; p = l$, $\color{grey}{\qquad p \,; \textsf{fst} = l}$
     - $\textsf{inr} \,; p = r$. $\color{grey}{\qquad p \,; \textsf{snd} = r}$
 
     Since the choice of $p$ depends on the $f$ and $g$ that you gave me, we will instead write the arrow $p$ that *you* must pick as
-    $$[ l , r ] : H \to P.$$
-    We will sometimes also denote it as $\textsf{cases}_{A,B} : H \to P$.
+    $$[ l , r ] : P \to H.$$
+    We will sometimes also denote it as $\textsf{cases}_{A,B} : P \to H$.
     With this notation, the equations above become the following:
 
     - $\textsf{inl} \,; [l,r] = l$, $\color{grey}{\qquad \langle l , r \rangle \,; \textsf{fst} = l}$
     - $\textsf{inr} \,; [l,r] = r$. $\color{grey}{\qquad \langle l , r \rangle \,; \textsf{snd} = r}$
 
-3. *(Copair/cases expansion.)* the choice for $[ \cdots , \cdots ]$ that you gave above must satisfy the following equation for every object $H$ and every arrow $h : H \to P$:
+3. *(Copair/cases expansion.)* the choice for $[ \cdots , \cdots ]$ that you gave above must satisfy the following equation for every object $H$ and every arrow $h : P \to H$:
 $$
-    [ \textsf{fst} \,; h  , \textsf{snd} \,; h] = h. \\
+    [ \textsf{inl} \,; h  , \textsf{inr} \,; h] = h. \\
     \color{grey}{\langle h \,; \textsf{fst}  , h \,; \textsf{snd} \rangle = h.}
 $$
 
 **(End of definition.)**
+
+### TODO: write why these are called
 
 # Examples of coproducts: in $\text{Prog}$
 
@@ -208,11 +210,11 @@ $$
     fn inl(v: A) -> Either<A, B> {
         Left(v)
     }
-    fn inl(v: B) -> Either<A, B> {
+    fn inr(v: B) -> Either<A, B> {
         Right(v)
     }
     ```
-    i.e., `inl = Left` and `inl = Right` are essentially the same maps.
+    i.e., `inl = Left` and `inr = Right` are essentially the same programs.
 
     Notice the reversal of arrows with respect to the definition of products:
     ```rust
@@ -290,7 +292,7 @@ $$
 
 - *(Copair expansion)*
 
-    Assume to have a morphism `fn s(v: Either<A,B>): X`. We show that is program equivalent to `cases_(compose_left_s)_(compose_right_s)`.
+    Assume to have a program `fn s(v: Either<A,B>): H`. We show that is program equivalent to `cases_(compose_inl_s)_(compose_inr_s)`.
 
     Assume to have a value `v: Either<A,B>`.
     There are two cases to check:
@@ -324,6 +326,28 @@ $$
       = v.s()
     ```
 
+Another way to see this is the fact that this program essentially just gives back $p$:
+
+```rust
+match p with
+| Left(a) => Left(a)
+| Right(b) => Right(b)
+```
+
+Abstractly, this is capturing this equation here:$$[\textsf{inl}, \textsf{inr}] = \textsf{id}$$
+
+Why? Because in the two cases,
+```rust
+match Right(b) with
+| Left(a) => Left(a)
+| Right(b) => Right(b)
+```
+This gives me back `Left(a)`
+```rust
+match Left(a) with
+| Left(a) => Left(a)
+| Right(b) => Right(a)
+```
 
 # Duality
 
@@ -341,7 +365,6 @@ Facts about duality:
 |-|-|
 | $\langle -,- \rangle : H \to A \times B$ | used as constructor |
 | $[-,-] : A + B \to H$ | used for `match`ing |
-
 
 Asking for the existence of (co)products is the same as asking for the existence of these Rust programs:
 
@@ -364,6 +387,24 @@ fn cases[a][b][h](f: Arr[a, h], g: Arr[b, h]): Arr[a+b, h] {
 | $(\N, \textsf{divides})$ |  $\gcd\{a,b\}$ | $\mathop{\text{lcm}}\{a,b\}$ |
 | $(\textsf{BExpr}, \to)$ |  `A && B` | `A \|\| B` |
 
+
+# These exercises are for free if you've done the previous ones!
+
+Two possible approaches:
+
+1. "flip everything": take the text of the exercises that you had before, and do the syntactic swap so you just invert arrows and composition calls. Problem: to do this you need twice the amount of paper.
+2. "choose a different category". Pick $C$ to be $C^\textsf{op}$ in the previous exercises.
+
+## Exercise 7.b.4
+Show that $A + B \cong B + A$.
+## Exercise 7.b.5
+Show that $A + (B + C) \cong (A + B) + C$.
+## Exercise 7.b.6
+Show that given $f : A \to C$ and $g : B \to D$ then there is an arrow $f + g : A + B \to C + D$.
+## Exercise 7.b.7
+Among the examples that we have seen in the previous lecture, find a category where $A \not \cong A + A$ and one where $A \cong A + A$.
+
+
 # EXERCISES
 
 Show that the following theorems are true: whenever you find an "if", you're allowed to imagine that someone has given to you some data/arrows/objects, and you're allowed to give a name to such objects/arrows that you imagine to have. For instance, to show that "if $A \cong B$..." then you can assume that someone has given you two arrows $f : A \to B$ and $g : B \to A$ (the names are arbitrary) and they have also told you that some equation holds (and you can use these in your proof.)
@@ -373,6 +414,7 @@ Show that the following theorems are true: whenever you find an "if", you're all
 Convince yourself that the category $(C^{\textsf{op}})^{\textsf{op}}$ is the "same" as the category $C$, i.e.:
 - The objects of $(C^{\textsf{op}})^{\textsf{op}}$ are the same type,
 - For every $A,B$ the types of arrows from $A$ to $B$ of these categories are the same type.
+- You also should show that $f \,; g = f \,;' g$, where $;$ is the comopsition of the first category and $;'$ is the composition of the second.
 
 ## Exercise 7.2
 
@@ -407,3 +449,14 @@ $$
 ## Exercise 7.0
 
 Show that the table in the section "Coproducts in other categories" indeed describes the way products and coproducts are formed.
+
+## Exercise 7.10
+
+There are some categories which have all products but not coproducts, and some categories that have coproducts but not all products. Show this.
+
+*Hint:* take the category where objects are given by this type:
+```rust
+enum Obj {
+    Int, Bool
+}
+```
