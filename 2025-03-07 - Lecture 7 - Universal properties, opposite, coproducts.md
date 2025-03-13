@@ -349,7 +349,7 @@ match Left(a) with
 | Right(b) => Right(a)
 ```
 
-# Why are they called products?
+# Why are they called coproducts?
 
 Consider the category $\text{FinProg}$, which is just the ""sub-category"" (we have not defined this yet precisely) where the types are only the finite ones.
 
@@ -373,12 +373,12 @@ enum Two {
 
 // Why are products called like this?
 // How many possible ways are there to construct elements of this type?
-struct Either_Three_Two {
+enum Either_Three_Two {
     Left(Three),
     Right(Two),
 }
 
-// There are all possibilities:
+// There are all possibilities to construt something of type Either_Three_two:
 
 // Left(A1)
 // Left(A2)
@@ -396,7 +396,7 @@ $\textsf{size}(\texttt{Either\_Three\_Two}) = 2+3 = 5$.
 In general, given two types `A,B` such that
 - $\textsf{size}(A) = n$, and
 - $\textsf{size}(B) = m$, then
-- $\textsf{size}(\texttt{Either}(A,B)) = n * m$.
+- $\textsf{size}(\texttt{Either}(A,B)) = n + m$.
 
 Now, the sum of numbers (i.e., the size of types) is associative, commutative, etc...
 

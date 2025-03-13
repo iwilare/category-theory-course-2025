@@ -1,4 +1,4 @@
-# 2025-03-13 - Lecture 8 (Initial and terminal objects)
+# 2025-03-13 - Lecture 8 (Initial, terminal, exponential objects)
 
 ## Today's plan
 
@@ -9,14 +9,26 @@
 
 An object $A$ of a category $C$ is called an *initial object* if the following condition holds:
 
-- *(Existence of arrows to every object.)* For every object $H$ in $C$, there is an arrow $!_H: A \to H$.
-- *(Uniqueness of this arrow.)* for every object $H$, any arrow $h : A \to H$ is actually equal to $h = {!_H}$.
+1. *(Existence of arrows to every object.)* For every object $H$ in $C$, there is an arrow $!_H: A \to H$.
+2. *(Uniqueness of this arrow.)* for every object $H$, any arrow $h : A \to H$ is actually equal to $h = {!_H}$.
+
+```
+
+   .        .        .      .    .
+   H1       H2       H3     A    H5
+
+                .
+                A
+```
+
 
 In other words, an initial object is one that has a unique arrow to every other object in the category.
 
 > Initial objects are sometimes denoted as $0$.
 
 # Definition: terminal object
+
+> An object $A$ of a category $C$ is called a *terminal object* exactly when $A$ is an initial object in $C^\textsf{op}$.
 
 An object $A$ of a category $C$ is called a *terminal object* if the following condition holds:
 
@@ -49,12 +61,12 @@ enum Empty {
 
 *Proof.*
 
-- *(Existence of unique arrows to every object.)* For any type `H`, we must show there exists exactly one function from `Empty` to `H`.
+1. *(Existence of arrows to every object.)* For any type `H`, we must show there exists exactly one Rust program from `Empty` to `H`.
 
   Let's define such a function:
 
   ```rust
-  fn empty_to_x(e: Empty) -> H {
+  fn empty_to_h(e: Empty) -> H {
       match e {
           // There are no cases to match!
       }
@@ -63,7 +75,15 @@ enum Empty {
 
   This is known as *vacuous pattern matching*. Since there are no values of type `Empty`, this function can never actually be called with a value. However, the type system still considers this a valid total function.
 
-- *(Uniqueness of this arrow.)* Moreover, this is the *only* possible function. If we had any other function `fn another_empty_to_x(e: Empty) -> H`, it would have to do something different for at least one input value. But since there are no values of type `Empty`, there can be no behavioral difference between any two functions of this signature.
+2. *(Uniqueness of this arrow.)* Moreover, this is the *only* possible function. If we had any other function `fn f(e: Empty) -> H`:
+
+    Let's way I want to show that this `f` is program equivalent to `empty_to_h`.
+
+    I have to show that for every possible value `v:Empty` then the two functions agree when they are called on `v`.
+
+    But there are no values of type `v:Empty`! So I'm done.
+
+<!--it would have to do something different for at least one input value. But since there are no values of type `Empty`, there can be no behavioral difference between any two functions of this signature.-->
 
 ### Terminal object in $\text{Prog}$
 
@@ -73,10 +93,15 @@ We claim that the *unit type* is a terminal object in `Prog`. We define it as:
 struct Unit {
     // No fields!
 }
-// Alternatively:
-enum Unit {
-    UnitValue
-}
+
+// A value of type Unit: Unit { }
+
+// // Alternatively:
+// enum Unit {
+//     One // ()
+// }
+
+// A value of type Unit: One
 ```
 
 *Proof.*
@@ -135,11 +160,12 @@ The initial object is $1$.
 
 ### Terminal object in $(\N, \textsf{divides})$
 
-There is no terminal object.
+There is a terminal object, and it's $0$.
 
 *Proof.*
 
-For every natural number $n$, there exists exactly one arrow from $n$ to $0$ if $n = 0$ (since $0$ divides $0$), and no arrows if $n \neq 0$ (since $0$ is not a multiple of any non-zero number).
+To claim that $0$ is terminal, we need to show that for every other number $n$, we have that $n$ divides $0$.
+So, we have to show, by definition of "divides", that there exists a number $k$ such that $0 = n * k$, so I can pick exactly $k$ to be zero.
 
 ## Initial and terminal objects in $(\text{BExpr}, \to)$
 
@@ -147,7 +173,7 @@ For every natural number $n$, there exists exactly one arrow from $n$ to $0$ if 
 > - Objects are boolean expressions.
 > - There is an arrow from expression $P$ to expression $Q$ if and only if $P$ implies $Q$, written $P \to Q$, i.e., according to the following truth table:
 >
->    | A | B | A $\to$ B |
+>    | P | Q | P $\to$ Q |
 >    |--|--|--|
 >    0 | 0 | 1
 >    0 | 1 | 1
@@ -214,9 +240,9 @@ This is also a terminal object.
 
 While these types are technically different, they behave identically in the category. We say they are "unique up to isomorphism."
 
-# Universal property of initial objects
+# Universal property of terminal objects
 
-Take $A,B$ objects. Any two objects $P$ and $Q$ that satisfy the property of being terminal are isomorphic.
+Any two objects $P$ and $Q$ that satisfy the property of being terminal are isomorphic.
 
 *Proof*.
 
@@ -225,7 +251,7 @@ Assume that we are given $P$ and $Q$, such that we know that both of them are te
 
 *Task objective.* Prove that $P \cong Q$.
 
-*Task objective.* Build two maps $\textsf{p2q} : P \to Q, \textsf{q2p} : Q \to P$, show that $$\textsf{p2q} \,; \textsf{q2p} = \textsf{id}_P, \quad \textsf{q2p} \,; \textsf{p2q} = \textsf{id}_Q.$$
+*Task objective.* Build two arrows $\textsf{p2q} : P \to Q, \textsf{q2p} : Q \to P$, show that $$\textsf{p2q} \,; \textsf{q2p} = \textsf{id}_P, \quad \textsf{q2p} \,; \textsf{p2q} = \textsf{id}_Q.$$
 
 Solution:
 
@@ -241,6 +267,9 @@ $$
     \textsf{q2p} := \textsf{()}_{Q} : Q \to P \\
 \end{array}
 $$
+
+*Small remark.* There might be arrows $f : P \to P$ on some object $P$ such that $f$ is just not the identity.
+
 
 *Lemma.* Given an arrow $h : P \to P$, then $h = \textsf{id}_P$. *Proof.* By definition, any arrow $h$ into the terminal $P$, no matter the source (we chose $H$ to be $P$ again in this case), is equal to $()_P$, i.e., $()_P = h$. In particular, $()_P = \textsf{id}_P$, hence $h = \textsf{id}_P$ by transitivity.
 
@@ -264,6 +293,8 @@ We show that $\textsf{()}_{Q}  \,;  \textsf{()}_{P}  = \textsf{id}_{Q}$. Note th
 - The initial object is also `(Unit, Unit {})`, verify this! Interesting claim.
 
 ## Note: it is NOT true in general that $A \times 0 \cong 0$.
+
+In the category $\textsf{Prog}$, it is true.
 
 In the category $\textsf{Pointed}$. Take for example the type `Bool`: then the product with $0$, which is defined `Unit`, is the type `Pair<Bool,Unit>`. This is not isomorphic to `Unit`! But it is isomorphic to `Bool`, again.
 
