@@ -69,6 +69,15 @@ We define the following category $\textsf{BExpr}$.
      In other words, there is an arrow whenever `P` implies `Q`.
      (In other words, there is an arrow whenever `!P || Q` is true.)
 
+     Yet in other words, this implication operator between `P` and `Q` is true according to the following truth table:
+
+     | A | B | A $\to$ B |
+     |--|--|--|
+     0 | 0 | 1
+     0 | 1 | 1
+     1 | 0 | 0
+     1 | 1 | 1
+
 - *(Identities.)* yes, because if I know that `P` is true then `P` is also true.
 - *(Composition.)* yes, because for every `P,Q,R:BExpr`:
     1. imagine I know that `P` implies `Q`.
@@ -116,7 +125,7 @@ $$
 
 There are other equivalent formulations for products that you might find in the wild, they are all equivalent.
 
-We will sometimes write $A \times B$ to indicate an object $P$ that satisfies the property of being a product of some other two objects $A,B$.
+> We will sometimes write $A \times B$ to indicate an object $P$ that satisfies the property of being a **product** of some other two objects $A,B$.
 
 ## Products sometimes might not exist:
 

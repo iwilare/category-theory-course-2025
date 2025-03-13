@@ -181,7 +181,7 @@ $$
 
 **(End of definition.)**
 
-### TODO: write why these are called
+> We will sometimes write $A + B$ to indicate an object $P$ that satisfies the property of being a **coproduct** of some other two objects $A,B$.
 
 # Examples of coproducts: in $\text{Prog}$
 
@@ -349,12 +349,65 @@ match Left(a) with
 | Right(b) => Right(a)
 ```
 
+# Why are they called products?
+
+Consider the category $\text{FinProg}$, which is just the ""sub-category"" (we have not defined this yet precisely) where the types are only the finite ones.
+
+```rust
+// Recall: general definition of coproduct, for any types `A`, `B`
+enum Either<A,B> {
+    Left(A),
+    Right(B),
+}
+```
+
+```rust
+// Consider these two types:
+enum Three {
+    A1, A2, A3
+}
+
+enum Two {
+    B1, B2
+}
+
+// Why are products called like this?
+// How many possible ways are there to construct elements of this type?
+struct Either_Three_Two {
+    Left(Three),
+    Right(Two),
+}
+
+// There are all possibilities:
+
+// Left(A1)
+// Left(A2)
+// Left(A3)
+
+// Right(B1)
+// Right(B2)
+```
+
+As you can see,
+$\textsf{size}(\texttt{Two}) = 2$,
+$\textsf{size}(\texttt{Three}) = 3$,
+$\textsf{size}(\texttt{Either\_Three\_Two}) = 2+3 = 5$.
+
+In general, given two types `A,B` such that
+- $\textsf{size}(A) = n$, and
+- $\textsf{size}(B) = m$, then
+- $\textsf{size}(\texttt{Either}(A,B)) = n * m$.
+
+Now, the sum of numbers (i.e., the size of types) is associative, commutative, etc...
+
 # Duality
 
 Facts about duality:
 
 - Coproducts in $C$ are just products in $C^\textsf{op}$.
 - Products in $C$ are just coproducts in $C^\textsf{op}$.
+
+Note the following: in coproducts, the two coproduct arrows $\textsf{inl},\textsf{inr}$ are constructors, whereas the two product arrows $\textsf{fst},\textsf{snd}$ correspond to "destructors" (i.e., pattern matching). The situation flips for the pairing and copairing maps: copairing corresponds to pattern matching and cases, whereas pairing corresponds to the constructor for products (i.e., the constructor `Pair { first: ..., second: ... }`).
 
 | Map | Interpretation in Rust/the term language |
 |-|-|
@@ -395,15 +448,14 @@ Two possible approaches:
 1. "flip everything": take the text of the exercises that you had before, and do the syntactic swap so you just invert arrows and composition calls. Problem: to do this you need twice the amount of paper.
 2. "choose a different category". Pick $C$ to be $C^\textsf{op}$ in the previous exercises.
 
-## Exercise 7.b.4
+## Exercise 7.b.1
 Show that $A + B \cong B + A$.
-## Exercise 7.b.5
+## Exercise 7.b.2
 Show that $A + (B + C) \cong (A + B) + C$.
-## Exercise 7.b.6
+## Exercise 7.b.3
 Show that given $f : A \to C$ and $g : B \to D$ then there is an arrow $f + g : A + B \to C + D$.
-## Exercise 7.b.7
+## Exercise 7.b.4
 Among the examples that we have seen in the previous lecture, find a category where $A \not \cong A + A$ and one where $A \cong A + A$.
-
 
 # EXERCISES
 
