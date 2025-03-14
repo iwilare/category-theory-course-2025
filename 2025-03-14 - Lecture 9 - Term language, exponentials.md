@@ -5,12 +5,12 @@
 - Introduce the definition of exponential object
 - See examples of exponential objects in two of the categories we have seen
 
-# Digression on term language:
+# Back on term language:
 
 At the beginning we saw that we restricted our Rust programs to only programs that take a single argument (and that have no effects). We will not lift this restriction to effects yet, but we will expans a little bit our language possibilities: the idea is that certain categorical features allow us to equivalently "translate"/compile these extra features in terms of such structure, and therefore allow us to go back to the original restrictions where, e.g., each Rust program must still take a single argument.
 
 
-1. *Claim.* If $C$ is a category with *a product for every $A$,$B$*, then the term language is allowed to:
+1. *Claim.* If $C$ is a category with *a product  $P$ for every $A$,$B$*, then the term language is allowed to:
     - have a type `Pair<A,B>` for every type `A`,`B`,
     - use projections (i.e., `a.first`, `a.second`),
     - use pair constructors `Pair { first: a, second: b }`,
@@ -55,40 +55,96 @@ At the beginning we saw that we restricted our Rust programs to only programs th
     fn program(a: Unit) {
         ...
     }
+
+    // For any H,
+    // ()_H : H -> Unit
+    // ()_A : A -> Unit
+    // ()_B : B -> Unit
+
     // equivalently:
-    fn program(a: A) {
+    fn do_computation(a: A) {
         ...
     }
-    fn program(b: A) {
+    // same program, same source code:
+    fn do_computation(b: B) {
         ...
     }
     // ...but then `b` is ignored.
     ```
-    *Important point* Ignoring values can only be done because of the existence of terminal objects.
+
+    **Example of translation/compilation from the term language into category theory and viceversa**:
+
+    ```rust
+    fn special1(p: Pair<A,Pair<B,A>) -> Pair<A,B> {
+        Pair { first: p.first, second: p.second.first }
+    }
+    fn special2(p: Pair<A,Pair<B,A>) -> Pair<A,B> {
+        Pair { first: p.second.second, second: p.second.first }
+    }
+    ```
+    Equivalent arrows in "math" notation:
+
+    $$
+        \textsf{special1} : A \times (B \times A) \longrightarrow A \times B \\
+        \textsf{special2} : A \times (B \times A) \longrightarrow A \times B \\
+
+        \textsf{special1} := \langle \textsf{fst} , \textsf{snd}\,;\textsf{fst} \rangle \\
+        \textsf{special2} := \langle \textsf{snd}\,;\textsf{snd}  , \textsf{snd}\,;\textsf{fst} \rangle \\
+            $$
+    In a sense, projections also discarded data:
+    $$        \textsf{fst} : A \times B \longrightarrow A \\
+            \textsf{snd} : A \times B \longrightarrow B \\
+            ()_{A \times B} : A \times B \longrightarrow 1
+    $$
+
+    *Important point.* Ignoring values can only be done because of the existence of terminal objects.
     If you look at the term language for general categories that was introduced in Lecture 4, the argument cannot be discarded!
 3. *Claim.* If $C$ is a category with an *initial object* $A$, called "`Empty`", then the term language is allowed to:
     - have a type `Empty`,
     - use the "destructor"/pattern matching `match e { }` (no clauses!)
-    - **In particular**, this allows for programs to "not return a value"/return *into any other value*.
+    - **In particular**, this allows for programs to "not return a value"/return *into any other type*.
     *Translation idea:*
     ```rust
     // A function which never returns
+
+    // Equivalent way of writing this program,
+    // assuming that fn f(a: A) -> Empty
+    fn program(a: A) -> B {
+        return !_B(f(a))
+    }
     fn program(a: A) -> B {
         ...
-        let b: Empty = f(...)
+        let e: Empty = f(...)
         match e {
 
         }
     }
     fn program(a: A) -> C {
         ...
-        let b: Empty = f(...)
+        let e: Empty = f(...)
         match e {
 
         }
     }
     ```
     (Side remark for the curious: having *some* effects is consistent with having an initial object.)
+
+    ```rust
+    fn prog1(a: A) -> Empty {
+        while true {
+                print("Hellow")
+        }
+    }
+    fn prog2(a: A) -> Empty {
+        while true {
+                print("World")
+        }
+    }
+    ```
+
+    (End of side-remark.)
+
+
 4. *Non-claim.* If $C$ is a category with all coproducts, **IT IS NOT TRUE** that the term language is allowed to:
     - have a type `Either<A,B>`,
     - use the two constructors `Left(a)` and `Right(b)` for some values `a:A`, `b:B`,
@@ -116,7 +172,7 @@ At the beginning we saw that we restricted our Rust programs to only programs th
 > $$
 > \textsf{opdist} :  A \times (B + C)  \longrightarrow (A \times B) + (A \times C)
 > $$
-> might not always exist, e.g.,
+> might not always exist, e.g.,W
 >
 > *Claim*: in $\text{Pointed}$ an arrow like this such that $\textsf{opdist} \,; \textsf{dist} = \textsf{id}$ and $\textsf{dist} \,; \textsf{opdist} = \textsf{id}$ does not exist.
 
@@ -160,6 +216,7 @@ An object $E$ is said to be *an exponential object from $A$ to $B$* (notation: $
 
 1. *(Existence of evaluation.)* you must pick an arrow
    - $\textsf{eval} : E \times A \to B$
+   - $\textsf{eval} : (A \Rightarrow B) \times A \to B$
 
 2. *(Existence of lambda abstraction.)* if someone gives you the following data,
    - another object $H$,
@@ -167,6 +224,7 @@ An object $E$ is said to be *an exponential object from $A$ to $B$* (notation: $
 
    then you must pick an arrow
    - $\Lambda(f) : H \to E$,
+   - $\Lambda(f) : H \to (A \Rightarrow B)$,
 
    such that this equation holds, which we will call the *Lambda equation*:
    - $\langle \Lambda(f) \times \textsf{id}_A \rangle \,; \textsf{eval} = f$
@@ -176,6 +234,10 @@ An object $E$ is said to be *an exponential object from $A$ to $B$* (notation: $
 3. *(Eta uniqueness.)* the choice for $\Lambda$ that you gave above must satisfy the following equation, for every object $H$ and every arrow $h : H \to E$:
 
     $$\Lambda(\langle h \times \textsf{id}_A \rangle \,; \textsf{eval}) = h$$
+    $$\lambda x. h(x) = h$$
+
+    $$\Lambda(\langle h[a] \times \textsf{id}_A \rangle \,; \textsf{eval}) = h[a]$$
+    $$\lambda x. h(a)(x) = h(a)$$
 
     This property is called eta-expansion because it corresponds to the eta-equivalence rule in lambda calculus, which states that any function $f$ is equivalent to $\Lambda x. f(x)$. In categorical terms, if we take a function $h$ and apply it to an argument and then abstract over that argument again, we get back the original function.
 
