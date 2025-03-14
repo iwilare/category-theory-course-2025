@@ -71,7 +71,7 @@ We define the following category $\textsf{BExpr}$.
 
      Yet in other words, this implication operator between `P` and `Q` is true according to the following truth table:
 
-     | A | B | A $\to$ B |
+     | P | Q | P $\to$ Q |
      |--|--|--|
      0 | 0 | 1
      0 | 1 | 1
