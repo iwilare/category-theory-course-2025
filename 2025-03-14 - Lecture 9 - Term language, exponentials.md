@@ -150,13 +150,13 @@ At the beginning we saw that we restricted our Rust programs to only programs th
 
 In the previous lecture, we saw how products gave us a way to "pair" two objects. Today, we'll see how we can represent "functions" between objects categorically.
 
-### Definition: exponential object $B^A$
+### Definition: exponential object $A \Rightarrow B$
 
 Fix two objects $A, B$ in a category with products. These will stay fixed for the rest of the definition.
 
 ---
 
-An object $E$ is said to be *an exponential object from $A$ to $B$* (notation: $B^A$) if the following conditions are satisfied:
+An object $E$ is said to be *an exponential object from $A$ to $B$* (notation: $A \Rightarrow B$ or $B^A$) if the following conditions are satisfied:
 
 1. *(Existence of evaluation.)* you must pick an arrow
    - $\textsf{eval} : E \times A \to B$
@@ -183,7 +183,7 @@ An object $E$ is said to be *an exponential object from $A$ to $B$* (notation: $
 
 **(End of definition.)**
 
-Intuitively, the exponential object $B^A$ represents "the space of all functions from $A$ to $B$". The evaluation arrow lets us apply a function to an argument, and lambda abstraction lets us "curry" a function of two arguments into a function that returns another function.
+Intuitively, the exponential object $A \Rightarrow B$ represents "the space of all functions from $A$ to $B$". The evaluation arrow lets us apply a function to an argument, and lambda abstraction lets us "curry" a function of two arguments into a function that returns another function.
 
 ## Examples of Exponential Objects: $\text{Prog}$
 
@@ -201,7 +201,7 @@ Let's show that the category $\text{Prog}$ has all exponential objects. Remember
     }
     // equivalently...
     fn eval(f: Func<A,B>, a: A>) -> B {
-        f(a)
+        f
     }
     ```
 
@@ -286,7 +286,7 @@ Recall that in $(\N, \le)$, the product of two numbers $A$ and $B$ is $\min\{A, 
 
 Question: Does this category have exponential objects?
 
-Let's think about what an exponential object $B^A$ would mean in this context:
+Let's think about what an exponential object $A \Rightarrow B$ would mean in this context:
 
 1. It needs to be a number $E$ such that there's an arrow $\textsf{eval} : E \times A \to B$
 2. For any $H$ with an arrow $f : H \times A \to B$, there must be an arrow $\Lambda f : H \to E$
@@ -308,7 +308,7 @@ Therefore, exponential objects don't always exist in $(\N, \le)$.
 
 In boolean logic, the product corresponds to conjunction (AND). The exponential object corresponds to logical implication.
 
-For propositions $A$ and $B$, the exponential object $B^A$ is $A \Rightarrow B$ (read: "A implies B").
+For propositions $A$ and $B$, the exponential object $A \Rightarrow B$ is $A \Rightarrow B$ (read: "A implies B").
 
 1. *(Existence of evaluation.)* The arrow $\textsf{eval} : (A \Rightarrow B) \times A \to B$ corresponds to modus ponens:
    - If I know "A implies B" and I know "A", then I can deduce "B"
@@ -381,8 +381,8 @@ enum ThreeToTwo = Func<Three,Two>
 ```
 
 If $\textsf{size}(A) = n$ and $\textsf{size}(B) = m$, then:
-- $\textsf{size}(B^A) = m^n$
+- $\textsf{size}(A \Rightarrow B) = m^n$
 
-For example, if $A$ has 2 elements and $B$ has 3 elements, then the number of possible functions from $A$ to $B$ is $3^2 = 9$.
+For example, if $A$ has 2 elements and $B$ has 3 elements, then the number of possible functions from $A$ to $B$, i.e., the type $A \Rightarrow B = B^A$ is $3^2 = 9$.
 
 This is exactly the number of elements in the function type `Func<A,B>`.
