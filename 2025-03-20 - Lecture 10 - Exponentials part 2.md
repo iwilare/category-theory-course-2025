@@ -33,7 +33,7 @@ $$
 2. Using $\Lambda$ on both of them:
    $$\Lambda_{A,B}(\textsf{inl}) : B \longrightarrow A \Rightarrow ((A \times B) + (A \times C))$$
    $$\Lambda_{A,C}(\textsf{inr}) : C \longrightarrow A \Rightarrow ((A \times B) + (A \times C))$$
-3. Note: these two arrows go into the same element! So there is an arrow from the coproduct of the source object:
+3. Note: these two arrows go into the same object! So there is an arrow from the coproduct of the sources:
    $$[\Lambda_{A,B}(\textsf{inl}), \Lambda_{A,C}(\textsf{inr})] : B + C \longrightarrow A \Rightarrow ((A \times B) + (A \times C))$$
 4. Add $A$ on the left:
 $$\textsf{id}_A \times [\Lambda_{A,B}(\textsf{inl}), \Lambda_{A,C}(\textsf{inr})] : A \times (B + C) \longrightarrow A \times (A \Rightarrow ((A \times B) + (A \times C)))$$
