@@ -215,7 +215,6 @@ Fix two objects $A, B$ in a category with products. These will stay fixed for th
 An object $E$ is said to be *an exponential object from $A$ to $B$* (notation: $A \Rightarrow B$ or $B^A$) if the following conditions are satisfied:
 
 1. *(Existence of evaluation.)* you must pick an arrow
-   - $\textsf{eval} : E \times A \to B$
    - $\textsf{eval} : (A \Rightarrow B) \times A \to B$
 
 2. *(Existence of lambda abstraction.)* if someone gives you the following data,
@@ -223,29 +222,34 @@ An object $E$ is said to be *an exponential object from $A$ to $B$* (notation: $
    - an arrow $f : H \times A \to B$,
 
    then you must pick an arrow
-   - $\Lambda(f) : H \to E$,
    - $\Lambda(f) : H \to (A \Rightarrow B)$,
 
-   such that this equation holds, which we will call the *Lambda equation*:
-   - $\langle \Lambda(f) \times \textsf{id}_A \rangle \,; \textsf{eval} = f$
+3. *(Lambda equation)* The choice above is such that this equation, called *Lambda equation* holds:
+   $$(\Lambda(f) \times \textsf{id}_A) \,; \textsf{eval} = f$$
 
-   Here, $\Lambda(f) \times \textsf{id}_A : H \times A \to E \times A$ is the arrow that applies $\Lambda(f)$ to the first component of the pair and leaves the second component unchanged.
+   Here, $\Lambda(f) \times \textsf{id}_A : H \times A \to (A \Rightarrow B) \times A$ is the arrow that applies $\Lambda(f)$ to the first component of the pair and leaves the second component unchanged.
 
-3. *(Eta uniqueness.)* the choice for $\Lambda$ that you gave above must satisfy the following equation, for every object $H$ and every arrow $h : H \to E$:
+   > Intuition, for every $v: H$, $a:A$:
+   > $$\textsf{eval}((\texttt{fun }x\,\,\texttt{=>}\,f(v,x)), a) = f(v,a)$$
+   > $$(\texttt{fun }x\,\,\texttt{=>}\,f(v,x))(a) = f(v,a)$$
 
-    $$\Lambda(\langle h \times \textsf{id}_A \rangle \,; \textsf{eval}) = h$$
-    $$\lambda x. h(x) = h$$
+4. *(Lambda expansion.)* the choice for $\Lambda$ that you gave above must satisfy the following equation, for every object $H$ and every arrow $h : H \to (A \Rightarrow B)$:
 
-    $$\Lambda(\langle h[a] \times \textsf{id}_A \rangle \,; \textsf{eval}) = h[a]$$
-    $$\lambda x. h(a)(x) = h(a)$$
+    $$\Lambda((h \times \textsf{id}_A) \,; \textsf{eval}) = h$$
 
-    This property is called eta-expansion because it corresponds to the eta-equivalence rule in lambda calculus, which states that any function $f$ is equivalent to $\Lambda x. f(x)$. In categorical terms, if we take a function $h$ and apply it to an argument and then abstract over that argument again, we get back the original function.
+    Where $h \times \textsf{id}_A : H \times A \to (A \Rightarrow B) \times A$.
 
-> *Claim.* The choice for $\Lambda$ that you gave above must be unique. That is, for every object $H$ and arrow $f : H \times A \to B$, if there is another arrow $g : H \to E$ that satisfies the lambda equation, then $g = \Lambda(f)$.
+    > Intuition, for every $v: H$:
+    > $$(\texttt{fun }x\,\,\texttt{=>}\,h(x)) = h$$
+
+> *Claim.* The choice for $\Lambda$ that you gave above is unique: that is, for every object $H$ and arrow $f : H \times A \to B$, if there is another arrow $g : H \to E$ that satisfies the lambda equation, then $g = \Lambda(f)$.
+
+Other names: "Lambda equation" is sometimes called $\beta$-equivalence or $\beta$-reduction, and "Lambda expansion" sometimes is called $\eta$-equivalence or $\eta$-expansion, stating that any function $f$ is equivalent to $\Lambda x. f(x)$.
+
 
 **(End of definition.)**
 
-Intuitively, the exponential object $A \Rightarrow B$ represents "the space of all functions from $A$ to $B$". The evaluation arrow lets us apply a function to an argument, and lambda abstraction lets us "curry" a function of two arguments into a function that returns another function.
+Intuitively, the exponential object $A \Rightarrow B$ represents "the type of functions from $A$ to $B$". The evaluation arrow lets us apply a function to an argument, and lambda abstraction lets us create new functions out of functions that take new arguments.
 
 ## Examples of Exponential Objects: $\text{Prog}$
 
@@ -281,7 +285,7 @@ Let's show that the category $\text{Prog}$ has all exponential objects. Remember
     }
     ```
 
-    Let's verify the lambda equation:
+- *(Lambda equation.*) Let's verify the lambda equation:
     $\langle \Lambda(f) \times \textsf{id}_A \rangle \,; \textsf{eval} = f$
 
     The composed arrow is this program:
@@ -300,7 +304,7 @@ Let's show that the category $\text{Prog}$ has all exponential objects. Remember
     = f(p)
     ```
 
-    - *(Eta uniqueness.)* Assume we have a program `h: H -> Func<A,B>`, we show that $h$ is program equivalent to $h = \Lambda(\langle h \times \textsf{id}_A \rangle \,; \textsf{eval})$.
+- *(Lambda expansion.)* Assume we have a program `h: H -> Func<A,B>`, we show that $h$ is program equivalent to $h = \Lambda(\langle h \times \textsf{id}_A \rangle \,; \textsf{eval})$.
     The second program is the following, for some value `v:H`:
 
     ```rust
@@ -314,93 +318,101 @@ Let's show that the category $\text{Prog}$ has all exponential objects. Remember
 
     Since the functions agree on all inputs, they are equivalent.
 
+**In a sense we are "internalizing" the notion of arrow as an object inside the category itself.**
+
 ## Exponential Objects represent Function Types
 
 Just as products in a category correspond to pairs in a programming language, exponential objects correspond to function types.
 
 If you tell me that a category $C$ has all products and all exponential objects, then:
 - The term language of $C$ is extended to have function types `Func<A,B>` for every type `A`, `B`
-- Function application `f(x)` corresponds to the evaluation arrow
-- Lambda abstractions `|x| e` correspond to the lambda abstraction arrow
-- The beta-reduction rule in lambda calculus corresponds to the lambda equation
+- Function application `f(x)` corresponds to the evaluation arrow,
+- Lambda abstractions `|x| e` correspond to the lambda abstraction arrow,
+- Function application corresponds to the lambda equation.
+- Lambda expansion is needed to show that function types are unique up to isomorphism.
 
 Consider the translation:
 
 ```rust
 // Lambda abstraction
-|x: A| e[x]
+|x: A| expr[a,b,...,z,x]
 ```
 
-can be replaced by
+is replaced by
 
 ```rust
-lambda_expr[free variables]
+lambda_expr[a,b,...,z]
 ```
 
 The lambda equation is precisely the beta-reduction rule from lambda calculus:
 ```
-(|x| e)(a) = e[a/x]
+(|x| e[x])(a) = e[a]
 ```
-
-## Examples of Exponential Objects: $(\N, \le)$
-
-Recall that in $(\N, \le)$, the product of two numbers $A$ and $B$ is $\min\{A, B\}$.
-
-Question: Does this category have exponential objects?
-
-Let's think about what an exponential object $A \Rightarrow B$ would mean in this context:
-
-1. It needs to be a number $E$ such that there's an arrow $\textsf{eval} : E \times A \to B$
-2. For any $H$ with an arrow $f : H \times A \to B$, there must be an arrow $\Lambda f : H \to E$
-
-Since this is a preorder, arrows are just the $\le$ relation, and the exponential object corresponds to "implication" in this order.
-
-In $(\N, \le)$, we need to find a number $E$ such that:
-- $\min(E, A) \le B$
-- For any $H$ where $\min(H, A) \le B$, we have $H \le E$
-
-$E$ must be the "largest" number such that $\min(E, A) \le B$.
-
-If $A \le B$, then we can take $E = \infty$ (or a sufficiently large number).
-If $A > B$, there's no valid choice for $E$.
-
-Therefore, exponential objects don't always exist in $(\N, \le)$.
 
 ## Examples of Exponential Objects: $(\text{BExpr}, \to)$
 
 In boolean logic, the product corresponds to conjunction (AND). The exponential object corresponds to logical implication.
 
+We add a new case to the old definition of `BExpr`.
+
+```rust
+enum BExpr {
+    LessEq(String, i32),
+    GreaterEq(String, i32),
+    And(BExpr, BExpr),
+    Or(BExpr, BExpr),
+    Not(BExpr),
+    F,
+    T,
+    // New case:
+    Imply(BExpr, BExpr)
+}
+```
+
+The intuition is that `Imply(P,Q)`, which we write as `P ⇒ Q`, is true exactly when the implication `P` $\to$ `Q` is true, according to the usual table:
+
+| P | Q | P ⇒ Q |
+|--|--|--|
+| 0 | 0 | 1 |
+| 0 | 1 | 1 |
+| 1 | 0 | 0 |
+| 1 | 1 | 1 |
+
+**In a sense we are "internalizing" the notion of arrow as an object inside the category itself.**
+
 For propositions $A$ and $B$, the exponential object $A \Rightarrow B$ is $A \Rightarrow B$ (read: "A implies B").
 
 1. *(Existence of evaluation.)* The arrow $\textsf{eval} : (A \Rightarrow B) \times A \to B$ corresponds to modus ponens:
-   - If I know "A implies B" and I know "A", then I can deduce "B"
+   - If I know `(A ⇒ B) && A`, then I can deduce `B`.
 
-2. *(Existence of lambda abstraction.)* If for some proposition $H$, I know that $H \land A$ implies $B$, then $H$ implies $(A \Rightarrow B)$
+2. *(Existence of lambda abstraction.)* If for some proposition $H$,
+    - Assume that, knowing that `H && A` holds then `B` holds,
+    - then I need to show that knowing that `H` holds then `(A ⇒ B)` holds.
 
-The truth table for implication is:
-
-| A | B | A ⇒ B |
-|---|---|-------|
-| 0 | 0 |   1   |
-| 0 | 1 |   1   |
-| 1 | 0 |   0   |
-| 1 | 1 |   1   |
+| H | A | H&A    | B |  A ⇒ B | `H&A` $\to$ `B`| `H` $\to$ `A ⇒ B` |
+| - |---| -      |---| -------| -              | - |
+| 0 | 0 | 0      | 0 |    1   | yes            | yes |
+| 0 | 0 | 0      | 1 |    1   | yes            | yes |
+| 0 | 1 | 0      | 0 |    0   | yes            | yes |
+| 0 | 1 | 0      | 1 |    1   | yes            | yes |
+| 1 | 0 | 0      | 0 |    1   | yes            | yes |
+| 1 | 0 | 0      | 1 |    1   | yes            | yes |
+| 1 | 1 | 1      | 0 |    0   | no             | no  |
+| 1 | 1 | 1      | 1 |    1   | yes            | yes |
 
 ## Cartesian Closed Categories (CCCs)
 
-A category is called *Cartesian closed* if:
-1. It has a terminal object (we'll define this next lecture)
-2. It has all binary products
+A category is called *cartesian closed* if:
+1. It has a terminal object
+    - (i.e., there is an object $1$ that is terminal)
+2. It has all products
+    - (i.e., for any $A,B$ there exists an object $P$ that satisfies the property of being a product of $A,B$)
 3. It has all exponential objects
+    - (i.e., for any $A,B$ there exists an object $E$ that satisfies the property of being exponential for $A,B$)
 
-Cartesian closed categories are particularly important in computer science because they provide a mathematical foundation for typed lambda calculi and functional programming languages. In particular:
+Cartesian closed categories are particularly important in computer science because they provide a mathematical foundation for typed lambda calculi and functional programming languages.
 
-- Objects correspond to types
-- Arrows correspond to functions
-- Products correspond to pair types
-- Exponential objects correspond to function types
-
-The category $\text{Prog}$ of Rust types and total programs is Cartesian closed, as we've shown that it has all products and exponential objects.
+The category $\text{Prog}$ of Rust types and total programs is cartesian closed whenever we allow for the types `Unit`, `Pair<A,B>`, `Func<A,B>`.
 
 ## Why are they called exponential objects?
 
@@ -419,27 +431,27 @@ enum Two {
 enum TwoToThree = Func<Two,Three>
 
 // 3^2 = 9
-// |a| match a { B1 => A1, B2 => A1 }
-// |a| match a { B1 => A1, B2 => A2 }
-// |a| match a { B1 => A1, B2 => A3 }
-// |a| match a { B1 => A2, B2 => A1 }
-// |a| match a { B1 => A2, B2 => A2 }
-// |a| match a { B1 => A2, B2 => A3 }
-// |a| match a { B1 => A3, B2 => A1 }
-// |a| match a { B1 => A3, B2 => A2 }
-// |a| match a { B1 => A3, B2 => A3 }
+// |a: Two| match a { B1 => A1, B2 => A1 }
+// |a: Two| match a { B1 => A1, B2 => A2 }
+// |a: Two| match a { B1 => A1, B2 => A3 }
+// |a: Two| match a { B1 => A2, B2 => A1 }
+// |a: Two| match a { B1 => A2, B2 => A2 }
+// |a: Two| match a { B1 => A2, B2 => A3 }
+// |a: Two| match a { B1 => A3, B2 => A1 }
+// |a: Two| match a { B1 => A3, B2 => A2 }
+// |a: Two| match a { B1 => A3, B2 => A3 }
 
 enum ThreeToTwo = Func<Three,Two>
 
 // 2^3 = 8
-// |a| match a { A1 => B1, A2 => B1, A3 => B1 }
-// |a| match a { A1 => B1, A2 => B1, A3 => B2 }
-// |a| match a { A1 => B1, A2 => B2, A3 => B1 }
-// |a| match a { A1 => B1, A2 => B2, A3 => B2 }
-// |a| match a { A1 => B2, A2 => B1, A3 => B1 }
-// |a| match a { A1 => B2, A2 => B1, A3 => B2 }
-// |a| match a { A1 => B2, A2 => B2, A3 => B1 }
-// |a| match a { A1 => B2, A2 => B2, A3 => B2 }
+// |a: Three| match a { A1 => B1, A2 => B1, A3 => B1 }
+// |a: Three| match a { A1 => B1, A2 => B1, A3 => B2 }
+// |a: Three| match a { A1 => B1, A2 => B2, A3 => B1 }
+// |a: Three| match a { A1 => B1, A2 => B2, A3 => B2 }
+// |a: Three| match a { A1 => B2, A2 => B1, A3 => B1 }
+// |a: Three| match a { A1 => B2, A2 => B1, A3 => B2 }
+// |a: Three| match a { A1 => B2, A2 => B2, A3 => B1 }
+// |a: Three| match a { A1 => B2, A2 => B2, A3 => B2 }
 ```
 
 If $\textsf{size}(A) = n$ and $\textsf{size}(B) = m$, then:

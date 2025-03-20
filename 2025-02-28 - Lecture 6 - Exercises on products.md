@@ -105,6 +105,20 @@ fn duplicate(v: A) -> Pair<A,A> {
 
 <!--*Solution.* the desired arrow is $\langle \textsf{id}_A, \textsf{id}_A \rangle : A \to A \times A$.-->
 
+# Example: the parallel arrow of $f$ and $g$
+
+Show that given $f : A \to C$ and $g : B \to D$ then there is an arrow $A \times B \to C \times D$, which we denote as "$f \times g$" and that we call "$f$ in parallel with $g$".
+
+*Solution.*
+
+- Take $\quad \textsf{fst} \,; f : A \times B \to C,$
+- Take $\quad \textsf{snd} \,; g : A \times B \to D,$
+
+Assuming that the product $C \times D$ exists as an object of our category, we can take the pairing of the two above there is an arrow into the product $C \times D$:
+$$
+{\langle \textsf{fst} \,; f , \textsf{snd} \,; g \rangle} :A \times B \to C \times D
+$$
+
 # Example: show that $p \,; \langle l, r \rangle = \langle p \,; l , p \,; r \rangle$.
 
 Abstract name of this property: *naturality of pairing.* We will see why in some lectures.

@@ -73,10 +73,10 @@ We define the following category $\textsf{BExpr}$.
 
      | P | Q | P $\to$ Q |
      |--|--|--|
-     0 | 0 | 1
-     0 | 1 | 1
-     1 | 0 | 0
-     1 | 1 | 1
+     | 0 | 0 | 1 |
+     | 0 | 1 | 1 |
+     | 1 | 0 | 0 |
+     | 1 | 1 | 1 |
 
 - *(Identities.)* yes, because if I know that `P` is true then `P` is also true.
 - *(Composition.)* yes, because for every `P,Q,R:BExpr`:
