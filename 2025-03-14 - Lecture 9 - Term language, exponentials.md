@@ -1,4 +1,4 @@
-# 2025-03-14 - Lecture 8 (Term language, exponential)
+# 2025-03-14 - Lecture 8 (Term language, exponential objects)
 
 ## Today's plan
 
@@ -172,7 +172,7 @@ At the beginning we saw that we restricted our Rust programs to only programs th
 > $$
 > \textsf{opdist} :  A \times (B + C)  \longrightarrow (A \times B) + (A \times C)
 > $$
-> might not always exist, e.g.,W
+> might not always exist, e.g.,
 >
 > *Claim*: in $\text{Pointed}$ an arrow like this such that $\textsf{opdist} \,; \textsf{dist} = \textsf{id}$ and $\textsf{dist} \,; \textsf{opdist} = \textsf{id}$ does not exist.
 
@@ -239,12 +239,12 @@ An object $E$ is said to be *an exponential object from $A$ to $B$* (notation: $
 
     Where $h \times \textsf{id}_A : H \times A \to (A \Rightarrow B) \times A$.
 
-    > Intuition, for every $v: H$:
+    > Intuition:
     > $$(\texttt{fun }x\,\,\texttt{=>}\,h(x)) = h$$
 
 > *Claim.* The choice for $\Lambda$ that you gave above is unique: that is, for every object $H$ and arrow $f : H \times A \to B$, if there is another arrow $g : H \to E$ that satisfies the lambda equation, then $g = \Lambda(f)$.
 
-Other names: "Lambda equation" is sometimes called $\beta$-equivalence or $\beta$-reduction, and "Lambda expansion" sometimes is called $\eta$-equivalence or $\eta$-expansion, stating that any function $f$ is equivalent to $\Lambda x. f(x)$.
+Other names: "Lambda equation" is sometimes called $\beta$-equivalence or $\beta$-reduction, and "Lambda expansion" sometimes is called $\eta$-equivalence or $\eta$-expansion, stating that any function $f$ is equivalent to $\lambda x. f(x)$.
 
 
 **(End of definition.)**
@@ -267,7 +267,7 @@ Let's show that the category $\text{Prog}$ has all exponential objects. Remember
     }
     // equivalently...
     fn eval(f: Func<A,B>, a: A>) -> B {
-        f
+        f(a)
     }
     ```
 
@@ -290,21 +290,20 @@ Let's show that the category $\text{Prog}$ has all exponential objects. Remember
 
     The composed arrow is this program:
         ```rust
-        fn compose_lambda_f_eval(p: Pair<H, A>) -> B {
-            eval(Pair(lambda_f(p.first), p.second))
-        }
+        fn compose_(parallel_lambda_f_id)_eval(p: Pair<H, A>) -> B { ... }
         ```
 
     Let's reason by program equivalence, for some argument `p: Pair<H, A>`:
     ```rust
-    eval(Pair(lambda_f(p.first), p.second))  // (Function expansion)
+      compose_(parallel_(lambda_f)_id)_eval(p)
+    = eval(Pair(lambda_f(p.first), id(p.second)))       // (Function expansion)
     = eval(Pair(|a: A| f(Pair(p.first, a)), p.second))  // (Function expansion)
-    = (|a: A| f(Pair(p.first, a)))(p.second)  // (Function application)
-    = f(Pair(p.first, p.second))  // (Pair expansion)
+    = (|a: A| f(Pair(p.first, a)))(p.second)            // (Function application)
+    = f(Pair(p.first, p.second))                        // (Pair expansion)
     = f(p)
     ```
 
-- *(Lambda expansion.)* Assume we have a program `h: H -> Func<A,B>`, we show that $h$ is program equivalent to $h = \Lambda(\langle h \times \textsf{id}_A \rangle \,; \textsf{eval})$.
+- *(Lambda expansion.)* Assume we have a program `h: H -> Func<A,B>`, we show that $h$ is program equivalent to $\Lambda(\langle h \times \textsf{id}_A \rangle \,; \textsf{eval}) = h$.
     The second program is the following, for some value `v:H`:
 
     ```rust
@@ -320,7 +319,7 @@ Let's show that the category $\text{Prog}$ has all exponential objects. Remember
 
 **In a sense we are "internalizing" the notion of arrow as an object inside the category itself.**
 
-## Exponential Objects represent Function Types
+## Term Language: Exponential Objects represent Function Types
 
 Just as products in a category correspond to pairs in a programming language, exponential objects correspond to function types.
 
@@ -380,14 +379,22 @@ The intuition is that `Imply(P,Q)`, which we write as `P ⇒ Q`, is true exactly
 
 **In a sense we are "internalizing" the notion of arrow as an object inside the category itself.**
 
-For propositions $A$ and $B$, the exponential object $A \Rightarrow B$ is $A \Rightarrow B$ (read: "A implies B").
+For propositions $A$ and $B$, the exponential object $A \Rightarrow B$ is the boolean expression ``Imply(A,B)`` for some boolean expressions `A`, `B`.
 
-1. *(Existence of evaluation.)* The arrow $\textsf{eval} : (A \Rightarrow B) \times A \to B$ corresponds to modus ponens:
+1. *(Existence of evaluation.)* The arrow $\textsf{eval} : (A \Rightarrow B) \times A \to B$:
    - If I know `(A ⇒ B) && A`, then I can deduce `B`.
 
+| A | B | (A ⇒ B) | (A ⇒ B) && A
+|--|--|--|--|
+| 0 | 0 | 1 | 0 |
+| 0 | 1 | 1 | 0 |
+| 1 | 0 | 0 | 0 |
+| 1 | 1 | 1 | 1 |
+
+
 2. *(Existence of lambda abstraction.)* If for some proposition $H$,
-    - Assume that, knowing that `H && A` holds then `B` holds,
-    - then I need to show that knowing that `H` holds then `(A ⇒ B)` holds.
+    - Assume that, knowing that `H && A` holds then `B` holds, (existence of the arrow $f$)
+    - then I need to show that knowing that `H` holds then `(A ⇒ B)` holds. (existence of the arrow $\Lambda(f)$)
 
 | H | A | H&A    | B |  A ⇒ B | `H&A` $\to$ `B`| `H` $\to$ `A ⇒ B` |
 | - |---| -      |---| -------| -              | - |

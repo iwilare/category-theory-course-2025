@@ -1,4 +1,4 @@
-# 2025-03-21 - Lecture 9 (Distributivity, Uniqueness of Exponentials)
+# 2025-03-21 - Lecture 9 (Distributivity, Universal proprerty of exponentials)
 
 ## Today's plan
 
@@ -79,7 +79,7 @@ $$
 \begin{array}{rcll}
 &   & \Lambda(\textsf{eval}) & \text{(Identity law for categories)} \\
 & = & \Lambda(\textsf{id}_{(A \Rightarrow B) \times A} \,; \textsf{eval}) & \text{(Lemma above)} \\
-& = & \Lambda((\textsf{id}_{A \Rightarrow B} \times \textsf{id}_{A}) \,; \textsf{eval}) & \text{(Lambda equation for $h := \textsf{id}_{A \Rightarrow B}$)}  \\
+& = & \Lambda((\textsf{id}_{A \Rightarrow B} \times \textsf{id}_{A}) \,; \textsf{eval}) & \text{(Lambda expansion for $h := \textsf{id}_{A \Rightarrow B}$)}  \\
 & = & \textsf{id}_{A \Rightarrow B} &  \\
 \end{array}
 $$
