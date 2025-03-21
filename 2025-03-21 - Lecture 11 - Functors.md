@@ -1,0 +1,242 @@
+# 2025-03-21 - Lecture 11 (Functors)
+
+# Today's plan
+
+- Give the definition of functors.
+- See examples.
+
+# Functors
+
+In short: functors are "arrows between entire categories".
+
+Idea behind functors: functors embody the idea of interpreting the types and programs of a programming language into another category.
+
+Given two categories, $C,D$, a functor $F : C \Rightarrow D$ amounts to the following choices (we use `C.asdf` and `D.asdf` to denote the choices of their respective categories):
+- *(Program on objects)* a choice of a Rust program `F_obj` with the following signature:
+    ```rust
+    fn F_obj(a: C.Obj) -> D.Obj {
+        ...
+    }
+    ```
+- *(Programs on arrows)* for every value `a:C.Obj`, `b:C.Obj` a choice of a Rust program `F_arrows[a][b]`
+    ```rust
+    fn F_arrows[a][b](f: C.Arr[a,b]) -> D.Arr[F_obj(a), F_obj(b)] {
+        ...
+    }
+    ```
+
+- *(`F_arrows` respects identities)*: for every `a:C.Obj`, we know that thers is a value `id[a]:C.Arr[a,a]`. Calling `F_arrows[a][a]` on that value must give you exactly the identity in the corresponding type `D.Arr[F_obj(a), F_obj(a)]`, i.e., this equation holds:
+    ```rust
+    F_arrows[a][a](C.id[a]) = D.id[F_obj(a)]
+    ```
+    $$F(\text{id}_A) = \text{id}_{F(A)}$$
+
+- *(`F_arrows` respects compositions, also called "functoriality")*: for every `a,b,c:C.Obj` and every `f:C.Arr[a,b]`, `g:Arr[b,c]`, this equation holds:
+    ```rust
+    F_arrows[a][b](C.compose(f, g)) =
+    D.compose(F_arrows[a][b](f), F_arrows[b][c](g))
+    ```
+    $$F(f\,;g) = F(f)\,;F(g)$$
+
+## Notation
+
+Again, we can often omit the indices if we know the types of the arrows involved.
+
+| Math notation | Rust notation |
+|---|---|
+| $F(a)$ | `F_obj(a)` |
+| $F(f)$ | `F_arrows(f)` |
+
+## Graphical intuition
+
+The intuition is that functors "cast a shadow" from one category into the other.
+
+**Drawing here.**
+
+## Example
+
+Take the following category:
+
+```rust
+// REMEMBER! THESE ARE NOT REAL TYPES, these are just symbols for a skeleton of programming language, or, in other words, its internal representation
+enum C.Obj {
+    Int,
+    Float,
+    String,
+}
+
+enum D.Obj {
+    Float,
+    ArrayChar,
+    Bool,
+}
+
+enum C.Arr_Int_Int {
+    Add3,
+    Identity,
+    ...
+}
+
+enum C.Arr_Int_Float {
+    ConvertToFloat,
+    AddThreeConvert,
+    AddSixConvert,
+    ...
+}
+
+enum C.Arr_Int_String {
+    PrintIntToString,
+}
+
+///////////////
+
+enum D.Arr_Float_String {
+    FloatToString
+}
+
+fn F_obj(a: C.Obj) -> D.Obj {
+    match a {
+        Int    => Float,
+        Float  => Float,
+        String => String
+    }
+}
+
+// For each possible a,b:C.Obj, define a function like this:
+//    fn F_arrow[a,b](a: C.Arr[a,b]) -> Prog.Arr[F_obj(a), F_obj(b)]
+
+// this is the case where a=Int, b=String:
+
+fn F_arrows[Int,String](a: C.Arr[Int,String]) -> D.Arr[F_obj(Int),F_obj(String)] { ... }
+fn F_arrows[Int,String](a: C.Arr[Int,String]) -> D.Arr[Float,String] {
+    match a {
+        PrintIntToString => FloatToString,
+        ...
+    }
+}
+
+enum D.Obj {
+    Float,
+    Bool,
+}
+```
+
+
+## Functors as interpretations of languages
+
+- Take $\textsf{Prog}$ the category of Rust types and Rust programs.
+- Take $\textsf{Java}$ the category of Java types and Java programs.
+
+A functor from $\textsf{Prog} \Rightarrow \textsf{Java}$ is essentially a way of translating Rust types into Java types and Rust programs into Java programs (using the translation on types).
+
+Of course there are many possible ways of translating types! e.g.,
+
+| Rust type | Java type |
+|-|-|
+| `i32` | `Integer` |
+| `i64` | `Integer` |
+| `Vec<i32>` | `ArrayList<Integer>` |
+| `bool` | `boolean` (or...) ||
+| `bool` | `Integer` |
+
+## Functors as models
+
+A *model* of a category $C$ is simply a functor $C \Rightarrow \text{Prog}$. What does this amount to?
+
+If you take the category where Obj := Int, Bool..., then one possible choice
+
+```rust
+// These are just symbols...
+enum C.Obj {
+    Int,
+    Float,
+    Bool,
+}
+
+enum C.Arr_Int_Bool {
+    IsEven
+}
+```
+
+But I can give it a real interpretation, via a functor $C \to \text{Prog}$ that assigns...
+
+```rust
+fn F_obj(a: C.Obj) -> Prog.Obj {
+    match a {
+        Int => "i32",
+        Float => "f32",
+        Bool => "bool",
+    }
+}
+```
+...continuing...
+```rust
+
+// For each possible a,b:C.Obj, define a function like this:
+//    fn F_arrow[a,b](a: C.Arr[a,b]) -> Prog.Arr[F_obj(a), F_obj(b)]
+
+...
+
+fn F_arrow[Int,Bool](Int: C.Arr[Int,Bool]) -> Prog.Arr[F_obj(Int), F_obj(Bool)] {
+    match a {
+        IsEven => "fn IsEven(a: Int) -> Bool { a % 2 == 0 }",
+    }
+}
+```
+
+In such a way that now this happens:
+
+```rust
+type Int = i32
+type Bool = bool
+type Float = f32
+
+fn IsEven(a: Int) -> Bool {
+    a % 2 == 0
+}
+```
+
+## Constant functor
+
+Given two categories $C,D$ and a chosen object `A:D.Obj`, there is a functor $K(A) : C \Rightarrow D$ that sends every object $X$ of $C$ to $A$.
+
+```rust
+enum D.Obj {
+    ...
+    A,
+    ...
+}
+
+fn K(A)_obj(a: C.Obj) -> D.Obj {
+    A
+}
+
+fn K(A)_arrows[a][b](f: C.Arr[a,b]) -> D.Obj[K(A)_Obj(a), K(A)_Obj(b)] { ... }
+fn K(A)_arrows[a][b](f: C.Arr[a,b]) -> D.Obj[A, A] {
+    id[A]
+}
+```
+
+To check functoriality, I have to check that for every $f : C \to D$, $g : D \to E$,
+
+$$
+F(f \,; g) = F(f) \,; F(g)\\
+\textsf{id}_A = \textsf{id}_A \,; \textsf{id}_A
+$$
+
+# Endomorphism
+
+A functor $F : C \Rightarrow C$ for some category $C$ is called an endofunctor (because source and target of the arrow are the same).
+
+# Endofunctors
+
+A functor $F : C \Rightarrow C$ for some category $C$ is called an endofunctor (because source and target of the arrow are the same).
+
+# Definition: the category of categories $\text{Cat}$.
+
+Like $\text{Prog}$ this is one of those categories that is somewhat complicated and that we cannot define in $\textsf{Rust}$.
+
+- *(Objects.)* The type of objects has a value of each possible category that you can think of (there is a lot of them!)
+- *(Arrows.)* Given two categories $C,D$, the type of arrows going from $C$ to $D$ has a symbol for each possible functor that you can have from $C$ to $D$.
+- *(Identities.)* Given a category $C$, there is a functor $\textsf{id}_C : C \Rightarrow C$, called the *identity functor*, which...
+- *(Composition.)* Given categories $C,D,E$ and two functors $F : C \Rightarrow D$ and $G : D \Rightarrow E$, there is a functor $F\,;G : C \Rightarrow E$
