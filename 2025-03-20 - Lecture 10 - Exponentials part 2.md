@@ -94,12 +94,12 @@ $$
 Since $A \Rightarrow B$ is an exponential object, it comes with:
 - $\textsf{eval} : (A \Rightarrow B) \times A \to B$
 - For any object $H$ and arrow $f : H \times A \to B$, an arrow $\Lambda(f) : H \to (A \Rightarrow B)$
-- Lambda equation, $\eta$-uniqueness.
+- Lambda equation, Lambda expansion.
 
 Similarly, $A \Rightarrow' B$ has:
 - $\textsf{eval}' : (A \Rightarrow' B) \times A \to B$
 - For any object $H$ and arrow $f : H \times A \to B$, an arrow $\Lambda'(f) : H \to (A \Rightarrow' B)$
-- Lambda equation, $\eta$-uniqueness.
+- Lambda equation, Lambda expansion.
 
 Now, let's define:
 
@@ -122,12 +122,12 @@ For $\textsf{E'2E} \,; \textsf{E2E'}$:
    $$
    \begin{array}{rcll}
     \textsf{E'2E} \,; \textsf{E2E'} & = & \Lambda'(((\textsf{E'2E} \,; \textsf{E2E'}) \times \textsf{id}_A) \,; \textsf{eval}') & \text{(Functoriality of $f\times g$)} \\
-    & & \Lambda'((\textsf{E'2E} \times \textsf{id}_A) \,; (\textsf{E2E'} \times \textsf{id}_A) \,; \textsf{eval}') & \text{(Definition of \textsf{E2E'})} \\
-    & & \Lambda'((\textsf{E'2E} \times \textsf{id}_A) \,; (\Lambda'(\textsf{eval}) \times \textsf{id}_A) \,; \textsf{eval}') & \text{(Lambda equation for $\Lambda'$)} \\
-    & & \Lambda'((\textsf{E'2E} \times \textsf{id}_A) \,; \textsf{eval}) & \text{(Definition of $\Lambda'$)} \\
-    & & \Lambda'((\Lambda(\textsf{eval}') \times \textsf{id}_A) \,; \textsf{eval}) & \text{(Lambda equation for $\Lambda$)} \\
-    & & \Lambda'(\textsf{eval}') & \text{(Previous lemma)}\\
-    & & \textsf{id}_{A\Rightarrow' B} \\
+    & = & \Lambda'((\textsf{E'2E} \times \textsf{id}_A) \,; (\textsf{E2E'} \times \textsf{id}_A) \,; \textsf{eval}') & \text{(Definition of \textsf{E2E'})} \\
+    & = & \Lambda'((\textsf{E'2E} \times \textsf{id}_A) \,; (\Lambda'(\textsf{eval}) \times \textsf{id}_A) \,; \textsf{eval}') & \text{(Lambda equation for $\Lambda'$)} \\
+    & = & \Lambda'((\textsf{E'2E} \times \textsf{id}_A) \,; \textsf{eval}) & \text{(Definition of $\Lambda'$)} \\
+    & = & \Lambda'((\Lambda(\textsf{eval}') \times \textsf{id}_A) \,; \textsf{eval}) & \text{(Lambda equation for $\Lambda$)} \\
+    & = & \Lambda'(\textsf{eval}') & \text{(Previous lemma)}\\
+    & = & \textsf{id}_{A\Rightarrow' B} \\
    \end{array}
    $$
 
