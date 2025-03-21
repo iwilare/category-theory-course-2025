@@ -12,28 +12,28 @@ In short: functors are "arrows between entire categories".
 Idea behind functors: functors embody the idea of interpreting the types and programs of a programming language into another category.
 
 Given two categories, $C,D$, a functor $F : C \Rightarrow D$ amounts to the following choices (we use `C.asdf` and `D.asdf` to denote the choices of their respective categories):
-- *(Program on objects)* a choice of a Rust program `F_obj` with the following signature:
+1. *(Program on objects)* a choice of a Rust program `F_obj` with the following signature:
     ```rust
     fn F_obj(a: C.Obj) -> D.Obj {
         ...
     }
     ```
-- *(Programs on arrows)* for every value `a:C.Obj`, `b:C.Obj` a choice of a Rust program `F_arrows[a][b]`
+2. *(Programs on arrows)* for every value `a:C.Obj`, `b:C.Obj` a choice of a Rust program `F_arrows[a][b]`
     ```rust
     fn F_arrows[a][b](f: C.Arr[a,b]) -> D.Arr[F_obj(a), F_obj(b)] {
         ...
     }
     ```
 
-- *(`F_arrows` respects identities)*: for every `a:C.Obj`, we know that thers is a value `id[a]:C.Arr[a,a]`. Calling `F_arrows[a][a]` on that value must give you exactly the identity in the corresponding type `D.Arr[F_obj(a), F_obj(a)]`, i.e., this equation holds:
+3. *(`F_arrows` respects identities)*: for every `a:C.Obj`, we know that thers is a value `id[a]:C.Arr[a,a]`. Calling `F_arrows[a][a]` on that value must give you exactly the identity in the corresponding type `D.Arr[F_obj(a), F_obj(a)]`, i.e., this equation holds:
     ```rust
     F_arrows[a][a](C.id[a]) = D.id[F_obj(a)]
     ```
-    $$F(\text{id}_A) = \text{id}_{F(A)}$$
+    $$F(\textsf{id}_A) = \textsf{id}_{F(A)}$$
 
-- *(`F_arrows` respects compositions, also called "functoriality")*: for every `a,b,c:C.Obj` and every `f:C.Arr[a,b]`, `g:Arr[b,c]`, this equation holds:
+4. *(`F_arrows` respects compositions, also called "functoriality")*: for every `a,b,c:C.Obj` and every `f:C.Arr[a,b]`, `g:Arr[b,c]`, this equation holds:
     ```rust
-    F_arrows[a][b](C.compose(f, g)) =
+    F_arrows[a][c](C.compose(f, g)) =
     D.compose(F_arrows[a][b](f), F_arrows[b][c](g))
     ```
     $$F(f\,;g) = F(f)\,;F(g)$$
@@ -44,7 +44,7 @@ Again, we can often omit the indices if we know the types of the arrows involved
 
 | Math notation | Rust notation |
 |---|---|
-| $F(a)$ | `F_obj(a)` |
+| $F(A)$ | `F_obj(A)` |
 | $F(f)$ | `F_arrows(f)` |
 
 ## Graphical intuition
@@ -196,7 +196,7 @@ fn IsEven(a: Int) -> Bool {
 }
 ```
 
-## Constant functor
+## Constant functor on an object $A$
 
 Given two categories $C,D$ and a chosen object `A:D.Obj`, there is a functor $K(A) : C \Rightarrow D$ that sends every object $X$ of $C$ to $A$.
 

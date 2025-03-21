@@ -103,8 +103,8 @@ Similarly, $A \Rightarrow' B$ has:
 
 Now, let's define:
 
-- $\textsf{E2E'} := \Lambda'(\textsf{eval}) : (A \Rightarrow B) \to (A \Rightarrow' B)$
-- $\textsf{E'2E} := \Lambda(\textsf{eval}') : (A \Rightarrow' B) \to (A \Rightarrow B)$
+- $\textsf{E2E'} := \Lambda'(\textsf{eval}) : (A \Rightarrow B) \to (A \Rightarrow' B) \quad $ (we picked $H := A \Rightarrow B$ in $\Lambda'$)
+- $\textsf{E'2E} := \Lambda(\textsf{eval}') : (A \Rightarrow' B) \to (A \Rightarrow B) \quad $ (we picked $H := A \Rightarrow' B$ in $\Lambda$)
 
 We need to show that $\textsf{E'2E} \,; \textsf{E2E'} = \textsf{id}_{(A \Rightarrow' B)}$ and $\textsf{E2E'} \,; \textsf{E'2E} = \textsf{id}_{(A \Rightarrow B)}$.
 
@@ -121,7 +121,8 @@ For $\textsf{E'2E} \,; \textsf{E2E'}$:
 
    $$
    \begin{array}{rcll}
-    \textsf{E'2E} \,; \textsf{E2E'} & = & \Lambda'(((\textsf{E'2E} \,; \textsf{E2E'}) \times \textsf{id}_A) \,; \textsf{eval}') & \text{(Functoriality of $f\times g$)} \\
+    \textsf{E'2E} \,; \textsf{E2E'} & = & \Lambda'(((\textsf{E'2E} \,; \textsf{E2E'}) \times \textsf{id}_A) \,; \textsf{eval}') & \text{(Identity laws of categories)} \\
+     & = & \Lambda'(((\textsf{E'2E} \,; \textsf{E2E'}) \times (\textsf{id}_A \,; \textsf{id}_A)) \,; \textsf{eval}') & \text{(Functoriality of $f\times g$)} \\
     & = & \Lambda'((\textsf{E'2E} \times \textsf{id}_A) \,; (\textsf{E2E'} \times \textsf{id}_A) \,; \textsf{eval}') & \text{(Definition of \textsf{E2E'})} \\
     & = & \Lambda'((\textsf{E'2E} \times \textsf{id}_A) \,; (\Lambda'(\textsf{eval}) \times \textsf{id}_A) \,; \textsf{eval}') & \text{(Lambda equation for $\Lambda'$)} \\
     & = & \Lambda'((\textsf{E'2E} \times \textsf{id}_A) \,; \textsf{eval}) & \text{(Definition of $\Lambda'$)} \\
@@ -136,7 +137,7 @@ A symmetric argument shows that $\textsf{E2E'} \,; \textsf{E'2E} = \textsf{id}_{
 
 # The Product-Exponential Isomorphism
 
-For any cartesian closed category $C$, which as types of arrows `Arr_A_B`, there's a fundamental isomorphism in the category $\text{Prog}$ (!!) between the following two types:
+For any cartesian closed category $C$, which as types of arrows `Arr_A_B`, there's a fundamental isomorphism in the category $\text{Prog}$ (!!) between the following two types for every $H,A,B$:
 
 $$\texttt{Arr\_HxA\_B} \cong \texttt{Arr\_H\_A⇒B} $$
 
@@ -193,13 +194,14 @@ Why do these form an isomorphism in $\text{Prog}$?
 >
 > Now, and only now, we show how the above definitions instantiate in Prog:
 
-## Example in Prog
+# Example in Prog ("External")
 
 In the category $\text{Prog}$ the above operations are defined as follows:
 
 ```rust
 // A function of two arguments
 fn f(p: Pair<H, A>) -> B { ... }
+fn g(p: H) -> Func<A,B> { ... }
 
 // Its curried version
 fn curry_f(h: H) -> Func<A, B> {
@@ -209,6 +211,19 @@ fn curry_f(h: H) -> Func<A, B> {
 // And uncurrying
 fn uncurry_g(p: Pair<H, A>) -> B {
     (g(p.first))(p.second)
+}
+```
+
+# Internal version of curry and uncurry ("Internal")
+
+I can define a version of curry and uncurry which is just a single function that does the operation above for every possible arrow. The one above just defins a new arrow if you give me another arrow f and g, but this act of giving a new arrow is *not* a program within the programming language itself.
+
+```rust
+fn curry(f: Func<Pair<H,A>, B>) -> Func<H, Func<A, B>> {
+   |h: H| |a: A| f(h, a)
+}
+fn uncurry(g: Func<H, Func<A, B>>) -> Func<Pair<H,A>, B> {
+   |p: Pair<H,A>| (g(p.first))(p.second)
 }
 ```
 
