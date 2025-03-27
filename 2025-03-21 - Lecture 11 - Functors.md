@@ -25,7 +25,7 @@ Given two categories, $C,D$, a functor $F : C \Rightarrow D$ amounts to the foll
     }
     ```
 
-3. *(`F_arrows` respects identities)*: for every `a:C.Obj`, we know that thers is a value `id[a]:C.Arr[a,a]`. Calling `F_arrows[a][a]` on that value must give you exactly the identity in the corresponding type `D.Arr[F_obj(a), F_obj(a)]`, i.e., this equation holds:
+3. *(`F_arrows` respects identities)*: for every `a:C.Obj`, we know that there is a value `id[a]:C.Arr[a,a]`. Calling `F_arrows[a][a]` on that value must give you exactly the identity in the corresponding type `D.Arr[F_obj(a), F_obj(a)]`, i.e., this equation holds:
     ```rust
     F_arrows[a][a](C.id[a]) = D.id[F_obj(a)]
     ```
@@ -139,63 +139,6 @@ Of course there are many possible ways of translating types! e.g.,
 | `bool` | `boolean` (or...) ||
 | `bool` | `Integer` |
 
-## Functors as models
-
-A *model* of a category $C$ is simply a functor $C \Rightarrow \text{Prog}$. What does this amount to?
-
-If you take the category where Obj := Int, Bool..., then one possible choice
-
-```rust
-// These are just symbols...
-enum C.Obj {
-    Int,
-    Float,
-    Bool,
-}
-
-enum C.Arr_Int_Bool {
-    IsEven
-}
-```
-
-But I can give it a real interpretation, via a functor $C \to \text{Prog}$ that assigns...
-
-```rust
-fn F_obj(a: C.Obj) -> Prog.Obj {
-    match a {
-        Int => "i32",
-        Float => "f32",
-        Bool => "bool",
-    }
-}
-```
-...continuing...
-```rust
-
-// For each possible a,b:C.Obj, define a function like this:
-//    fn F_arrow[a,b](a: C.Arr[a,b]) -> Prog.Arr[F_obj(a), F_obj(b)]
-
-...
-
-fn F_arrow[Int,Bool](Int: C.Arr[Int,Bool]) -> Prog.Arr[F_obj(Int), F_obj(Bool)] {
-    match a {
-        IsEven => "fn IsEven(a: Int) -> Bool { a % 2 == 0 }",
-    }
-}
-```
-
-In such a way that now this happens:
-
-```rust
-type Int = i32
-type Bool = bool
-type Float = f32
-
-fn IsEven(a: Int) -> Bool {
-    a % 2 == 0
-}
-```
-
 ## Constant functor on an object $A$
 
 Given two categories $C,D$ and a chosen object `A:D.Obj`, there is a functor $K(A) : C \Rightarrow D$ that sends every object $X$ of $C$ to $A$.
@@ -223,20 +166,3 @@ $$
 F(f \,; g) = F(f) \,; F(g)\\
 \textsf{id}_A = \textsf{id}_A \,; \textsf{id}_A
 $$
-
-# Endomorphism
-
-A functor $F : C \Rightarrow C$ for some category $C$ is called an endofunctor (because source and target of the arrow are the same).
-
-# Endofunctors
-
-A functor $F : C \Rightarrow C$ for some category $C$ is called an endofunctor (because source and target of the arrow are the same).
-
-# Definition: the category of categories $\text{Cat}$.
-
-Like $\text{Prog}$ this is one of those categories that is somewhat complicated and that we cannot define in $\textsf{Rust}$.
-
-- *(Objects.)* The type of objects has a value of each possible category that you can think of (there is a lot of them!)
-- *(Arrows.)* Given two categories $C,D$, the type of arrows going from $C$ to $D$ has a symbol for each possible functor that you can have from $C$ to $D$.
-- *(Identities.)* Given a category $C$, there is a functor $\textsf{id}_C : C \Rightarrow C$, called the *identity functor*, which...
-- *(Composition.)* Given categories $C,D,E$ and two functors $F : C \Rightarrow D$ and $G : D \Rightarrow E$, there is a functor $F\,;G : C \Rightarrow E$
