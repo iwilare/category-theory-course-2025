@@ -1,5 +1,9 @@
 # Lecture notes "Introduction to Category Theory and its Applications" (Computer Science Track)
 
+### Homeworks
+
+- [Homework 1](Homework1.md)
+
 ### Further reading material
 
 Here is a non-exhaustive list of introductory books to Category Theory which encourage the perspective taken in this course. The list is given in *increasing* order of perceived difficulty for students.
