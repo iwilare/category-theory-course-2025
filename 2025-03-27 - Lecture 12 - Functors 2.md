@@ -1,7 +1,5 @@
 # 2025-03-21 - Lecture 11 (Functors)
 
-# Today's plan
-
 ## Functors as models
 
 A *model* of a category $C$ is simply a functor $C \Rightarrow \text{Prog}$.
@@ -258,11 +256,10 @@ fn fmap(f: A -> B) -> Func<List<A>, List<B>> {
 }
 ```
 
-
-
 ### Exercise: define functors in $\text{Prog}$: `X` is sent to `Maybe<X>`
 
 ### Exercise: define functors in $\text{Prog}$: `X` is sent to `Pair<X, X>`
+
 ### Exercise: define functors in $\text{Prog}$, for any `A` type: `X` is sent to `Pair<A, X>`
 
 ### Exercise: define functors in $\text{Prog}$, for any `A` type: `X` is sent to `Either<A, X>`
