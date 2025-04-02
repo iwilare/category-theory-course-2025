@@ -1,4 +1,4 @@
-# 2025-03-21 - Lecture 11 (Functors)
+# 2025-03-21 - Lecture 12 (Functors)
 
 ## Functors as models
 

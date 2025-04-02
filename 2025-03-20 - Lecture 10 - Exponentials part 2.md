@@ -1,4 +1,4 @@
-# 2025-03-21 - Lecture 9 (Distributivity, Universal proprerty of exponentials)
+# 2025-03-21 - Lecture 10 (Distributivity, Universal proprerty of exponentials)
 
 ## Today's plan
 

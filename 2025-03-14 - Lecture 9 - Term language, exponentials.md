@@ -1,4 +1,4 @@
-# 2025-03-14 - Lecture 8 (Term language, exponential objects)
+# 2025-03-14 - Lecture 9 (Term language, exponential objects)
 
 ## Today's plan
 
