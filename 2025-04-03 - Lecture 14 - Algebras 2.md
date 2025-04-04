@@ -467,6 +467,32 @@ $$
 
 # Now, you can do this exact process about every single recursive algebraic data type that you can think of: each type is going to be the object of an initial algebra.
 
+# Something that is not a functor...
+
+
+We need to add function types in the mix for us to be able to create something that is not a functor. if we onl have coproducts (Either), products (Pairs), terminals (Unit), initial (Empty) then everything we can build out of these is going to be a functor and the recursive datatypes that you build out of the initial algebra process are effectively the correct ones.
+
+An example of something that is not a functor:
+
+```rust
+struct NotAFunctor<X> {
+    endo: Func<X, X>
+}
+type NotAFunctor<X> = Func<X, X>
+
+// Whenever we have given an fn f(a: A) -> B { ... }
+// We cannot complete this definition, however:
+fn NotAFunctor_arrow_f(a: NotAFunctor<A>): NotAFunctor<B> {
+    ...
+}
+fn NotAFunctor_arrow_f(a: Func<A,A>): Func<B,B> {
+    let g: Func<A,B> = compose(a, f)
+}
+```
+
+
+
+
 # On the term language
 
 Take any category $C$ with products, coproducts, and a terminal object. Pick a special object $V$ of $C$, which acts as our `i32`.

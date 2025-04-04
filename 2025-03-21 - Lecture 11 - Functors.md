@@ -141,7 +141,7 @@ Of course there are many possible ways of translating types! e.g.,
 
 ## Constant functor on an object $A$
 
-Given two categories $C,D$ and a chosen object `A:D.Obj`, there is a functor $K(A) : C \Rightarrow D$ that sends every object $X$ of $C$ to $A$.
+Given two categories $C,D$ and a chosen object `A:D.Obj`, there is a functor $const(A) : C \Rightarrow D$ that sends every object $X$ of $C$ to $A$.
 
 ```rust
 enum D.Obj {
@@ -150,12 +150,12 @@ enum D.Obj {
     ...
 }
 
-fn K(A)_obj(a: C.Obj) -> D.Obj {
+fn const(A)_obj(a: C.Obj) -> D.Obj {
     A
 }
 
-fn K(A)_arrows[a][b](f: C.Arr[a,b]) -> D.Obj[K(A)_Obj(a), K(A)_Obj(b)] { ... }
-fn K(A)_arrows[a][b](f: C.Arr[a,b]) -> D.Obj[A, A] {
+fn const(A)_arrows[a][b](f: C.Arr[a,b]) -> D.Obj[const(A)_Obj(a), const(A)_Obj(b)] { ... }
+fn const(A)_arrows[a][b](f: C.Arr[a,b]) -> D.Obj[A, A] {
     id[A]
 }
 ```
