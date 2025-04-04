@@ -1,4 +1,4 @@
-# 2025-04-02 - Lecture 13 (Algebras)
+# 2025-04-03 - Lecture 14 (Algebras)
 
 ## Main example: `ListInt` as initial algebra.
 
@@ -10,6 +10,14 @@ enum ListInt {
 }
 ```
 
+---
+
+```rust
+enum ListIntAlg<X> {
+    AlgEmpty,
+    AlgElement(i32, X)
+}
+```
 What does an algebra for this functor essentially provide?
 
 > RECALL:
@@ -48,9 +56,9 @@ What does an algebra for this functor essentially provide?
 An algebra for this functor is a choice of a type `A` with an arrow/program `fn extract(a: ListIntAlg<A>) -> A`, which essentially gives you a pair of functions like these:
 
 ```rust
-fn extract_AEmpty(a: Unit) -> A { extract(AlgEmpty) } // equivalently,
-fn extract_AEmpty() -> A { extract(AlgEmpty) }
-fn extract_AElement(v: i32, a: A) -> A { extract(AlgElement(v, a)) }
+fn extract_AlgEmpty(a: Unit) -> A { extract(AlgEmpty) } // equivalently,
+fn extract_AlgEmpty() -> A { extract(AlgEmpty) }
+fn extract_AlgElement(v: i32, a: A) -> A { extract(AlgElement(v, a)) }
 ```
 
 where note that the first function is essentially just a value of `A`.
@@ -124,8 +132,8 @@ The following code is the typical way in which `foldr` is represented (e.g., in 
 ```rust
 fn foldr<A>(base: A, func: Func<Pair<i32, A>, A>, list: ListInt) -> A {
     match list {
-        AlgEmpty => base,
-        AlgElement(v: i32, tail: ListInt) -> func(v, foldr(base, func, tail))
+        Empty => base,
+        Element(v: i32, tail: ListInt) -> func(v, foldr(base, func, tail))
     }
 }
 ```
@@ -151,13 +159,13 @@ An alternative "parametric" and **less functional** version of this program is t
 The next one is the version that we will use here.
 Let's write the above choice explicitly in terms of algebras of `ListIntAlg`.
 
-Imagine that someone gives us an algebra for `ListIntAlg`, i.e., they pick a type `H` and gives us an arrow/program `fn alpha(a: ListIntAlg<H>)`. Then, we can construct an arrow like this:
+Imagine that someone gives us an algebra for `ListIntAlg`, i.e., they pick a type `H` and gives us an arrow/program `fn alpha(a: ListIntAlg<H>) -> H`. Then, we can construct an arrow like this:
 
 > ```rust
-> fn foldr[alpha](list: ListInt) -> A {
+> fn foldr[alpha](list: ListInt) -> H {
 >     match list {
->         AlgEmpty => alpha(AlgEmpty),
->         AlgElement(v, tail: ListInt) -> func(v, foldr[alpha](tail))
+>         Empty => alpha(AlgEmpty),
+>         Element(v, tail: ListInt) -> alpha(AlgElement(v, foldr[alpha](tail)))
 >     }
 > }
 > ```
@@ -165,7 +173,7 @@ Imagine that someone gives us an algebra for `ListIntAlg`, i.e., they pick a typ
 ## `ListInt` as initial algebra for `ListIntAlg`.
 
 **Spoilers for what we will do**: we show that:
-1. There is an algebra $i : $ (`ListInt`, `fn constr(a: ListIntAlg<ListInt>) -> ListInt`),
+1. There is an algebra $i := $ (`ListInt`, `fn constr(a: ListIntAlg<ListInt>) -> ListInt`),
 2. This algebra $i$ is an initial algebra in the category $\textsf{Alg}(\texttt{ListIntAlg})$.
 3. The arrow `constr` gives you the constructors of `ListInt`,
 4. The initiality property of `ListInt` tells you precisely how to define `foldr`, in a unique way.
@@ -175,8 +183,8 @@ Imagine that someone gives us an algebra for `ListIntAlg`, i.e., they pick a typ
 1. First, we decide the arrow `fn constr(a: ListIntAlg<ListInt>) -> ListInt` of the algebra $i$:
 
     Again, if we've done our calculations correct in the previous section, this should amount to:
-    1. a value of ListInt,
-    2. A binary function that takes as input an integer and a value of ListInt to produce a value of ListInt.
+    1. A value of `ListInt`,
+    2. A binary function that takes as input an integer and a value of `ListInt` to produce a value of `ListInt`.
 
     ```rust
     enum ListIntAlg<X> {
@@ -197,7 +205,7 @@ Imagine that someone gives us an algebra for `ListIntAlg`, i.e., they pick a typ
 
     What does it mean to be initial?
 
-    For every other algebra $(H,\alpha) : (H, \texttt{fn alpha(a: ListIntAlg<H>) -> H})$, there is an algebra arrow $f : i \to (H,\alpha)$.
+    For every other algebra $(H,\alpha) := (H, \texttt{fn alpha(a: ListIntAlg<H>) -> H})$, there is an algebra arrow $f : i \to (H,\alpha)$.
 
     What is an algebra arrow again? It's an arrow of $\text{Prog}$ from the object chosen by $i$ to the object chosen by $\alpha$:
 
@@ -229,7 +237,7 @@ Imagine that someone gives us an algebra for `ListIntAlg`, i.e., they pick a typ
     Let's verify that the square commutes; remember that $\texttt{ListIntAlg}(\texttt{foldr}_\alpha)$ corresponds to the program on arrows of $\texttt{foldr}_\alpha$.
 
     The square commuting, in $\texttt{Prog}$, means that two arrows/programs are program equivalent.
-    In particular, we need to check that for every value `v: ListIntAlg(ListInt)` the following two programs are equivalent:
+    In particular, we need to check that for every value `v: ListIntAlg<ListInt>` the following two programs are equivalent:
 
     ```rust
         alpha(ListIntAlg_arrows_foldr(v))
@@ -239,17 +247,17 @@ Imagine that someone gives us an algebra for `ListIntAlg`, i.e., they pick a typ
     where we don't know anything about `fn alpha(v: ListIntAlg<H>) -> H` and the other arrows are defined like this:
 
     ```rust
-    fn ListInt_arrows_f(a: ListIntAlg<A>) -> ListIntAlg<B> {
+    fn ListIntAlg_arrows_f(a: ListIntAlg<A>) -> ListIntAlg<B> {
         match a {
             AlgEmpty => AlgEmpty,
-            AlgElement(v: i32, x: A) -> AlgElement(v, f(a))
+            AlgElement(v: i32, x: A) -> AlgElement(v, f(x))
         }
     }
     // so, for f=foldr,
-    fn ListInt_arrows_foldr(a: ListIntAlg<ListInt>) -> ListIntAlg<H> {
+    fn ListIntAlg_arrows_foldr(a: ListIntAlg<ListInt>) -> ListIntAlg<H> {
         match a {
             AlgEmpty => AlgEmpty,
-            AlgElement(i: i32, v: ListInt) -> AlgElement(v, foldr(v))
+            AlgElement(i: i32, x: ListInt) -> AlgElement(i, foldr(x))
         }
     }
     fn foldr[alpha](a: ListIntAlg<ListInt>) -> ListIntAlg<H> {
@@ -269,7 +277,7 @@ Imagine that someone gives us an algebra for `ListIntAlg`, i.e., they pick a typ
     There are two cases to check:
     1. `v = AlgEmpty`:
         ```rust
-         = alpha(ListIntAlg_arrows_foldr(v))
+           alpha(ListIntAlg_arrows_foldr(v))
          = alpha(ListIntAlg_arrows_foldr(AlgEmpty))
          = alpha(AlgEmpty)
         ```
@@ -281,23 +289,19 @@ Imagine that someone gives us an algebra for `ListIntAlg`, i.e., they pick a typ
         = alpha(AlgEmpty)
         ```
 
-        Note that for
-        ```
-        = alpha(ListIntAlg_arrows_foldr(AlgEmpty))
-        ```
-    2. `v = AlgElement(i, v)` for a value `i: i32` and a list `v: ListInt`, we must have that
+    2. `v = AlgElement(i, x)` for a value `i: i32` and a list `x: ListInt`, we must have that
         ```rust
            alpha(ListIntAlg_arrows_foldr(v))
-         = alpha(ListIntAlg_arrows_foldr(AlgElement(i, v)))
-         = alpha(AlgElement(i, foldr(v)))
+         = alpha(ListIntAlg_arrows_foldr(AlgElement(i, x)))
+         = alpha(AlgElement(i, foldr(x)))
         ```
         The other side of the equality,
         ```rust
            foldr(constr(v))
-         = foldr(constr(AlgElement(i, v)))
-         = foldr(Element(i, v)) // this is the point where we impose = alpha(AlgElement(i, foldr(v))).
-         = alpha(AlgElement(i, foldr(v)))
-3. Given any other algebra arrow $k : (\texttt{ListInt},\texttt{constr}) \to (H,\alpha)$ (so, an arrow `fn k(a: ListInt) -> H` which makes the algebra arrow square commute), we need to show that `k` is actually program equivalent to $\textsf{foldr} : (\texttt{ListInt},\texttt{constr}) \to (H,\alpha)$. This is uniqueness of the arrow from initial objects.
+         = foldr(constr(AlgElement(i, x)))
+         = foldr(Element(i, x)) // this is the point where we impose = alpha(AlgElement(i, foldr(x))).
+         = alpha(AlgElement(i, foldr(x)))
+3. *(This last point does not need to be studied in detail, since we do not introduce/assume that you know about induction.)* Given any other algebra arrow $h : (\texttt{ListInt},\texttt{constr}) \to (H,\alpha)$ (so, an arrow `fn h(a: ListInt) -> H` which makes the algebra arrow square commute), we need to show that `h` is actually program equivalent to $\textsf{foldr} : (\texttt{ListInt},\texttt{constr}) \to (H,\alpha)$. This is uniqueness of the arrow from initial objects.
 
     > Remember that since we know that `h` is also an algebra arrow, we know that the equation
     > ```rust
@@ -353,7 +357,7 @@ Imagine that someone gives us an algebra for `ListIntAlg`, i.e., they pick a typ
 
 Assume there exists an initial algebra $(I, \gamma : F(I) \to I)$. (note that $I$ is not the initial object of $C$ here!!)
 
-Then, $\gamma$ is part of the isomorphism $F(I) \cong I$, i.e., there is an arrow $\beta : I \to F(I)$ which composes to the identity with $\gamma$ in both ways.
+*(Claim.)* Then, $\gamma$ is part of the isomorphism $F(I) \cong I$, i.e., there is an arrow $\beta : I \to F(I)$ which composes to the identity with $\gamma$ in both ways.
 
 Again, saying that $F(I) \cong I$ essentially amounts to saying that $I$ is a fixpoint of $F$.
 
@@ -411,7 +415,7 @@ This is a consequence of initiality; if we had *weak initality* we would not be 
 
     BUT, by uniqueness, we must have that $!_{\mathcal{A}} \,; \gamma = \textsf{id}_I$, because these are two "distinct" *algebra arrows* from the same initial object, and since we assume that $(I, \gamma)$ is the initial object there can only be one. (this step is analogous to when we showed that being initial is a universal property.)
 
-4. In the other direction, we want to show that $\gamma \,; !_\mathcal{A}$. This actually follows very quickly from the commutativity of this square that we invoked before using initiality:
+4. In the other direction, we want to show that $\gamma \,; !_\mathcal{A} = \textsf{id}_{F(I)}$. This actually follows very quickly from the commutativity of this square that we invoked before using initiality:
     $$
     \begin{array}{ccccccccc}
     \phantom{\gamma} F(I) & \xrightarrow{F(!_{\mathcal{A}})} & F(F(I)) \phantom{F(\gamma)} & \\
@@ -460,3 +464,58 @@ $$
 & \cong &\texttt{1 + $\underbrace{\texttt{i32}}{}$ + $\underbrace{\texttt{i32 × i32}}{}$ + $\underbrace{\texttt{i32 × i32 × i32}}{}$ + $\underbrace{\texttt{i32 × i32 × i32 × i32}}{}$ + ...} \\
 \end{array}
 $$
+
+# Now, you can do this exact process about every single recursive algebraic data type that you can think of: each type is going to be the object of an initial algebra.
+
+# On the term language
+
+Take any category $C$ with products, coproducts, and a terminal object. Pick a special object $V$ of $C$, which acts as our `i32`.
+
+Consider the endofunctor $LA$ defined like this:
+- the program on object sends $X$ to $1 + V \times X$,
+- the program on arrows sends an arrow $f : A \to B$ to an arrow $LA(f) : (1 + V \times A) \to (1 + V \times B)$, which is defined in a suitable way which we omit here.
+
+*(Claim.)* If the category of algebras of $\textsf{Alg}(LA)$ has an initial object $(L, c : LA(L) \to L)$, then the term language comes equipped with:
+- A type `List<V>` (corresponding to the object $L$),
+- A constructor `Empty` (corresponding to $\textsf{inl}\,;\,c$)
+- A constructor `Element` (corresponding to $\textsf{inr}\,;\,c$)
+- The possibility of simple recursion on lists; simple recursion here essentially means that you're only allowed to call recursive functions on the *tail* of the list. More complicated forms of recursions are not too hard to obtain, but require more care.
+*(Claim.)* Every function definable in the above Rust-like term language can be written in terms of `foldr`.
+
+# Small extra: coinduction
+
+We have seen *initial algebras*: in the case of a certain functor `ListIntAlg`, the type `ListInt` with its constructors becomes an initial algebra.
+
+What if we reverse all the arrows?
+
+In other words, what is a *terminal coalgebra* for `ListIntAlg`?
+The answer turns out to be this: such terminal coalgebras do not exist in the version of Rust that we talk about, and actually they do not arise (in a precise way) in most programming languages, with the notable exception of *Idris, Haskell*, and Java to some extent.
+
+*(Claim.)* The terminal coalgebra for `ListIntAlg` is `ColistInt` (if you've seen Idris then you know what this is.) `ColistInt` is defined as follows:
+
+```rust
+type ColistInt = Either<ListInt, StreamInt>
+```
+
+where now `StreamInt` is the type of *infinite streams of integers*.
+
+*(Claim.)* Moreover, `StreamInt` is also a terminal coalgebra. Take this very simple functor here:
+
+```rust
+enum StreamInt {
+    // No case of empty! Streams do not ever terminate.
+    Element(a: i32, v: StreamInt)
+}
+enum StreamIntAlg<X> {
+    Element(a: i32, v: X)
+}
+
+type StreamIntAlg<X> = Pair<i32, X>
+
+// Not obvious how to create a value like this in a finite amount of time... (unless you have pointers)
+```
+The claim is that, if Rust had full coinductive datatypes, then `StreamInt` (with the constructor above) would be a terminal coalgebra for this functor `StreamIntAlg`.
+
+Notice the duality:
+- Induction was used to prove uniqueness of the arrow from the initial algebra to any other one in the case of lists.
+- Coinduction will need to be used to prove uniqueness of the arrow into the terminal algebra from any other one in the case of lists.
