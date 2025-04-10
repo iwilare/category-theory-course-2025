@@ -228,7 +228,7 @@ How did I derive these? Simply by substituting equal things for other equal thin
 
 At the same time you have programs. Given *ANY* category whatsoever, one can construct a *canonical* corresponding programming language:
 
-- *(Types).* type of your programming language are exactly the objects of the category.
+- *(Types).* the types of your programming language are exactly the objects of the category.
 - *(Programs/functions).* are the arrows.
 
 ```rust
