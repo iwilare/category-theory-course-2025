@@ -32,7 +32,7 @@ Show that if $A \cong B$ then $A \times C \cong B \times C$. Do this by explicit
 
 ## Exercise 5 (10 points)
 
-Show that $A + 0 \cong 0$. (Hint: remember that, as per definition of initial object, any arrow $f : 0 \to H$ is equal to the unique one $! : 0 \to H$ that you have because $0$ is the initial object.)
+Show that $A + 0 \cong A$. (Hint: remember that, as per definition of initial object, any arrow $f : 0 \to H$ is equal to the unique one $! : 0 \to H$ that you have because $0$ is the initial object.)
 
 ## Exercise 6 (10 points)
 
