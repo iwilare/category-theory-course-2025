@@ -251,7 +251,7 @@ fn List_arrows_f(a: List<A>) -> List<B> {
 *This program here is related but it not what is required from the definition of functor.*
 
 ```rust
-fn fmap(f: A -> B) -> Func<List<A>, List<B>> {
+fn fmap(f: Func<A,B>) -> Func<List<A>, List<B>> {
     ...
 }
 ```
