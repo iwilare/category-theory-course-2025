@@ -482,4 +482,38 @@ How to define this functor?
 We will see in the next lecture that secretly $よ$ is the curried version of a very important functor:
 $$\text{Arr} : C^\textsf{op} \times C \to \textsf{Prog}$$
 
-<!--# Extra: Why this is the true Yoneda and the rest are fakes...-->
+# Beware of fake Yoneda lemmas!
+
+People often can find online explanations of the Yoneda lemma using Haskell.
+
+*(Claim.)* Those explainations using standard programming languages (i.e., not math nor the presentation given here) are *NOT* about the Yoneda lemma.
+
+Typically, in those explainations Haskell is used and the Yoneda lemma is presented as saying something like this:
+
+### Fake Yoneda lemma, in Haskell
+
+Given any Functor `F` and a type `a` there is an isomorphism of types between `∀ x. (a -> x) -> F x` and `F a`.
+
+Here are some problems with this definition.
+
+- In our course we have never mentioned `∀` as a part of our language, it's just part of what our types can be: we *do* use parametric functions and this effectively amounts to a sort of "∀", but this quantification is not part of the types themselves (it just never appears). Modeling what it means for a programming language to have this sort of "internal ∀" (which for example allows you to write something like `(∀ x. x -> x) -> Bool`) is actually extremely complicated!
+
+   *(Claim.)* Consider the category where objects are the types of such a programming language with "internal ∀" and arrows are the programs writable in such a programming language, and equality of arrows is defined to be program equivalence in this programming language. Then, there is no fully-faithful functor (i.e., a functor such that programs on arrows are isomorphisms of types) from such a category into $\textrm{Prog}$. Intuition: there are no "standard/easy models" of this programming language. References for this extra fact: [^1][^2][^4]
+- The kind of reasoning that one uses in Haskell is very informal, it's just not program equivalence, because you need to pull out of thin air the "naturality" property that we have always *assumed* to have; in those tutorial naturality is taken implicitly as a consequence of something called "parametricity", a (very nice but) much more complicated property to justify. Take a look at [^3] for the concept of parametricity.
+- A technical condition that we do not mention for the Yoneda lemma is that $C$ must be a *small category*. What this means exactly is out of the scope of the course, but intuitively, is that every category that we can define inside Rust (i.e. that we can literally write the objects and arrows types for) is a small category. The rest is typically not small. Examples of categories that are not small:
+
+    - $\textrm{Prog}$ is not small,
+    - $\textrm{Cat}$ is not small.
+
+    If $C,D$ are small categories, $[C,D]$ is a small category.
+- With this in mind, the Yoneda lemma presented in Haskell is essentially picking $C$ to be $\textrm{Prog}$ (because `a` is a type, i.e., a value in the type of objects $\text{Prog}$), and so the Yoneda lemma in Haskell says something about functors $[\textrm{Prog},\textrm{Prog}]$.
+
+#### References
+
+[^1]: Reynolds, "Polymorphism is not set-theoretic" (1984)
+
+[^2]: Pitts, "Polymorphism is set theoretic, constructively" (1987)
+
+[^3]: Wadler, "Theorems for Free!" (1989)
+
+[^4]: Bainbridge et al. "Functorial polymorphism" (1990)
