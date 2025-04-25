@@ -1,4 +1,4 @@
-# 2025-04-11 - Lecture 16 (Product of categories, monoidal categories)
+# 2025-04-11 - Lecture 16 (Products, terminals, initials of categories)
 
 #### Meta-comment: this lecture is shorter because on this day we finished the proof of the Yoneda lemma.
 
@@ -85,10 +85,10 @@ struct Unit {
 ```
 
 1. *(Object).* We pick as `Obj` The type `Unit`.
-2. *(Arrows).* We pick as `Arr_Obj_Obj` the type `Unit`.
+2. *(Arrows).* We pick as `Arr_unit()_unit()` the type `Unit`.
 3. *(Identities).* For the identity on the object `unit()` (note! this is an object of the category. Do not mistake it for the type of objects `Unit`), we pick the value `unit(): Arr_unit_unit`.
 4. *(Composition).* We can only make this choice here:
-```
+```rust
 fn compose[unit()][unit()][unit()](a: Arr_unit_unit, b: Arr_unit_unit): Arr_unit_unit { ... }
 fn compose[unit()][unit()][unit()](a: Unit, b: Unit): Unit {
     unit()

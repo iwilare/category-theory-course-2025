@@ -1,4 +1,4 @@
-# 2025-04-11 - Lecture 16 (Product of categories, monoidal categories)
+# 2025-04-11 - Lecture 16 (Monoidal categories)
 
 Today we will see how to build new functors from old ones.
 
@@ -39,7 +39,7 @@ So, we build a natural transformation:
 
 $$\alpha : F \times G \longrightarrow F$$
 
-given by a family of arrows
+given by a family of arrows for each $X$ an object of $C$,
 
 $$\alpha_X : (F \times G)(X) \longrightarrow F(X)$$
 $$\alpha_X : F(X) \times G(X) \longrightarrow F(X)$$
@@ -71,7 +71,7 @@ Equationally, I need to show that
 $$
 \begin{array}{rcll}
    &   & (F(f) \times G(f)) \,; \textsf{fst} & \text{(unfolding the parallel pair of arrows)} \\
-& = & \langle \textsf{fst} \,; F(f), \textsf{fst} \,; G(f) \rangle \,; \textsf{fst} & \text{(product equation)} \\
+& = & \langle \textsf{fst} \,; F(f), \textsf{snd} \,; G(f) \rangle \,; \textsf{fst} & \text{(product equation)} \\
  & = & \textsf{fst}\,;F(f)
 \end{array}$$
 
@@ -157,6 +157,17 @@ Same thing as above, but for coproducts.
 
 As you saw, there some cases where you have a functor $C \times C \Rightarrow C$ on your category. It turns out that there are some more examples which do *not* come from product/coproduct structure.
 
+# Another observation:
+
+these functors so far behave very well with respect to other specific objects:
+
+- $1 \times X \cong X$.
+- $X \times 1 \cong X$.
+- $0 + X \cong X$.
+- $X + 0 \cong X$.
+- $X \times (Y \times Z) \cong (X \times Y) \times Z$.
+- $X + (Y + Z) \cong (X + Y) + Z$.
+
 # Definition: (strict) monoidal category
 
 A category $C$ is called *strict monoidal* if it comes equipped with
@@ -165,16 +176,101 @@ A category $C$ is called *strict monoidal* if it comes equipped with
 
 such that,
 
-3. *(Strict object associativity)* For any objects $A,B,C$, the following two objects are literally *the same* object: $$(A \otimes B) \otimes C = (A \otimes B) \otimes C$$
+3. *(Strict object associativity)* For any objects $A,B,C$, the following two objects are literally *the same* object: $$(A \otimes B) \otimes C = A \otimes (B \otimes C)$$
 4. *(Strict object unitality)* For any object $A$, $$I \otimes A = A, \\ A \otimes I = A,$$
 5. *(Arrow associativity)* For any arrow $f : A \to A', g : B \to B', h : C \to C'$, these two arrows are the same: $$(f \otimes g) \otimes h = f \otimes (g \otimes h),$$
 
     (here we are using the program on arrows of $\otimes$.)
 
-    (these two arrows go from $A \times (B \times C) \longrightarrow A' \times (B' \times C') = (A \times B) \times C$).
+    (the first arrow $(f \otimes g) \otimes h$ goes from
+
+    $(A \otimes B) \otimes C \to (A' \otimes B') \otimes C'$)
+
+    (the second arrow $f \otimes (g \otimes h)$ goes from
+
+    $A \otimes (B \otimes C) \to A' \otimes (B' \otimes C')$)
+
+    But I can ask that these two are the same essentially because $(A \otimes B) \otimes C = A \otimes (B \otimes C)$ and $(A' \otimes B') \otimes C' = A' \otimes (B' \otimes C')$.
+
 5. *(Arrow unitality)* For any arrow $f : A \to A'$ these two arrows are the same: $$\textsf{id}_I \otimes f = f, \\ f \otimes \textsf{id}_I = f,$$
 
 This is called an *evil* notion (https://ncatlab.org/nlab/show/evil, ctrl+f "evil") because it involves equality of objects in points 3. and 4. (points 5. and 6. implicitly use these two points too.)
+
+# Example: the preorder $(\N,\le)$
+
+- The product in this category was $\min$
+- The coproduct in this category was $\max$
+- We know automatically that there is a functor $(\N,\le) \times (\N,\le) \to (\N,\le)$. Why?
+
+Because if $n \le n'$ and $m \le m'$ then $\min\{n,m\} \le \min\{n',m'\}$.
+
+---
+
+A reasonable guess for what it means to be the product would have been for example $*$ the operation that multiplies numbers together.
+
+A reasonable guess for what it means to be the coproduct (sum) would have been for example $+$ the operation that sums two numbers together.
+
+Also, not the similarity with products and coproducts: imagine that $\times$ and $+$ are the usual operations and that $X,Y,Z$ are numers, then:
+
+- $0 + X = X$.
+- $X + 0 = X$.
+- $X + (Y + Z) = (X + Y) + Z$.
+
+The operations above *still* assemble into functors with the same shape as $\times$ and $+$.
+
+### Claim
+
+There is a functor $$\oplus : (\N,\le) \times (\N,\le) \to (\N,\le)$$
+
+that is defined by sending $(a,b) \mapsto a + b$ their sum.
+
+The program on arrows is this one:
+ if $n \le n'$ and $m \le m'$ then
+ $$ n + m  \le n' + m'.$$
+
+This is true, so this is a functor.
+
+---
+
+The operations above *still* assemble into functors with the same shape as $\times$ and $*$.
+
+### Claim
+
+There is a functor $$\otimes : (\N,\le) \times (\N,\le) \to (\N,\le)$$
+
+that is defined by sending $(a,b) \mapsto a * b$ their sum.
+
+The program on arrows is this one:
+ if $n \le n'$ and $m \le m'$ then
+ $$ n * m  \le n' * m'.$$
+
+This is true, so this is a functor.
+
+Again, these properties are satisfied:
+
+- $1 * X = X$.
+- $X * 1 = X$.
+- $X * (Y * Z) = (X * Y) * Z$.
+
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+
+
+
+
+
+
+Because.
+
+
+<br>
+<br>
+
 
 # Example: the preorder $(\N,\le)$ with monoidal structure $(0,+)$
 
@@ -201,13 +297,51 @@ We have to check that $* : (\N,\le) \times (\N,\le) \to (\N,\le)$ really is a fu
 
 # Example: any category of endofunctors $[C,C]$ as a strict monoidal category
 
+Let's take the category $[C,C]$
+Let me define a functor
+
+$$
+\,; : [C,C] \times [C,C] \to [C,C]
+$$
+
+- Choose ${;}$, to the functor sending $(F,G) \mapsto F\,; G$ to their composition.
+
+Now, we need to check that ${;} : [C,C] \times [C,C] \to [C,C]$ really is a functor.
+The program on objects is what we defined above.
+
+For the program on arrows, we need to check that, given a pair of natural transformation
+- $\alpha : F \to F'$ and
+- $\beta : G \to G'$
+
+ (i.e., an arrow in $[C,C] \times [C,C]$)
+
+ there is an arrow in $[C,C]$ from $$F\,;G \longrightarrow F' \,;G'$$
+
+
+ but this is exactly what we chose to construct with horizontal composition of natural transformations! You can check the rest of the structure to see that indeed it works.
+
+ The special object in this category is the identity endofunctor $\textsf{id} : C \Rightarrow C$ of $[C,C]$:
+
+- $\textsf{id} \,; X = X$.
+- $X \,; \textsf{id} = X$.
+- $X \,; (Y \,; Z) = (X \,; Y) \,; Z$.
+
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+
 - Choose $\otimes := {;}$, the functor sending $(F,G) \mapsto F\,; G$ to their composition.
 - Choose $I := \textsf{id}_C$,
 
 And indeed, if you do $I \otimes F = \textsf{id}_C \,; F = F$ you get back the functor that you started with.
 
-Now, we need to check that ${;} : [C,C] \times [C,C] \to [C,C]$ really is a functor.
-The program on objects is what the defined above. For the program on arrows, we need to check that, given a pair of natural transformation $\alpha : F \to F'$ and $\beta : G \to G'$ (i.e., an arrow in $[C,C] \times [C,C]$) there is an arrow in $[C,C]$ from $F\,;F' \to G \,;G'$: but this is exactly what we chose to construct with horizontal composition of natural transformations! You can check the rest of the structure to see that indeed it works.
 
 # Almost-example: any category with products as a (non-strict!!) monoidal category
 
