@@ -6,7 +6,7 @@ Today's topic is pretty light so we'll sprinkle in there some interesting stuff.
 
 ## Definition: inverse arrow
 
-Given an object $X$ and an arrow $f : X \to Y$, an arrow $g : Y \to X$ is said to be *the* inverse of $f$ if these familiar equations are true:
+Given objects $X,Y$ and an arrow $f : X \to Y$, an arrow $g : Y \to X$ is said to be *the* inverse of $f$ if these familiar equations are true:
 $$
 f\,;g = \textsf{id}_X \quad g \,; f = \textsf{id}_Y
 $$
@@ -101,8 +101,8 @@ Let's show that, if both of them really did prove all the identity laws, then th
 For every object $X$,
 
 $$\begin{array}{rll}
-  & \textsf{id}_X & \text{(right identity law of $\textsf{id}_X$ for $f := \textsf{id}'_X$)} \\
-= & \textsf{id}_X \,; \textsf{id}'_X & \text{(left identity law of $\textsf{id}'_X$ for $f := \textsf{id}_X$)}  \\
+  & \textsf{id}_X & \text{(right identity law of $\textsf{id}'_X$ for $f := \textsf{id}'_X$)} \\
+= & \textsf{id}_X \,; \textsf{id}'_X & \text{(left identity law of $\textsf{id}_X$ for $f := \textsf{id}_X$)}  \\
 = & \textsf{id}_X' & \\
 \end{array}$$
 
@@ -190,7 +190,7 @@ More in some lectures.
 
 *(No caveat). the category we are working with really is strict monoidal! Everything is fine.*
 
-# Symmetric strict monoidal categories
+# Strict symmetric monoidal categories
 
 A strict monoidal category is said to be symmetric if it comes equipped with a choice of arrow
 
@@ -201,7 +201,7 @@ for every object $X,Y$ which is
 
 $$(f \otimes g) \,; \textsf{swap}_{A',B'} = \textsf{swap}_{A,B} \,; (g \otimes f)$$
 
-3. Symmetricity: $\textsf{swap}_{Y,X}$ is the inverse map to $\textsf{swap}_{X,Y}$.
+2. Symmetricity: $\textsf{swap}_{Y,X}$ is the inverse map to $\textsf{swap}_{X,Y}$.
 
 
 Note! The swap map is, again, not unique. Of course its inverse is unique.

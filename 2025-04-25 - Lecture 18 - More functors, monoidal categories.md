@@ -244,7 +244,7 @@ For the program on arrows, we need to check that, given a pair of natural transf
 - $X \,; (Y \,; Z) = (X \,; Y) \,; Z$.
 
 - Choose $\otimes := {;}$, the functor sending $(F,G) \mapsto F\,; G$ to their composition.
-- Choose $I := \textsf{id}_C$,
+- Choose the special object $I := \textsf{id}_C$,
 
 And indeed, if you do $I \otimes F = \textsf{id}_C \,; F = F$ you get back the functor that you started with.
 
@@ -266,9 +266,9 @@ A *strict monoidal category* is a choice of the following things:
 
 such that,
 
-3. *(Strict object associativity)* For any objects $A,B,C$, the following two objects are literally *the same* object: $$(A \otimes B) \otimes C = A \otimes (B \otimes C)$$
-4. *(Strict object unitality)* For any object $A$, $$I \otimes A = A, \\ A \otimes I = A,$$
-5. *(Arrow associativity)* For any arrow $f : A \to A', g : B \to B', h : C \to C'$, these two arrows are the same: $$(f \otimes g) \otimes h = f \otimes (g \otimes h),$$
+4. *(Strict object associativity)* For any objects $A,B,C$, the following two objects are literally *the same* object: $$(A \otimes B) \otimes C = A \otimes (B \otimes C)$$
+5. *(Strict object unitality)* For any object $A$, $$I \otimes A = A, \\ A \otimes I = A,$$
+6. *(Arrow associativity)* For any arrow $f : A \to A', g : B \to B', h : C \to C'$, these two arrows are the same: $$(f \otimes g) \otimes h = f \otimes (g \otimes h),$$
 
     (here we are using the program on arrows of $\otimes$.)
 
@@ -282,10 +282,10 @@ such that,
 
     But I can ask that these two are the same essentially because $(A \otimes B) \otimes C = A \otimes (B \otimes C)$ and $(A' \otimes B') \otimes C' = A' \otimes (B' \otimes C')$.
 
-5. *(Arrow unitality)* For any arrow $f : A \to A'$ these two arrows are the same: $$\textsf{id}_I \otimes f = f, \\ f \otimes \textsf{id}_I = f,$$
+7. *(Arrow unitality)* For any arrow $f : A \to A'$ these two arrows are the same: $$\textsf{id}_I \otimes f = f, \\ f \otimes \textsf{id}_I = f,$$
 
 This is called an *evil* notion (https://ncatlab.org/nlab/show/evil, ctrl+f "evil") because it involves equality of objects in points 3. and 4. (points 5. and 6. implicitly use these two points too.)
 
 ## Observation
 
-Given a normal category $C$, there might be more than one choice of unit $I$ and combine functor $\otimes$! We saw one example above, the preorder $(\textsf{Nat}, \le)$ is the same but we can put two different monoidal operations "on top" of it.
+  Given a normal category $C$, there might be more than one choice of unit $I$ and combine functor $\otimes$! We saw one example above, the preorder $(\N, \le)$ is the same but we can put two different monoidal operations "on top" of it.
