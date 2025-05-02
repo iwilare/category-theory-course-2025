@@ -1,4 +1,4 @@
-# 2025-04-11 - Lecture 16 (Monoidal categories)
+# 2025-04-25 - Lecture 18 (More functors, monoidal categories)
 
 Today we will see how to build new functors from old ones.
 
@@ -157,9 +157,7 @@ Same thing as above, but for coproducts.
 
 As you saw, there some cases where you have a functor $C \times C \Rightarrow C$ on your category. It turns out that there are some more examples which do *not* come from product/coproduct structure.
 
-# Another observation:
-
-these functors so far behave very well with respect to other specific objects:
+Moreover, observe that these functors so far behave very well with respect to other specific objects:
 
 - $1 \times X \cong X$.
 - $X \times 1 \cong X$.
@@ -168,33 +166,7 @@ these functors so far behave very well with respect to other specific objects:
 - $X \times (Y \times Z) \cong (X \times Y) \times Z$.
 - $X + (Y + Z) \cong (X + Y) + Z$.
 
-# Definition: (strict) monoidal category
-
-A category $C$ is called *strict monoidal* if it comes equipped with
-1. A specific object $I$ of $C$ called "*monoidal unit*" or just "*unit*",
-2. A functor $\otimes : C \times C \to C$ called "*tensor product*" or just "*tensor*" (I will try to call it "*combination functor*" or "*combine*"),
-
-such that,
-
-3. *(Strict object associativity)* For any objects $A,B,C$, the following two objects are literally *the same* object: $$(A \otimes B) \otimes C = A \otimes (B \otimes C)$$
-4. *(Strict object unitality)* For any object $A$, $$I \otimes A = A, \\ A \otimes I = A,$$
-5. *(Arrow associativity)* For any arrow $f : A \to A', g : B \to B', h : C \to C'$, these two arrows are the same: $$(f \otimes g) \otimes h = f \otimes (g \otimes h),$$
-
-    (here we are using the program on arrows of $\otimes$.)
-
-    (the first arrow $(f \otimes g) \otimes h$ goes from
-
-    $(A \otimes B) \otimes C \to (A' \otimes B') \otimes C'$)
-
-    (the second arrow $f \otimes (g \otimes h)$ goes from
-
-    $A \otimes (B \otimes C) \to A' \otimes (B' \otimes C')$)
-
-    But I can ask that these two are the same essentially because $(A \otimes B) \otimes C = A \otimes (B \otimes C)$ and $(A' \otimes B') \otimes C' = A' \otimes (B' \otimes C')$.
-
-5. *(Arrow unitality)* For any arrow $f : A \to A'$ these two arrows are the same: $$\textsf{id}_I \otimes f = f, \\ f \otimes \textsf{id}_I = f,$$
-
-This is called an *evil* notion (https://ncatlab.org/nlab/show/evil, ctrl+f "evil") because it involves equality of objects in points 3. and 4. (points 5. and 6. implicitly use these two points too.)
+But, again, where $1$ and $0$ are the terminal and initial objects. Turns out, there are certain objects (without a universal property!!) with respect to the functors with shape $C \times C \Rightarrow C$ are well-behaved.
 
 # Example: the preorder $(\N,\le)$
 
@@ -204,98 +176,43 @@ This is called an *evil* notion (https://ncatlab.org/nlab/show/evil, ctrl+f "evi
 
 Because if $n \le n'$ and $m \le m'$ then $\min\{n,m\} \le \min\{n',m'\}$.
 
----
+- A reasonable guess for what it means to be the "product" would have been for example $*$ the operation that multiplies numbers together.
+- A reasonable guess for what it means to be the "coproduct"(sum) would have been for example $+$ the operation that sums two numbers together.
 
-A reasonable guess for what it means to be the product would have been for example $*$ the operation that multiplies numbers together.
-
-A reasonable guess for what it means to be the coproduct (sum) would have been for example $+$ the operation that sums two numbers together.
-
-Also, not the similarity with products and coproducts: imagine that $\times$ and $+$ are the usual operations and that $X,Y,Z$ are numers, then:
-
-- $0 + X = X$.
-- $X + 0 = X$.
-- $X + (Y + Z) = (X + Y) + Z$.
-
-The operations above *still* assemble into functors with the same shape as $\times$ and $+$.
+Take the program that does *addition* of two numbers (the literal addition!) and the program that computes the *multiplication* of two numbers: these two operations *still* assemble into functors with the same shape as $\times$ and $+$.
 
 ### Claim
 
-There is a functor $$\oplus : (\N,\le) \times (\N,\le) \to (\N,\le)$$
+1. There is a functor $\oplus : (\N,\le) \times (\N,\le) \to (\N,\le)$ defined by sending $(a,b) \mapsto a + b$ their addition. Now, we need to check that this really is a functor:
 
-that is defined by sending $(a,b) \mapsto a + b$ their sum.
+   If I know that $$(n,m) \le (n',m'),$$ which by definition of product category means that$$n \le m \text{ and } n' \le m',$$ then I need to show that $$F(n,m) \le F(n',m'),$$ which by definition of our functor $F$ in this is case means that $$n + m \le n' + m'$$ which is true because of a general property of natural numbers which we take as intuitive.
 
-The program on arrows is this one:
- if $n \le n'$ and $m \le m'$ then
- $$ n + m  \le n' + m'.$$
+   So, to summarize, the program on arrows is this one: if $n \le n'$ and $m \le m'$ then $ n + m  \le n' + m'.$
+   This is true, so this is a functor.
 
-This is true, so this is a functor.
+2. There is a functor $\otimes : (\N,\le) \times (\N,\le) \to (\N,\le)$ defined by sending $(a,b) \mapsto a \cdot b$ their multiplication.
+
+   The program on arrows is this one: if $n \le n'$ and $m \le m'$ then $ n \cdot m  \le n' \cdot m'.$
+   This is true, so this is a functor.
 
 ---
 
-The operations above *still* assemble into functors with the same shape as $\times$ and $*$.
+Also, note the similarity with products and coproducts: imagine that $\times$ and $+$ are the usual operations and that $X,Y,Z$ are numbers. Then, **let's write the number zero with 0 (which happens to be the initial object)** then:
 
-### Claim
+- $0 \oplus X = X$.
+- $X \oplus 0 = X$.
+- $X \oplus (Y \oplus Z) = (X \oplus Y) \oplus Z$.
 
-There is a functor $$\otimes : (\N,\le) \times (\N,\le) \to (\N,\le)$$
+Which is very similar to the situation that happens with $+$ instead of $\oplus$!
 
-that is defined by sending $(a,b) \mapsto a * b$ their sum.
+But also, **let's write the number one with 1 (NOT the terminal object! There is no terminal object in this category if we do not assume that $\infty$ is a number)**. Then, look:
 
-The program on arrows is this one:
- if $n \le n'$ and $m \le m'$ then
- $$ n * m  \le n' * m'.$$
-
-This is true, so this is a functor.
-
-Again, these properties are satisfied:
-
-- $1 * X = X$.
-- $X * 1 = X$.
-- $X * (Y * Z) = (X * Y) * Z$.
-
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
+- $1 \otimes X = X$.
+- $X \otimes 1 = X$.
+- $X \otimes (Y \otimes Z) = (X \otimes Y) \otimes Z$.
 
 
-
-
-
-
-Because.
-
-
-<br>
-<br>
-
-
-# Example: the preorder $(\N,\le)$ with monoidal structure $(0,+)$
-
-- Choose $\otimes := +$, the functor sending $(a,b) \mapsto a+b$ to their sum,
-- Choose $I := 0$,
-
-We have to check that $+ : (\N,\le) \times (\N,\le) \to (\N,\le)$ really is a functor,
-
-- If I know that $$(n,m) \le (n',m'),$$ which by definition of product category means that$$n \le m \text{ and } n' \le m',$$ then I need to show that $$F(n,m) \le F(n',m'),$$ which by definition of our functor $F$ in this is case means that $$n + m \le n' + m'$$ which is true because of a general property of natural numbers which we take as intuitive.
-
-- Then, clearly the equations for strict monoidal categories above are true.
-- Note! This is a preorder, we do not need to check any equation on the arrows, since in a preorder everything holds.
-
-# Example: the preorder $(\N,\le)$ with monoidal structure $(1,*)$
-
-- Choose $\otimes := *$, the functor sending $(a,b) \mapsto a+b$ to their multiplication,
-- Choose $I := 1$,
-
-We have to check that $* : (\N,\le) \times (\N,\le) \to (\N,\le)$ really is a functor,
-
-- If I know that $$n \le m \text{ and } n' \le m',$$ then I need to show that $$n * m \le n' * m'$$ which is true because of a general property of natural numbers which we take as intuitive.
-
-- Then, clearly the equations for strict monoidal categories above are true.
-
-# Example: any category of endofunctors $[C,C]$ as a strict monoidal category
+# Example: the category of endofunctors $[C,C]$ and composition
 
 Let's take the category $[C,C]$
 Let me define a functor
@@ -326,24 +243,12 @@ For the program on arrows, we need to check that, given a pair of natural transf
 - $X \,; \textsf{id} = X$.
 - $X \,; (Y \,; Z) = (X \,; Y) \,; Z$.
 
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
-
 - Choose $\otimes := {;}$, the functor sending $(F,G) \mapsto F\,; G$ to their composition.
 - Choose $I := \textsf{id}_C$,
 
 And indeed, if you do $I \otimes F = \textsf{id}_C \,; F = F$ you get back the functor that you started with.
 
-
-# Almost-example: any category with products as a (non-strict!!) monoidal category
+# Almost-example: any category with products
 
 - Choose $\otimes := \times$ the functor sending $(A,B) \mapsto A \times B$ to their product,
 - Choose $I := 1$ the terminal object.
@@ -352,6 +257,35 @@ We need to check that $\times : C \times C \to C$ really is a functor, done!
 
 So, this works only if you create a new category, called the "strictification" of $C$, where you identify any two products with literally the same object.
 
-# A monoid in a monoidal category
+# Definition: (strict) monoidal category
 
-<!-- # Monoidal closed categories -->
+A *strict monoidal category* is a choice of the following things:
+1. A category $C$,
+1. A specific object $I$ of $C$ called "*monoidal unit*" or just "*unit*",
+2. A functor $\otimes : C \times C \to C$ called "*tensor product*" or just "*tensor*" (I will try to call it "*combination functor*" or "*combine*"),
+
+such that,
+
+3. *(Strict object associativity)* For any objects $A,B,C$, the following two objects are literally *the same* object: $$(A \otimes B) \otimes C = A \otimes (B \otimes C)$$
+4. *(Strict object unitality)* For any object $A$, $$I \otimes A = A, \\ A \otimes I = A,$$
+5. *(Arrow associativity)* For any arrow $f : A \to A', g : B \to B', h : C \to C'$, these two arrows are the same: $$(f \otimes g) \otimes h = f \otimes (g \otimes h),$$
+
+    (here we are using the program on arrows of $\otimes$.)
+
+    (the first arrow $(f \otimes g) \otimes h$ goes from
+
+    $(A \otimes B) \otimes C \to (A' \otimes B') \otimes C'$)
+
+    (the second arrow $f \otimes (g \otimes h)$ goes from
+
+    $A \otimes (B \otimes C) \to A' \otimes (B' \otimes C')$)
+
+    But I can ask that these two are the same essentially because $(A \otimes B) \otimes C = A \otimes (B \otimes C)$ and $(A' \otimes B') \otimes C' = A' \otimes (B' \otimes C')$.
+
+5. *(Arrow unitality)* For any arrow $f : A \to A'$ these two arrows are the same: $$\textsf{id}_I \otimes f = f, \\ f \otimes \textsf{id}_I = f,$$
+
+This is called an *evil* notion (https://ncatlab.org/nlab/show/evil, ctrl+f "evil") because it involves equality of objects in points 3. and 4. (points 5. and 6. implicitly use these two points too.)
+
+## Observation
+
+Given a normal category $C$, there might be more than one choice of unit $I$ and combine functor $\otimes$! We saw one example above, the preorder $(\textsf{Nat}, \le)$ is the same but we can put two different monoidal operations "on top" of it.
