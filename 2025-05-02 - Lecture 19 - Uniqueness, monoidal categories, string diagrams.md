@@ -116,6 +116,15 @@ $$\begin{array}{rll}
 = & I' & \\
 \end{array}$$
 
+
+---
+---
+
+*Change of topic.*
+
+---
+---
+
 # String diagrams for monoidal categories.
 
 - Combine objects: you put objects on "top" of each other graphically.
@@ -124,71 +133,7 @@ $$\begin{array}{rll}
 - Functoriality of $\otimes$, which amounts to the following equation:
   $$(f \otimes g) \,; (f' \otimes g') = (f \,; f') \otimes (g \,; g')$$
   this is a sort of "coherence"/"non-ambiguousness" of interpretation.
-
-# Note:
-
-Recall that in any category with products and terminal objects we have two "special" arrows, for any object $A$:
-
-$$\begin{array}{rcl} \textsf{duplicate} := \langle \textsf{id}_A , \textsf{id}_A \rangle & : & A \to A \times A \\ !_A & : & A \to 1 \\ \end{array}$$
-
-Monoidal categories do not come equipped by default with diagonal arrows $\delta$
-
-# Definition: monoid object $A$ in a monoidal category $(I,\otimes)$
-
-Imagine that someone gives me an object $A$.
-
-A *monoid object structure* on $A$ is a choice of two arrows:
-
-- $\textsf{mul} : A \otimes A \to A$
-- $\textsf{unit} : I \to A$
-
-Such that the following string diagrammatic equations are satisfied:
-
-
-
-*(Definition.)* A *monoid pbject* is a choice of an object $A$ with a *monoid object structure*. (We have to do all this precise/delicate thing because monoid object structures are not unique!)
-
-## Example: a monoid in $(\textsf{Prog}, \times, 1)$
-
-This is precisely what a monoid is the way we have defined it in Lecture 3.
-
-Example: I pick the object $A :=$ `String`. Then, the arrows that I pick are
-
-- $\textsf{mul} : \texttt{String} \otimes \texttt{String} \to \texttt{String} \\ $
-  $\textsf{mul} : \texttt{String} \times \texttt{String} \to \texttt{String}$
-  ```rust
-  fn mul(a: Pair<String, String>) -> String { ... }
-  fn mul(a: String, b: String) -> String {
-    a + b // string concatenation
-  }
-  ```
-- $\textsf{ident} : I \to \texttt{String} \\ $
-  $\textsf{ident} : 1 \to \texttt{String} \\ $
-  $\textsf{ident} : \texttt{Unit} \to \texttt{String}$
-  ```rust
-  fn ident(a: Unit) -> String {
-    ""
-  }
-  ```
-- Monoid law 1 essentially says that appending the empty string on the left behaves like the identity program.
-- Monoid law 2 essentially says that appending the empty string on the right behaves like the identity program.
-- Monoid law 2 essentially says that the two programs (with three arguments) that append together
-
-*(Caveat). technically the category we are working with is not strict monoidal but only monoidal, which is a more complicated notion that we have not defined yet; we are doing some implicit strictification business here.*
-
-## Example: a monoid object in $(\textsf{Cat}, \times, 1)$
-
-This is precisely... a strict monoidal category!
-
-*(Caveat). technically the category we are working with is not strict monoidal but only monoidal, which is a more complicated notion that we have not defined yet; we are doing some implicit strictification business here.*
-
-## Example: a monoid object in $({[C,C]}, {\,;\,}, \textsf{id}_C)$
-
-This is precisely... what people call a monad.
-
-More in some lectures.
-
-*(No caveat). the category we are working with really is strict monoidal! Everything is fine.*
+  Graphically: two parallel wires, four boxes, two on each wire.
 
 # Strict symmetric monoidal categories
 
@@ -222,7 +167,6 @@ $$\textsf{swap}_{X,Y} : Y \otimes X \to X \otimes Y$$
 
 **Insert drawing here.**
 
-
 # Example: $(\N,\le)$ and its monoidal structures on top
 
 Both of the monoidal structures we can put on $(\N,\le)$ are symmetric:
@@ -250,25 +194,3 @@ Then $\textsf{List} \otimes \textsf{Maybe}$ is the functor sending the type `X` 
 Then $\textsf{Maybe} \otimes \textsf{List}$ is the functor sending the type `X` $\mapsto$ `List<Maybe<X>>`.
 
 But these two functors are very different! Even less they are literally the same object.
-
-# Fox's theorem (1976)
-
-We saw some examples of strict monoidal category
-
-Given a symmetric strict monoidal category, the unit object and combine operations $(I,\otimes)$ are equivalent to the terminal object and the combine operation $(1,\times)$ if the following happens:
-
-1. Every object $X$ has two maps
-    - $\delta_A : A \to A \otimes A \hspace{3em}$ (think of it as $\textsf{duplicate} : A \to A \times A$)
-    - $\varepsilon_A : A \to I \hspace{5.3em}$ (think of it as $!_A : A \to 1$)
-2. Each $(A , \delta_A, \varepsilon_A)$ is a commutative comonoid, i.e., these somewhat intuitive equations hold:
-    - Unitality left,
-    - Unitality right,
-    - Associativity,
-    - Commutativity.
-3. $\delta$ and $\varepsilon$ are "uniform" (i.e., well behaved w.r.t. monoidal structure):
-  $$\delta_{A \otimes B} = (\delta_{A} \otimes \delta_{B}) \,; \textsf{id}_A \otimes \textsf{swap}_{A,B} \otimes \textsf{id}_B$$
-  $$\varepsilon_{A \otimes B} = \varepsilon_{A} \otimes  \varepsilon_{B}$$
-4. $\delta$ and $\varepsilon$ are "natural" (i.e., they slide nicely), for any $f : X \to Y$:
-  $$f\,; \delta_{Y} = \delta_{X} \,; (f \otimes f)$$
-  $$f\,; \varepsilon_{Y} = \varepsilon_{X}$$
-  (This last condition fails in many interesting monoidal categories!! It's more like a feature than a bug.)
