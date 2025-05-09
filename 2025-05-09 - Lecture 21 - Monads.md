@@ -226,3 +226,16 @@ fn extend_f(m: Func<S, Pair<S, A>>) -> Func<S, Pair<S, B>> {
 # Internalized form for extension systems
 
 Typically in programming languages you see these definitions for monads:
+
+```haskell
+-- Functoriality of m
+fmap : (a -> b) -> m a -> m b
+
+-- unit of the monad
+return : a -> m a
+
+-- multiplication of the monad
+join : m (m a) -> a
+
+-- notation: (>>=)
+bind : (a -> m b) -> m a -> m b
