@@ -37,11 +37,11 @@
 > 2. $(\textsf{id}_M * \textsf{unit}) \,; \textsf{mul} = \textsf{id}_M$
 > 3. $ (\textsf{mul} * \textsf{id}_M) \,; \textsf{mul} = (\textsf{id}_M * \textsf{mul}) \,; \textsf{mul}$
 
-# Examples of monads
+# Main examples of monads
 
 The main examples of monads that we will see will be in our category $\text{Prog}$, calling $\textsf{join} := \textsf{mul}$ just for simplicity:
 
-- The `X` $\mapsto$ `List<X>` endofunctor
+- *(The List/non-determinism monad.)* The `X` $\mapsto$ `List<X>` endofunctor, equipped with this monad structure:
 
 ```rust
 fn unit<X>(x: X) -> List<X> {
@@ -56,7 +56,7 @@ fn join<X>(xs: List<List<X>>) -> List<X> {
 }
 ```
 
-- The `X` $\mapsto$ `Maybe<X>` endofunctor
+- *(The Maybe/failure monad.)* The `X` $\mapsto$ `Maybe<X>` endofunctor, equipped with this monad structure:
 
 ```rust
 fn unit<X>(x: X) -> Maybe<X> {
@@ -71,7 +71,7 @@ fn join<X>(m: Maybe<Maybe<X>>) -> Maybe<X> {
 }
 ```
 
-- The `X` $\mapsto$ `Either<E, X>` endofunctor
+- *(The Either/error monad.)* The `X` $\mapsto$ `Either<E, X>` endofunctor, equipped with this monad structure:
 
 ```rust
 fn unit<X>(x: X) -> Either<E, X> {
@@ -86,7 +86,7 @@ fn join<X>(m: Either<E, Either<E, X>>) -> Either<E, X> {
 }
 ```
 
-- The `X` $\mapsto$ `Func<A, X>` endofunctor
+- *(The Reader monad.)* The `X` $\mapsto$ `Func<A, X>` endofunctor, equipped with this monad structure:
 
 ```rust
 fn unit<X>(x: X) -> Func<A, X> {
@@ -98,7 +98,20 @@ fn join<X>(m: Func<A, Func<A, X>>) -> Func<A, X> {
 }
 ```
 
-- The `X` $\mapsto$ `Func<A, Pair<A, X>>` endofunctor
+- *(The Writer/logger monad.)* The `X` $\mapsto$ `Pair<String, X>` endofunctor, equipped with this monad structure:
+
+```rust
+fn unit<X>(x: X) -> Pair<String, X> {
+    ("", x)
+}
+
+fn join<X>(m: Pair<String, Pair<String, X>>) -> Pair<String, X> {
+    let (s1, (s2, x)) = m
+    (s1 ++ s2, x) // string concatenation
+}
+```
+
+- *(The State monad.)* The `X` $\mapsto$ `Func<A, Pair<A, X>>` endofunctor, equipped with this monad structure:
 
 ```rust
 fn unit<X>(x: X) -> Func<A, Pair<A, X>> {
@@ -116,14 +129,134 @@ fn join<X>(m: Func<A, Pair<A, Func<A, Pair<A, X>>>) ->
 }
 ```
 
-# Monad laws for our examples
+- *(The Probability Distribution monad.)* The `X` $\mapsto$ `List<Pair<f32,X>>` endofunctor, equipped with this monad structure:
 
-- `List` monad:
+```rust
+fn unit<X>(x: X) -> List<X> {
+    Element(Pair(1.0, x), Empty)
+}
+
+fn join<X>(xs: List<Pair<f32, List<Pair<f32, X>>>) -> List<Pair<f32, X>> {
+    let choices: List<List<Pair<f32, X>>> =
+        xs.map(|(v,cs): Pair<f32, List<Pair<f32, X>>>|
+               cs.map((w, x) => (v * w, x)))
+    choices.join()
+}
+
+// We should check that this preserves these two invariants:
+// - there is no element in each list with value 0,
+// - the sum of all weights is always exactly 1.0.
+```
+
+# Fundamental idea
+
+The idea is that now we "enrich" our arrows by considering arrows not just like $X \to Y$, but always in the form
+
+$$X \to M(Y)$$
+
+where $M$ is a monad that we can pick. Picking different monads gives us different "effects".
+
+We call arrows in this form "Kleisli arrows" or "effectful arrows".
+
+- **(Failure effect.)** In the case of `X` $\mapsto$ `Maybe<X>`, a Kleisli arrow is a program
+  ```rust
+  fn f(x: A) -> Maybe<B> { ... }
+  ```
+  **Idea:** arrows are programs that can fail.
+- **(Non-deterministic effect.)** In the case of `X` $\mapsto$ `List<X>`, a Kleisli arrow is a program
+  ```rust
+  fn f(x: A) -> List<B> { ... }
+  ```
+  **Idea:** arrows are programs that return multiple results "non-deterministically".
+- **(Errors/exceptions effect.)** In the case of `X` $\mapsto$ `Either<E, X>`, a Kleisli arrow is a program
+  ```rust
+  fn f(x: A) -> Either<E, B> { ... }
+  ```
+  **Idea:** arrows are programs that can fail, with an explicit reason why (given by the type `E`).
+- **(Reading from the environment effect.)** In the case of `X` $\mapsto$ `Func<S, X>`, a Kleisli arrow is a program
+  ```rust
+  fn f(x: A) -> Func<S, Pair<S, B>> { ... }
+  fn f(x: Pair<S, A>) -> Pair<S, B> { ... } // by the iso of types of arrows into an exponential object
+  fn f(s: S, a: A) -> Pair<S, B> { ... }
+  ```
+  **Idea:** arrows are programs that can read from an environment.
+- **(Logging/writing effect.)** In the case of `X` $\mapsto$ `Pair<String, X>`, a Kleisli arrow is a program
+  ```rust
+  fn f(x: A) -> Pair<String, B> { ... }
+  ```
+  **Idea:** arrows are programs that return a value and also ask to write something to the console.
+- **(State effect.)** In the case of `X` $\mapsto$ `Func<S, Pair<S, X>>`, a Kleisli arrow is a program
+  ```rust
+  fn f(x: A) -> Func<S, Pair<S, B>> { ... }
+  fn f(x: Pair<S, A>) -> Pair<S, B> { ... }
+  fn f(s: S, a: A) -> Pair<S, B> { ... }
+  ```
+  **Idea:** arrows are programs that can read and write to a global shared state.
+- **(Probabilistic effect.)** In the case of `X` $\mapsto$ `List<Pair<f32, X>>`, a Kleisli arrow is a program
+  ```rust
+  fn f(x: A) -> List<Pair<f32, X>> { ... }
+  ```
+  **Idea:** arrows are programs that return a probability distribution of possible values of `X`. You can think of `List` as being the special case where every distribution is uniform, i.e., every value has equal likelihood of being the "selected" one.
+
+# Monad laws for our examples
 
 > Monad laws: (monoid laws for $M$ viewed as a monoid)
 > 1. $(\textsf{unit} * \textsf{id}_M) \,; \textsf{mul} = \textsf{id}_M$
 > 2. $(\textsf{id}_M * \textsf{unit}) \,; \textsf{mul} = \textsf{id}_M$
 > 3. $ (\textsf{mul} * \textsf{id}_M) \,; \textsf{mul} = (\textsf{id}_M * \textsf{mul}) \,; \textsf{mul}$
+
+Note! These are equalities between arrows in the category $[C,C]$: but arrows in this category are natural transformations, and equalities between natural transformations were defined to be equalities between families of arrows, so for each object $X$ we have that $\alpha_X = \beta_X$.
+
+> 1. for every $X$, $(\textsf{unit} * \textsf{id}_M)_X \,; \textsf{mul}_X = \textsf{id}_{M(X)}$
+> 2. for every $X$, $(\textsf{id}_M * \textsf{unit})_X \,; \textsf{mul}_X = \textsf{id}_{M(X)}$
+> 3. for every $X$, $ (\textsf{mul} * \textsf{id}_M)_X \,; \textsf{mul}_X = (\textsf{id}_M * \textsf{mul})_X \,; \textsf{mul}_X$
+
+Remember the definition of horizontal composition of natural transformations (Lecture 16):
+
+> Given two natural transformations:
+> - $\alpha : F \longrightarrow F'$
+> - $\beta : G \longrightarrow G'$
+>
+> I cook up a new natural transformation like this
+> - $\gamma : (F\,;G) \longrightarrow (F'\,; G')$
+>
+> which we will denote as $\gamma := \alpha * \beta$. This natural transformation, called "horizontal composition of $\alpha,\beta$ is defined like this:
+> $$
+> \begin{array}{rcl}
+> (\alpha \ast \beta)_X &:=& G(\alpha_X) \,; \beta_{F'(X)}  \\
+> \end{array}
+> $$
+
+
+Now, $\textsf{unit} : \textsf{id}_C \longrightarrow M, \quad \textsf{mul} : (M\,;M) \longrightarrow M, \quad \textsf{id}_M : M \longrightarrow M$.
+
+Moreover, remember that $(\textsf{id}_M)_X := \textsf{id}_{M(X)}$, since when we write $\textsf{id}_M$ we really mean the identity arrow in $[C,C]$ on the object $M$, but an arrow, whether it's an identity or not, it's a natural transformation so a family of arrows again.
+
+Let's unpack all horizontal compositions:
+
+> - $\textsf{unit} * \textsf{id}_M : M = \textsf{id}_C \,; M \to M \,; M \quad$ hence $F = \textsf{id}_C$, $F' = G = G' = M$ in the def. of horiz. comp.
+> - $\textsf{id}_M * \textsf{unit} : M = M \,; \textsf{id}_C \to M \,; M \quad$ hence $G = \textsf{id}_C$, $F' = F = G' = M$ in the def. of horiz. comp.
+> - $\textsf{mul} * \textsf{id}_M : (M \,; M) \,; M \to M \,; M \quad$ hence $F = M\,;M$, $F' = G = G' = M$ in the def. of horiz. comp.
+> - $\textsf{id}_M * \textsf{mul} : M \,; (M \,; M) \to M \,; M \quad $ hence $G = M\,;M$, $F' = F = G' = M$ in the def. of horiz. comp.
+
+Following the definition of horizontal composition:
+
+> - $(\textsf{unit} * \textsf{id}_M)_X = M(\textsf{unit}_X) \,; \textsf{id}_{M(X)} = M(\textsf{unit}_X)$
+> - $(\textsf{id}_M * \textsf{unit})_X  = M(\textsf{id}_{M(X)}) \,; \textsf{unit}_{M(X)} = \textsf{unit}_{M(X)}$
+> - $ (\textsf{mul} * \textsf{id}_M)_X = M(\textsf{mul}_X) \,;  \textsf{id}_{M(M(X))} = M(\textsf{mul}_X)$
+> - $(\textsf{id}_M * \textsf{mul})_X = M(\textsf{id}_{M(X)}) \,; \textsf{mul}_{M(M(X))} = \textsf{mul}_{M(M(X))}$
+
+Then we substitute them back in the original definition in order to get **the monad laws.**
+
+> Monad laws, in elementary form:
+> 1. for every $X$, $M(\textsf{unit}_X) \,; \textsf{mul}_X = \textsf{id}_{M(X)}$
+> 2. for every $X$, $\textsf{unit}_{M(X)} \,; \textsf{mul}_X = \textsf{id}_{M(X)}$
+> 3. for every $X$, $M(\textsf{mul}_X) \,; \textsf{mul}_X = \textsf{mul}_{M(X)} \,; \textsf{mul}_X$
+
+## Example
+
+We illustrate the idea using $M := \textsf{List}$.
+
 
 ### Monad law number 1 (unitality)
 
@@ -321,119 +454,4 @@ We're going to define a new category $\textsf{Kleisli}(M)$.
 
   for every $X,Y$ and $f : X \to M(Y)$ then $f \,; M(\textsf{unit}_Y) \,; \textsf{mul}_Z = f$.
 
-### At the end of the day, we obtained for "free" an operation that composes "effectul arrows" together.
-
-- In the case of `X` $\mapsto$ `Maybe<X>`, a Kleisli arrow is a program
-  ```rust
-  fn f(x: A) -> Maybe<B> { ... }
-  ```
-- In the case of `X` $\mapsto$ `List<X>`, a Kleisli arrow is a program
-  ```rust
-  fn f(x: A) -> List<B> { ... }
-  ```
-- In the case of `X` $\mapsto$ `Either<E, X>`, a Kleisli arrow is a program
-  ```rust
-  fn f(x: A) -> Either<E, B> { ... }
-  ```
-- In the case of `X` $\mapsto$ `Func<S, Pair<S, X>>`, a Kleisli arrow is a program
-  ```rust
-  fn f(x: A) -> Func<S, Pair<S, B>> { ... }
-  fn f(x: Pair<S, A>) -> Pair<S, B> { ... }
-  fn f(s: S, a: A) -> Pair<S, B> { ... }
-  ```
-
-# Extension form of monads
-
-There is an equivalent *presentation* of monads.
-
-Take an endofunctor $M : C \Rightarrow C$. (actually you don't even need the functor map, just a function on objects.)
-
-An *extension system* for $M$ consists of the following choices:
-
-- For every object $A$ of $C$, an arrow $\eta_A : A \to M(A)$,
-- For every object $A,B$ of $C$, given an arrow $$f : A \to M(B),$$ a choice of an arrow $$\overline f : M(A) \to M(B).$$
-- For every arrow $f : A \to B$, $$\eta_A \,; \overline{f} = f$$
-- For every arrow $f : A \to M(B)$, $g : B \to M(C)$, $$\overline{f} \,; \overline{g} = \overline{(f \,; \overline{g})}$$
-
-# These two presentations are equivalent
-
-*(Theorem.)* Giving an extension system for an endofunctor $M : C \Rightarrow C$ is
-   equivalent to giving a monad structure on $M : C \Rightarrow C$.
-
-*Proof.*
-
-# Extension systems, explicitly
-
-- The `X` $\mapsto$ `List<X>` endofunctor
-
-```rust
-// given an arrow $f : A -> List<B>$, ...
-fn extend_f(xs: List<A>) -> List<B> {
-    match xs {
-        Empty => Empty
-        Element(x, xs) => append(f(x), extend_f(xs))
-    }
-}
-```
-
-- The `X` $\mapsto$ `Maybe<X>` endofunctor
-
-```rust
-// given an arrow $f : A -> Maybe<B>$, ...
-fn extend_f(m: Maybe<A>) -> Maybe<B> {
-    match m {
-        Nothing => Nothing
-        Just(x) => f(x)
-    }
-}
-```
-
-- The `X` $\mapsto$ `Either<E, X>` endofunctor
-
-```rust
-// given an arrow $f : A -> Either<E, B>$, ...
-fn extend_f(m: Either<E, A>) -> Either<E, B> {
-    match m {
-        Left(e) => Left(e)
-        p => f(p)
-    }
-}
-```
-
-- The `X` $\mapsto$ `Func<S, X>` endofunctor
-
-```rust
-// given an arrow $f : A -> Func<S, B>$, ...
-fn extend_f(m: Func<S, A>>) -> Func<S, B> {
-
-}
-```
-
-- The `X` $\mapsto$ `Func<S, Pair<S, X>>` endofunctor
-
-```rust
-// given an arrow $f : A -> Func<S, Pair<S, B>>$, ...
-fn extend_f(m: Func<S, Pair<S, A>>) -> Func<S, Pair<S, B>> {
-    |a: A| {
-
-    }
-}
-```
-
-# Internalized form for extension systems
-
-Typically in programming languages you see these definitions for monads:
-
-```haskell
--- Functoriality of m
-fmap : (a -> b) -> m a -> m b
-
--- unit of the monad
-return : a -> m a
-
--- multiplication of the monad
-join : m (m a) -> a
-
--- notation: (>>=)
-bind : (a -> m b) -> m a -> m b
-```
+### At the end of the day, we obtained an operation that composes "effectul arrows" together.

@@ -76,7 +76,7 @@ which we will denote as $\gamma := \alpha * \beta$.
 
 $$
 \begin{array}{rcl}
-(\beta \ast \alpha)_X &:=& G(\alpha_X) \,; \beta_{F'(X)}  \\
+(\alpha \ast \beta)_X &:=& G(\alpha_X) \,; \beta_{F'(X)}  \\
 \end{array}
 $$
 
@@ -93,9 +93,9 @@ $$
 
 $$
 \begin{array}{ccc}
-\phantom{F(f)} G(F(X)) & \xrightarrow{\phantom{ii} (\beta \ast \alpha)_X \phantom{ii}} & G'(F'(X)) \phantom{F(f)} \\
+\phantom{F(f)} G(F(X)) & \xrightarrow{\phantom{ii} (\alpha \ast \beta)_X \phantom{ii}} & G'(F'(X)) \phantom{F(f)} \\
 G(F(f)) \downarrow & \raisebox{2pt}{\tiny =} & \downarrow G'(F'(f)) \\
-\phantom{F(f)} G(F(Y)) & \xrightarrow{\phantom{ii} (\beta \ast \alpha)_Y \phantom{ii}} & G'(F'(Y)) \phantom{F(f)} \\
+\phantom{F(f)} G(F(Y)) & \xrightarrow{\phantom{ii} (\alpha \ast \beta)_Y \phantom{ii}} & G'(F'(Y)) \phantom{F(f)} \\
 \end{array}
 $$
 
