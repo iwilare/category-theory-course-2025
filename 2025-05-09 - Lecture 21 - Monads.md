@@ -143,12 +143,12 @@ fn join<X>(xs: List<Pair<f32, List<Pair<f32, X>>>) -> List<Pair<f32, X>> {
     choices.join()
 }
 
-// We should check that this preserves these two invariants:
+// Technically, we should ensure that every arrow of this form preserves these two invariants:
 // - there is no element in each list with value 0,
 // - the sum of all weights is always exactly 1.0.
 ```
 
-# Fundamental idea
+# Fundamental idea: effectful arrows
 
 The idea is that now we "enrich" our arrows by considering arrows not just like $X \to Y$, but always in the form
 
@@ -248,10 +248,10 @@ Following the definition of horizontal composition:
 
 Then we substitute them back in the original definition in order to get **the monad laws.**
 
-> Monad laws, in elementary form:
-> 1. for every $X$, $M(\textsf{unit}_X) \,; \textsf{mul}_X = \textsf{id}_{M(X)}$
-> 2. for every $X$, $\textsf{unit}_{M(X)} \,; \textsf{mul}_X = \textsf{id}_{M(X)}$
-> 3. for every $X$, $M(\textsf{mul}_X) \,; \textsf{mul}_X = \textsf{mul}_{M(X)} \,; \textsf{mul}_X$
+> ***Monad laws, in elementary form:***
+> 1. for every $X$, $M(\textsf{unit}_X) \,; \textsf{mul}_X = \textsf{id}_{M(X)}$ as arrows $M(M(X)) \to M(X)$
+> 2. for every $X$, $\textsf{unit}_{M(X)} \,; \textsf{mul}_X = \textsf{id}_{M(X)}$ as arrows $M(M(X)) \to M(X)$
+> 3. for every $X$, $M(\textsf{mul}_X) \,; \textsf{mul}_X = \textsf{mul}_{M(X)} \,; \textsf{mul}_X$ as arrows $M(M(M(X))) \to M(X)$
 
 ## Example
 
@@ -446,12 +446,37 @@ We're going to define a new category $\textsf{Kleisli}(M)$.
   - $f \,; M(g) \quad : X \to M(M(Z))$
   - $f \,; M(g) \,; \textsf{mul}_Z \quad : X \to M(Z)$
 
-- *(Left identity.*) for every $X,Y$ and $g : X \to Y$ then $\textsf{id}_X \,; g = g$.
+- *(Left identity.)* for every $X,Y$ and $g : X \to Y$ then $\textsf{id}_X \,; g = g$.
 
-  for every $X,Y$ and $g : X \to M(Y)$ then $\textsf{unit}_X \,; M(g) \,; \textsf{mul}_Z  = g$.
+  for every $X,Y$ and $g : X \to M(Y)$ then $\textsf{unit}_X \,; M(g) \,; \textsf{mul}_Y  = g$.
 
-- *(Right identity.*) for every $X,Y$ and $f : X \to Y$ then $f \,; \textsf{id}_Y = f$.
+    $$\begin{array}{lll}
+        & \textsf{unit}_X \,; M(g) \,; \textsf{mul}_Y & \text{(naturality of \text{unit})} \\
+      = & g \,; \textsf{unit}_Y \,; \textsf{mul}_Y & \text{(first monad law)} \\
+      = & f &
+      \end{array}$$
 
-  for every $X,Y$ and $f : X \to M(Y)$ then $f \,; M(\textsf{unit}_Y) \,; \textsf{mul}_Z = f$.
+  Remember that $\textsf{unit}$ must be a natural transformation: so, for every $X,Y$ and $f : X \to Y$,
+
+$$
+    \begin{array}{ccccccccc}
+    \phantom{\textsf{id}_C(f) M(f)} X & \xrightarrow{\phantom{iii}\textsf{unit}_X\phantom{iii}} & M(X) \phantom{M(f)} & \\
+    {\textsf{id}_C(f) = f} \downarrow & \raisebox{2pt}{\tiny =} & \downarrow {M(f)}\\
+    \phantom{\textsf{id}_C(f) M(f)} Y & \xrightarrow{\phantom{iii}\textsf{unit}_Y \phantom{iii}} & M(Y) \phantom{M(f)} \\
+    \end{array}
+$$
+
+  We used this hypothesis above.
+
+- *(Right identity.)* for every $X,Y$ and $f : X \to Y$ then $f \,; \textsf{id}_Y = f$.
+
+  for every $X,Y$ and $f : X \to M(Y)$ then
+    $$\begin{array}{lll}
+        & f \,; M(\textsf{unit}_Y) \,; \textsf{mul}_Y & \text{(second monad law)} \\
+      = & f \,; \textsf{id}_{M(Y)} & \\
+      = & f &
+      \end{array}$$
+
+- *(Associativity.)* Exercise. You need to use associativity.
 
 ### At the end of the day, we obtained an operation that composes "effectul arrows" together.
