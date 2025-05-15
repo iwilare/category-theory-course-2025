@@ -107,7 +107,7 @@ fn unit<X>(x: X) -> Pair<String, X> {
 
 fn join<X>(m: Pair<String, Pair<String, X>>) -> Pair<String, X> {
     let (s1, (s2, x)) = m
-    (s1 ++ s2, x) // string concatenation
+    (s2 ++ s1, x) // string concatenation
 }
 ```
 
@@ -137,7 +137,28 @@ fn join<X>(m: Pair<i32, Pair<i32, X>>) -> Pair<i32, X> {
 }
 ```
 
-### The two monads above have the same underlying functor, but with different structure.
+---
+---
+
+Let `A` be a monoid, i.e., a type:
+- a special value `mempty: A`
+- a function `fn mappend(a: A, b: A) -> A`
+1. unital on the left,
+2. unital on the right,
+3. associative.
+
+```rust
+fn unit<X>(x: X) -> Pair<A, X> {
+    (mempty, x)
+}
+
+fn join<X>(m: Pair<A, Pair<A, X>>) -> Pair<A, X> {
+    let (s1, (s2, x)) = m
+    (mappend(s1, s2), x)
+}
+```
+
+### The two monads above have the same underlying functor, but with different monad structure.
 
 - *(The State monad.)* The `X` $\mapsto$ `Func<A, Pair<A, X>>` endofunctor, equipped with this monad structure:
 
@@ -160,7 +181,7 @@ fn join<X>(m: Func<A, Pair<A, Func<A, Pair<A, X>>>) ->
 - *(The Probability Distribution monad.)* The `X` $\mapsto$ `List<Pair<f32,X>>` endofunctor, equipped with this monad structure:
 
 ```rust
-fn unit<X>(x: X) -> List<X> {
+fn unit<X>(x: X) -> List<Pair<f32, X>> {
     Element(Pair(1.0, x), Empty)
 }
 
@@ -174,6 +195,20 @@ fn join<X>(xs: List<Pair<f32, List<Pair<f32, X>>>) -> List<Pair<f32, X>> {
 // Technically, we should ensure that every arrow of this form preserves these two invariants:
 // - there is no element in each list with value 0,
 // - the sum of all weights is always exactly 1.0.
+```
+
+```rust
+join([
+  (0.7, [(0.3, a), (0.2, b), (0.5, c)]),
+  (0.3, [(0.7, d), (0.3, e)])
+])
+= [
+   (0.21, a),
+   (0.14, b),
+   (0.4,  c),
+   (0.21, d),
+   (0.14, e)
+  ]
 ```
 
 # Fundamental idea: effectful arrows
@@ -480,8 +515,8 @@ We're going to define a new category $\textsf{Kleisli}(M)$.
 
     $$\begin{array}{lll}
         & \textsf{unit}_X \,; M(g) \,; \textsf{mul}_Y & \text{(naturality of \text{unit})} \\
-      = & g \,; \textsf{unit}_Y \,; \textsf{mul}_Y & \text{(first monad law)} \\
-      = & f &
+      = & g \,; \textsf{unit}_{M(Y)} \,; \textsf{mul}_Y & \text{(first monad law)} \\
+      = & g &
       \end{array}$$
   Remember that $\textsf{unit}$ must be a natural transformation: so, for every $X,Y$ and $f : X \to Y$,
   $$
