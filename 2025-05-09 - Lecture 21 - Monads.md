@@ -111,6 +111,34 @@ fn join<X>(m: Pair<String, Pair<String, X>>) -> Pair<String, X> {
 }
 ```
 
+- *(The Writer/logger monad with integers.)* The `X` $\mapsto$ `Pair<i32, X>` endofunctor, equipped with this monad structure:
+
+```rust
+fn unit<X>(x: X) -> Pair<i32, X> {
+    (0, x)
+}
+
+fn join<X>(m: Pair<i32, Pair<i32, X>>) -> Pair<i32, X> {
+    let (s1, (s2, x)) = m
+    (s1 + s2, x) // addition
+}
+```
+
+- *(The Writer/logger monad with integers, but a different structure.)* The `X` $\mapsto$ `Pair<i32, X>` endofunctor, equipped with this monad structure:
+
+```rust
+fn unit<X>(x: X) -> Pair<i32, X> {
+    (1, x)
+}
+
+fn join<X>(m: Pair<i32, Pair<i32, X>>) -> Pair<i32, X> {
+    let (s1, (s2, x)) = m
+    (s1 * s2, x) // multiplication
+}
+```
+
+### The two monads above have the same underlying functor, but with different structure.
+
 - *(The State monad.)* The `X` $\mapsto$ `Func<A, Pair<A, X>>` endofunctor, equipped with this monad structure:
 
 ```rust
@@ -455,17 +483,14 @@ We're going to define a new category $\textsf{Kleisli}(M)$.
       = & g \,; \textsf{unit}_Y \,; \textsf{mul}_Y & \text{(first monad law)} \\
       = & f &
       \end{array}$$
-
   Remember that $\textsf{unit}$ must be a natural transformation: so, for every $X,Y$ and $f : X \to Y$,
-
-$$
+  $$
     \begin{array}{ccccccccc}
     \phantom{\textsf{id}_C(f) M(f)} X & \xrightarrow{\phantom{iii}\textsf{unit}_X\phantom{iii}} & M(X) \phantom{M(f)} & \\
     {\textsf{id}_C(f) = f} \downarrow & \raisebox{2pt}{\tiny =} & \downarrow {M(f)}\\
     \phantom{\textsf{id}_C(f) M(f)} Y & \xrightarrow{\phantom{iii}\textsf{unit}_Y \phantom{iii}} & M(Y) \phantom{M(f)} \\
     \end{array}
-$$
-
+  $$
   We used this hypothesis above.
 
 - *(Right identity.)* for every $X,Y$ and $f : X \to Y$ then $f \,; \textsf{id}_Y = f$.
