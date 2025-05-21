@@ -208,16 +208,3 @@ fn extend_f(m: Func<S, A>>) -> Func<S, B> {
 # Some words about comonads
 
 [Comonadic notions of computations](https://www.sciencedirect.com/science/article/pii/S1571066108003435)
-
-# Adjunctions
-
-*(Definition.)* Take two categories $C$ and $D$ with two functors $L : C \to D$ and $R : D \to C$.
-We say that $F$ is left adjoint to $G$, or equivalently, that $G$ is right adjoint to $F$, if for every $X$ in $C$ and $Y$ in $D$ there is an isomorphism between in $\textsf{Prog}$ between these two types of arrows:
-
-$$\begin{array}{lll}
-D(L(X), Y) \\ \hline \hline
-C(X, R(Y))
-\end{array}
-$$
-
-(and moreover these isomorphisms are natural in $X$ and $Y$.)

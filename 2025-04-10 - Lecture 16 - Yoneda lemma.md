@@ -458,7 +458,7 @@ $$\texttt{Arr[Cᵒᵖ,Prog]\_intoΓ\_intoΔ} \cong \texttt{Arr\_Γ\_Δ}$$
 
 # The Yoneda embedding
 
-The act of sending $Γ$ to $\textsf{from}_Γ$ is also a functor! But there is a catch... it's a functor of this shape:
+The act of sending $Γ$ to $\textsf{from}_Γ$ is also a functor! But there is a catch... it's (almost) a functor of this shape:
 
 $$よ : C \to [C,\textsf{Prog}]$$
 
