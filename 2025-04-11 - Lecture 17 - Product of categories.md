@@ -1,4 +1,4 @@
-# 2025-04-11 - Lecture 16 (Products, terminals, initials of categories)
+# 2025-04-11 - Lecture 17 (Products, terminals, initials of categories)
 
 #### Meta-comment: this lecture is shorter because on this day we finished the proof of the Yoneda lemma.
 
@@ -72,8 +72,15 @@ After doing this, you need to check that what you gave really is a product of $C
         1. *(Program on objects.)* So, `fn fst_obj(a: CxD.Obj) -> C.Obj {...}` must be given.
         1. *(Program on arrows.)* So, `fn fst_arrows[A,B](a: ArrCxD_A_B) ArrC_(fst_obj(A))_(fst_obj(B)) -> C.Obj {...}` must be given.
     2. $\textsf{snd} : (C \times D) \to D$, so I need to construct a functor $\textsf{snd} : (C \times D) \Rightarrow D$.
-2. *(Pairing arrow).* ...
-3. ...
+2. *(Pairing arrow).* for any category $H$, given functors $F : H \Rightarrow C$, $G : H \Rightarrow D$ there is a functor $\langle F, G \rangle : H \Rightarrow C \times D$ defined by 
+        
+      $F(H) := (F(H), G(H))$ on objects $H$ of the category $H$, 
+      
+      $F(h) := (F(h), G(h))$ on arrows $h : X \to Y$ of the category $H$ (remember that arrows in $C \times D$ are pairs of arrows)
+
+      Exercise: check that this really is a functor. Also check that the usual squares commute.
+3. (Product equations) ...
+4. (Pair expansion) ...
 
 *(Claim.)* $\textrm{Cat}$ has all products, given by the definition above.
 

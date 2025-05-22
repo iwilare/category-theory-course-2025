@@ -1,4 +1,4 @@
-# 2025-04-10 - Lecture 15 (Natural transformations 2, Yoneda)
+# 2025-04-10 - Lecture 16 (Natural transformations 2, Yoneda)
 
 # Working with natural transformations
 
