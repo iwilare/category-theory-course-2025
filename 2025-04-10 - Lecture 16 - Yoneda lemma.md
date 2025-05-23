@@ -425,17 +425,22 @@ Again, we have to reason by program equivalence:
     = β<X>(m)                   // Done!
     ```
 
-# The Yoneda embedding
+# A special case of Yoneda: the Yoneda embedding theorem
 
 Let's see what the Yoneda lemma becomes when we make a special choice of $F$: using $\textsf{from}_Γ$ again!
 
 Remember, Yoneda works for any functor $F : C \Rightarrow \text{Prog}$.
 
-Now we pick as our $F := \textsf{from}_Δ$. Yoneda now says that
+Now we pick as our $F := \textsf{from}_Δ$ for some object $\Delta$. Yoneda now says that
 
 Before:
+
+For every object $\Gamma$ of $C$ and functor $F : C \Rightarrow \text{Prog}$,
 $$\texttt{Arr[C,Prog]\_fromΓ\_F} \cong F(Γ)$$
 After:
+
+For every object $\Gamma, \Delta$ of $C$,
+
 $$\texttt{Arr[C,Prog]\_fromΓ\_fromΔ} \cong \textsf{from}_Δ(Γ)$$
 
 $$\texttt{Arr[C,Prog]\_fromΓ\_fromΔ} \cong \texttt{Arr\_Δ\_Γ}$$
@@ -456,7 +461,7 @@ We obtain this:
 
 $$\texttt{Arr[Cᵒᵖ,Prog]\_intoΓ\_intoΔ} \cong \texttt{Arr\_Γ\_Δ}$$
 
-# The Yoneda embedding
+# The Yoneda embedding functor
 
 The act of sending $Γ$ to $\textsf{from}_Γ$ is also a functor! But there is a catch... it's (almost) a functor of this shape:
 
@@ -481,6 +486,10 @@ How to define this functor?
 
 We will see in the next lecture that secretly $よ$ is the curried version of a very important functor:
 $$\text{Arr} : C^\textsf{op} \times C \to \textsf{Prog}$$
+
+### Important technical detail:
+
+The Yoneda embedding theorem is not complete without defining the Yoneda embedding functor: in particular, one also needs to check that one of the two sides of the isomorphism (in the Yoneda embedding) corresponds exactly with the program on arrows of the Yoneda embedding functor. Otherwise one cannot obtain a later theorem (which follows from the fact that the Yoneda embedding is fully faithful).
 
 # Beware of fake Yoneda lemmas!
 

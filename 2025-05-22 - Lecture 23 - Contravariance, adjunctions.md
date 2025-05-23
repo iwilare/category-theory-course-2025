@@ -15,9 +15,9 @@ The two types being isomorphic are `ArrD_(L_obj(X))_Y` and `ArrC_X_(R_obj(Y))`, 
 
 *Moreover, the two programs witness the isomorphism are natural in $X$ and $Y$. This is important.*
 
-# The "arrows"-functor $\text{Arr} : C^\textsf{op} \times C \to \textsf{Prog}$
+# The "arrows"-functor $\text{Arr} : C^\textsf{op} \times C \Rightarrow \textsf{Prog}$
 
-We saw in the lecture for Yoneda that for every object $\Gamma$ in $C$ I can give you a functor $\textsf{from}_\Gamma : C \to \textsf{Prog}$.
+We saw in the lecture for Yoneda that for every object $\Gamma$ in $C$ I can give you a functor $\textsf{from}_\Gamma : C \Rightarrow \textsf{Prog}$.
 
 Then, we said that this assignment actually creates a functor into the functor category, which on objects sends $\Gamma \mapsto \textsf{from}_\Gamma$. In order to define it on arrows we said that you need to put an "$\textsf{op}$".
 
@@ -25,7 +25,7 @@ $$よ : C^{\textsf{op}} \to [C,\textsf{Prog}]$$
 
 Today we explain the situation better by introducing this functor here:
 
-$$\text{Arr} : C^\textsf{op} \times C \to \textsf{Prog}$$
+$$\text{Arr} : C^\textsf{op} \times C \Rightarrow \textsf{Prog}$$
 
 This functor is sometimes called *the "hom" functor of $C$*, or *the "arrows" functor of $C$.*
 
@@ -87,8 +87,8 @@ This functor is sometimes called *the "hom" functor of $C$*, or *the "arrows" fu
 
 We can do this for every category $C$. In particular, we can do it for $C := \text{Prog}$.
 
-- $\textsf{Arr}_C : C^\textsf{op} \times C \to \textsf{Prog}$
-- $\textsf{Arr}_\textsf{Prog} : \textsf{Prog}^\textsf{op} \times \textsf{Prog} \to \textsf{Prog}$
+- $\textsf{Arr}_C : C^\textsf{op} \times C \Rightarrow \textsf{Prog}$
+- $\textsf{Arr}_\textsf{Prog} : \textsf{Prog}^\textsf{op} \times \textsf{Prog} \Rightarrow \textsf{Prog}$
 
 # $\text{Cat}$ is cartesian closed
 
@@ -101,7 +101,7 @@ We can do this for every category $C$. In particular, we can do it for $C := \te
 ### $\text{Cat}$ has exponential objects
 
 1. *(Existence of evaluation)*. There is a functor $\textsf{eval} : A \times [A,B] \to B$, defined like this: on objects $\textsf{eval}(X,F) := F(X)$ we send the pair of an object $X$ of $A$ and a functor $F : A \Rightarrow B$ to the object of $B$ that $F$ sends $X$ to. Exercise: check the rest of the definition.
-2. *(Existence of lambda abstraction)*. given a category $H$ and a functor $F : H \times A \to B$ we need to build a functor $\Lambda(F) : H \to [A,B]$ into the functor category.
+2. *(Existence of lambda abstraction)*. given a category $H$ and a functor $F : H \times A \Rightarrow B$ we need to build a functor $\Lambda(F) : H \Rightarrow [A,B]$ into the functor category.
     - *(Program on objects.)* $\Lambda(F)(X)$ for some object $X$ of $H$ must be an object of $[A,B]$, so a functor! Let's define this functor.
         - *(Program on objects.)* $\Lambda(F)(X)(Z)$ for some object $Z$ of $A$ is defined as $\Lambda(F)(X)(Z) := F(X,Z)$.
         - *(Program on arrows.)* $\Lambda(F)(X)(f)$ for some arrow $f : Z \to Z'$ of $A$ is defined as $\Lambda(F)(X)(f) := F(\textsf{id}_X,f)$.
@@ -166,12 +166,12 @@ Let's build functors out of nothing.
 
 Ingredients:
 - Categories $C,D$
-- A functor $F : C \to D$.
-- $\textsf{Arr}_D : D^\textsf{op} \times D \to \textsf{Prog}$
+- A functor $F : C \Rightarrow D$.
+- $\textsf{Arr}_D : D^\textsf{op} \times D \Rightarrow \textsf{Prog}$
 
-We want to build a functor $C^\textsf{op} \times D \to \textsf{Prog}$ defined by $(X,Y) \mapsto \texttt{Arr}_D(F(X),Y)$.
+We want to build a functor $C^\textsf{op} \times D \Rightarrow \textsf{Prog}$ defined by $(X,Y) \mapsto \texttt{Arr}_D(F(X),Y)$.
 
-1. Knowing that $\textsf{op}$ is functorial, I have a functor $F^\textsf{op} : C^\textsf{op} \to D^\textsf{op}$.
+1. Knowing that $\textsf{op}$ is functorial, I have a functor $F^\textsf{op} : C^\textsf{op} \Rightarrow D^\textsf{op}$.
 2. Knowing that $\textsf{Cat}$ has products, I get for free this usual definition of "parallel arrows":
     - given $F : A \Rightarrow B$,
     - given $G : C \Rightarrow D$,
@@ -179,34 +179,24 @@ We want to build a functor $C^\textsf{op} \times D \to \textsf{Prog}$ defined by
 
     so I can put in parallel $F^\text{op}$ with the identity to get a functor
 
-    $F^\textsf{op} : C^\textsf{op} \to D^\textsf{op}$
+    $F^\textsf{op} : C^\textsf{op} \Rightarrow D^\textsf{op}$
 
     $F^\textsf{op} \times \textsf{id}_D : C^\textsf{op} \times D \to D^\textsf{op} \times D$.
-3. Then I can postcompose with $\textsf{Arr}_D$ to get a functor $C^\textsf{op} \times D \to \textsf{Prog}$.
+3. Then I can postcompose with $\textsf{Arr}_D$ to get a functor $C^\textsf{op} \times D \Rightarrow \textsf{Prog}$.
 
-    So, the final functor is $(F^\textsf{op} \times \textsf{id}_D)\,;\textsf{Arr}_D : C^\textsf{op} \times D \to \textsf{Prog}$.
+    So, the final functor is $$(F^\textsf{op} \times \textsf{id}_D)\,;\textsf{Arr}_D : C^\textsf{op} \times D \Rightarrow \textsf{Prog}$$
 
     *Intuition:* $(X,Y) \mapsto \texttt{Arr}_D(F(X),\textsf{id}_D(Y))$.
 
 ---
 
-
-
-
 We will use the notation $\texttt{Arr}_D(F^\textsf{op}(-),=)$, using $-$ and $=$ to indicate "placeholders" to indicate what the arguments of these functor is.
 
 # Another example
 
-$$(X,Y) \mapsto \texttt{Arr}_D(F(X),\textsf{id}_D(Y))$$
-$$(X,Y) \mapsto \texttt{Arr}_D(F(X),Y)$$
-$$\texttt{Arr}_D(F^\textsf{op}(-),=)$$
-
 This is the functor:
 $$(F^\textsf{op} \times \textsf{id}_D)\,;\textsf{Arr}_D$$
 
-<br>
-<br>
----
 
 $$(X,Y) \mapsto \texttt{Arr}_D(X,F(Y))$$
 $$\texttt{Arr}_D(-,F(=))$$
@@ -216,7 +206,7 @@ $F : C \Rightarrow D$
 
 $\textsf{id}_{D^\textsf{op}} \times F : D^\textsf{op} \times C \Rightarrow D^\textsf{op} \times D$
 
-$(\textsf{id}_{D^\textsf{op}} \times F)\,;\textsf{Arr}_{D} : D^\textsf{op} \times C \Rightarrow \text{Prog}$
+$$(\textsf{id}_{D^\textsf{op}} \times F)\,;\textsf{Arr}_{D} : D^\textsf{op} \times C \Rightarrow \text{Prog}$$
 
 # Back to adjunctions
 
@@ -224,12 +214,27 @@ Ingredients:
 - Categories $C,D$
 - A functor $L : C \to D$.
 - A functor $R : D \to C$.
-- $\textsf{Arr}_C : C^\textsf{op} \times C \to \textsf{Prog}$
-- $\textsf{Arr}_D : D^\textsf{op} \times D \to \textsf{Prog}$
+- $\textsf{Arr}_C : C^\textsf{op} \times C \Rightarrow \textsf{Prog}$
+- $\textsf{Arr}_D : D^\textsf{op} \times D \Rightarrow \textsf{Prog}$
 
 ### Definition of adjunction:
 
 there is an isomorphism $$\texttt{Arr}_D(L^\textsf{op}(-),=) \cong \texttt{Arr}_C(-,R(=))$$ in the functor category $[C^\textsf{op}\times D, \text{Prog}]$, where arrows are natural transformations. This takes care of the naturality requirement as well as the requirement that this isomorphism is there for every single $X$ and $Y$.
+
+Explicitly, there are two natural transformations $\theta,\theta^{-1}$. between functors $[C^\textsf{op} \times D,\text{Prog}]$ which compose to the identity.
+
+- $\theta : \texttt{Arr}_D(L^\textsf{op}(-),=) \to \texttt{Arr}_C(-,R(=))$
+- $\theta^{-1} : \texttt{Arr}_D(L^\textsf{op}(-),=) \to \texttt{Arr}_C(-,R(=))$
+- such that $\theta\,;\theta^{-1} = \textsf{id}$,  $\theta^{-1}\,;\theta = \textsf{id}$.
+
+Since these are natural transformations, they are families of arrows 
+
+$$
+\theta_{A,B} : \texttt{Arr}_D(L(A),B) \to \texttt{Arr}_C(A,R(B)) \\
+\theta^{-1}_{A,B} : \texttt{Arr}_C(A,R(B)) \to \texttt{Arr}_D(L(A),B) \\
+$$
+
+for every object (i.e., pair) $(A,B)$ of $C^{\textsf{op}} \times D$, so $A$ of $C$ and $B$ of $D$.
 
 # Example 1: exponential adjunction/tensor-hom adjunction
 
@@ -266,10 +271,10 @@ I always have that $L := A \times -$ is a functor.
 
 ### Claim 1
 
-0. $C := C, D := 1$
-1. $L = {!} : C \Rightarrow 1$,
-2. We ask for the existence of $R : 1 \Rightarrow C$
-3. We ask for $! \vdash R$.
+1. $C := C, D := 1$
+2. $L = {!} : C \Rightarrow 1$,
+3. We ask for the existence of $R : 1 \Rightarrow C$
+4. We ask for $! \vdash R$.
 
 For every $X$ object of $C$ and every $Y$ object of $1$,
 
@@ -281,10 +286,10 @@ $$
 
 ### Claim 2
 
-0. $C := 1, D := D$
-1. $R = {!} : D \Rightarrow 1$,
-2. We ask for the existence of $L : 1 \Rightarrow C$
-3. We ask for $L \vdash {!}$.
+1. $C := 1, D := D$
+2. $R = {!} : D \Rightarrow 1$,
+3. We ask for the existence of $L : 1 \Rightarrow C$
+4. We ask for $L \vdash {!}$.
 
 For every $X$ object of $1$ and every $Y$ object of $D$,
 
@@ -360,7 +365,3 @@ L(A,B) \longrightarrow Y \text{ in }C\\ \hline \hline
  A \longrightarrow Y \text{ in } C \qquad  B \longrightarrow Y \text{ in } C \\
 \end{array}
 $$
-
-# Unit-counit presentation of adjunctions
-
-# Monads from adjunctions
