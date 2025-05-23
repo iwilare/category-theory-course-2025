@@ -23,21 +23,21 @@ So, $\textsf{Arr}$ "generlizes" both $\textsf{into}$ and $\textsf{from}$ at the 
 
 A straightforward consequence of the theorem above is this one:
 
-If 
+If
 
 $$
-\textsf{Arr}_C(\Gamma,-) \cong \textsf{Arr}_C(\Delta,-) 
+\textsf{Arr}_C(\Gamma,-) \cong \textsf{Arr}_C(\Delta,-)
 $$
 
-(i.e., they are isomorphic as objects of $[C,\text{Prog}]$), then $\Gamma \cong \Delta$ as objects of $C$. 
+(i.e., they are isomorphic as objects of $[C,\text{Prog}]$), then $\Gamma \cong \Delta$ as objects of $C$.
 
-Similarly, if 
+Similarly, if
 
 $$
-\textsf{Arr}_C(-,\Gamma) \cong \textsf{Arr}_C(-,\Delta) 
+\textsf{Arr}_C(-,\Gamma) \cong \textsf{Arr}_C(-,\Delta)
 $$
 
-(i.e., they are isomorphic as objects of $[C^\textsf{op},\text{Prog}]$), then $\Gamma \cong \Delta$ as objects of $C$. 
+(i.e., they are isomorphic as objects of $[C^\textsf{op},\text{Prog}]$), then $\Gamma \cong \Delta$ as objects of $C$.
 
 *Slogan: two objects are isomorphic precisely when their $\textsf{into}$ (or $\textsf{from}$) functors are (naturally) isomorphic.*
 
@@ -69,18 +69,18 @@ It turns out (check this!!! important technical detail) that the Yoneda embeddin
 
 Then, I obtain these:
 
-- $よ^{-1}_{\Gamma,\Delta}(\alpha) : \Gamma \to \Delta$ 
-- $よ^{-1}_{\Delta,\Gamma}(\alpha^{-1}) : \Delta \to \Gamma$ 
+- $よ^{-1}_{\Gamma,\Delta}(\alpha) : \Gamma \to \Delta$
+- $よ^{-1}_{\Delta,\Gamma}(\alpha^{-1}) : \Delta \to \Gamma$
 
 Let's show that these two compose to the identity.
 
 $$
 \begin{array}{lll}
-& よ^{-1}_{\Gamma,\Delta}(\alpha) \,; よ^{-1}_{\Delta,\Gamma}(\alpha^{-1}) \\ 
-= & \textsf{id}(よ^{-1}(\alpha) \,; よ^{-1}(\alpha^{-1})) & \text{($よ\,;よ^{-1} = \textsf{id}$)} \\ 
-= & よ^{-1}(よ(よ^{-1}(\alpha) \,; よ^{-1}(\alpha^{-1}))) & \text{(よ is a functor)}\\ 
-= & よ^{-1}(よ(よ^{-1}(\alpha)) \,; よ(よ^{-1}(\alpha^{-1}))) & \text{($よ^{-1}\,;よ = \textsf{id}$, twice)}\\ 
-= & よ^{-1}(\alpha \,; \alpha^{-1}) & \text{($\alpha\,;\alpha^{-1} = \textsf{id}$)}\\ 
+& よ^{-1}_{\Gamma,\Delta}(\alpha) \,; よ^{-1}_{\Delta,\Gamma}(\alpha^{-1}) \\
+= & \textsf{id}(よ^{-1}(\alpha) \,; よ^{-1}(\alpha^{-1})) & \text{($よ\,;よ^{-1} = \textsf{id}$)} \\
+= & よ^{-1}(よ(よ^{-1}(\alpha) \,; よ^{-1}(\alpha^{-1}))) & \text{(よ is a functor)}\\
+= & よ^{-1}(よ(よ^{-1}(\alpha)) \,; よ(よ^{-1}(\alpha^{-1}))) & \text{($よ^{-1}\,;よ = \textsf{id}$, twice)}\\
+= & よ^{-1}(\alpha \,; \alpha^{-1}) & \text{($\alpha\,;\alpha^{-1} = \textsf{id}$)}\\
 = & よ^{-1}(\textsf{id}) & \text{(よ is a functor, so respects identities)} \\
 = & よ^{-1}(よ(\textsf{id})) & \text{($よ\,;よ^{-1} = \textsf{id}$)}\\
 = & \textsf{id} \\
@@ -101,9 +101,11 @@ The other direction is analogous.
 4. $$\textsf{Arr}_{C}(A + B, -) \cong \textsf{Arr}_{C}(A, -) \times \textsf{Arr}_{C}(B, -) $$
 5. $$\textsf{Arr}_{C}(A \times -, =) \cong \textsf{Arr}_{C}(-, A \Rightarrow =)$$
 
+To be fully clear, $1$ on the right here refers to the functor $\textsf{const}_{1} : C^{\textsf{op}} \Rightarrow \text{Prog}$ defined by sending $X \mapsto \texttt{Unit}$.
+
 # The point of the next exercises:
 
-Properties of structures defined by adjunctions (or in general, using $\textsf{into}$/$\textsf{from}$ functors) *in any category $C$*, follow almost directly from the fact that $\textsf{Prog}$, *specifically*, has these properties. 
+Properties of structures defined by adjunctions (or in general, using $\textsf{into}$/$\textsf{from}$ functors) *in any category $C$*, follow almost directly from the fact that $\textsf{Prog}$, *specifically*, has these properties.
 
 In particular, we use *chains of isomorhisms* between $\textsf{into}$/$\textsf{from}$ functors, and then, by the Yoneda isomorphism, we conclude that two objects must be isomorphic. We call all of these steps together *Yoneda reasoning*.
 
@@ -113,10 +115,10 @@ For every category $C$ which has all products, then for every $A,B$,
 
 $$
 \begin{array}{lll}
-  & \textsf{Arr}(-, A \times B) & \text{(adjunction for products)}\\ 
+  & \textsf{Arr}(-, A \times B) & \text{(adjunction for products)}\\
 \cong & \textsf{Arr}(-, A) \times \textsf{Arr}(-, B) & \textbf{(products in *$\text{Prog}$* are symmetric)}\\
-\cong & \textsf{Arr}(-, B) \times \textsf{Arr}(-, A) & \text{(adjunction for products)}\\ 
-\cong & \textsf{Arr}(-, B \times A) & \\ 
+\cong & \textsf{Arr}(-, B) \times \textsf{Arr}(-, A) & \text{(adjunction for products)}\\
+\cong & \textsf{Arr}(-, B \times A) & \\
 \end{array}
 $$
 
@@ -128,12 +130,12 @@ For every category $C$ which has all products, then for every $A,B,C$,
 
 $$
 \begin{array}{lll}
-  & \textsf{Arr}(-, (A \times B) \times C) & \text{(adjunction for products)}\\ 
-\cong & \textsf{Arr}(-, A \times B) \times \textsf{Arr}(-, B) & \text{(adjunction for products)}\\
+  & \textsf{Arr}(-, (A \times B) \times C) & \text{(adjunction for products)}\\
+\cong & \textsf{Arr}(-, A \times B) \times \textsf{Arr}(-, C) & \text{(adjunction for products)}\\
 \cong & \left(\textsf{Arr}(-, A) \times \textsf{Arr}(-, B) \right) \times \textsf{Arr}(-, C) & \textbf{(products in *$\text{Prog}$* are associative)}\\
 \cong & \textsf{Arr}(-, A) \times (\textsf{Arr}(-, B) \times \textsf{Arr}(-, C)) & \text{(adjunction for products)}\\
 \cong & \textsf{Arr}(-, A) \times \textsf{Arr}(-, B \times C) & \text{(adjunction for products)}\\
-\cong & \textsf{Arr}(-, A \times (B \times C)) & \\ 
+\cong & \textsf{Arr}(-, A \times (B \times C)) & \\
 \end{array}
 $$
 
@@ -145,10 +147,10 @@ For every category $C$ which has all coproducts, then for every $A,B$,
 
 $$
 \begin{array}{lll}
-  & \textsf{Arr}(A + B, -) & \text{(adjunction for coproducts)}\\ 
+  & \textsf{Arr}(A + B, -) & \text{(adjunction for coproducts)}\\
 \cong & \textsf{Arr}(A, -) \times \textsf{Arr}(B, -) & \textbf{(products in *$\text{Prog}$* are symmetric)}\\
-\cong & \textsf{Arr}(B, -) \times \textsf{Arr}(A, -) & \text{(adjunction for coproducts)}\\ 
-\cong & \textsf{Arr}(B + A, -) & \\ 
+\cong & \textsf{Arr}(B, -) \times \textsf{Arr}(A, -) & \text{(adjunction for coproducts)}\\
+\cong & \textsf{Arr}(B + A, -) & \\
 \end{array}
 $$
 
@@ -164,11 +166,11 @@ $$(A \times B) + (A \times C) \cong A \times (B + C)$$
 
 $$
 \begin{array}{lll}
-  & \textsf{Arr}((A \times B) + (A \times C), -) & \text{(adjunction for coproducts)}\\ 
-  & \textsf{Arr}(A \times B, -) \times \textsf{Arr}(A \times C, -) & \text{(exponential adjunction on $A$)}\\ 
-  & \textsf{Arr}(B, A \Rightarrow -) \times \textsf{Arr}(C, A \Rightarrow -) & \text{(adjunction for coproducts)}\\ 
-  & \textsf{Arr}(B + C, A \Rightarrow -) & \text{(exponential adjunction on $A$)}\\ 
-  & \textsf{Arr}(A \times (B + C), -) & \text{(exponential adjunction on $A$)}\\ 
+  & \textsf{Arr}((A \times B) + (A \times C), -) & \text{(adjunction for coproducts)}\\
+  & \textsf{Arr}(A \times B, -) \times \textsf{Arr}(A \times C, -) & \text{(exponential adjunction on $A$)}\\
+  & \textsf{Arr}(B, A \Rightarrow -) \times \textsf{Arr}(C, A \Rightarrow -) & \text{(adjunction for coproducts)}\\
+  & \textsf{Arr}(B + C, A \Rightarrow -) & \text{(exponential adjunction on $A$)}\\
+  & \textsf{Arr}(A \times (B + C), -) & \text{(exponential adjunction on $A$)}\\
 \end{array}
 $$
 
@@ -182,20 +184,30 @@ Then, we show that for every $L'(X) \cong L(X)$. Moreover, one can easily check 
 
 $$
 \begin{array}{lll}
-  & \textsf{Arr}(L'(-), =) & \text{($L'$ is a left adjoint)}\\ 
- \cong & \textsf{Arr}(-, R(=)) & \text{($L$ is a left adjoint)}\\ 
- \cong & \textsf{Arr}(L(-), =) & \\ 
+  & \textsf{Arr}(L'(-), =) & \text{($L'$ is a left adjoint)}\\
+ \cong & \textsf{Arr}(-, R(=)) & \text{($L$ is a left adjoint)}\\
+ \cong & \textsf{Arr}(L(-), =) & \\
 \end{array}
 $$
 
 Therefore $L'(-) \cong L(-)$ by Yoneda reasoning. (technically we can only do this for a concrete $Y := L(X)$ for now but of course it can be generalized to apply to this case too.)
 
+We can also do it for a concrete $X$:
+$$
+\begin{array}{lll}
+  & \textsf{Arr}(L'(X), -) & \text{($L'$ is a left adjoint)}\\
+ \cong & \textsf{Arr}(X, R(-)) & \text{($L$ is a left adjoint)}\\
+ \cong & \textsf{Arr}(L(X), -) & \\
+\end{array}
+$$
+
+
 Right adjoints are also unique by the same reasoning:
 $$
 \begin{array}{lll}
-  & \textsf{Arr}(-, R(=)) & \text{($R$ is a right adjoint)}\\ 
-  \cong & \textsf{Arr}(L(-), =) & \text{($R'$ is a right adjoint)}\\ 
-  \cong & \textsf{Arr}(-, R'(=)) & \\ 
+  & \textsf{Arr}(-, R(=)) & \text{($R$ is a right adjoint)}\\
+  \cong & \textsf{Arr}(L(-), =) & \text{($R'$ is a right adjoint)}\\
+  \cong & \textsf{Arr}(-, R'(=)) & \\
 \end{array}
 $$
 
@@ -209,26 +221,30 @@ A functor $F : C \Rightarrow D$ is said to preserve terminal objects when
 
 $$F(1) \cong 1$$
 
-Imagine that we are given an adjunction $L \vdash R$. Then $R$ preserves products and terminal objects (in general, right adjoint-like structures).
+Imagine that we are given an adjunction $L \dashv R$. Then $R$ preserves products and terminal objects (in general, right adjoint-like structures).
 
 $$
 \begin{array}{lll}
-  & \textsf{Arr}(-, R(A \times B)) & \text{($R$ is a right adjoint)}\\ 
-  \cong & \textsf{Arr}(L(-), A \times B) & \text{(adjunction for products)}\\ 
-  \cong & \textsf{Arr}(L(-), A) \times \textsf{Arr}(L(-), B) & \text{($R$ is a right adjoint)}\\ 
-  \cong & \textsf{Arr}(-, R(A)) \times \textsf{Arr}(-, R(B)) & \text{($R$ is a right adjoint)}\\ 
-  \cong & \textsf{Arr}(-, R(A) \times R(B)) &\\ 
+  & \textsf{Arr}(-, R(A \times B)) & \text{($R$ is a right adjoint)}\\
+  \cong & \textsf{Arr}(L(-), A \times B) & \text{(adjunction for products)}\\
+  \cong & \textsf{Arr}(L(-), A) \times \textsf{Arr}(L(-), B) & \text{($R$ is a right adjoint)}\\
+  \cong & \textsf{Arr}(-, R(A)) \times \textsf{Arr}(-, R(B)) & \text{(adjunction for products)}\\
+  \cong & \textsf{Arr}(-, R(A) \times R(B)) &\\
 \end{array}
 $$
 
 $$
 \begin{array}{lll}
-  & \textsf{Arr}(-, R(1)) & \text{($R$ is a right adjoint)}\\ 
- \cong & \textsf{Arr}(L(-), 1) & \text{(adjunction for terminal objects)}\\ 
- \cong & 1 & \text{(adjunction for terminal objects)}\\ 
- \cong & \textsf{Arr}(-, 1) & \\ 
+  & \textsf{Arr}(-, R(1)) & \text{($R$ is a right adjoint)}\\
+ \cong & \textsf{Arr}(L(-), 1) & \text{(adjunction for terminal objects)}\\
+ \cong & 1 & \text{(adjunction for terminal objects)}\\
+ \cong & \textsf{Arr}(-, 1) & \\
 \end{array}
 $$
+
+### Left adjoints preserve coproducts and initial objects.
+
+### People say: RAPL, L = limits
 
 # Unit-counit presentation of adjunctions
 
@@ -246,15 +262,15 @@ There are two special natural transformations that I associate to every adjuncti
 
 $$
 \begin{array}{ll}
-\textsf{unit} : \textsf{id}_C \longrightarrow L\,;R \\ 
-\textsf{unit}_X : X \to R(L(X)) \\ 
+\textsf{unit} : \textsf{id}_C \longrightarrow L\,;R \\
+\textsf{unit}_X : X \to R(L(X)) \\
 \end{array}
 $$
 
 $$
 \begin{array}{ll}
-\textsf{counit} : R\,;L \longrightarrow \textsf{id}_D \\ 
-\textsf{counit}_X : L(R(X)) \to X \\ 
+\textsf{counit} : R\,;L \longrightarrow \textsf{id}_D \\
+\textsf{counit}_X : L(R(X)) \to X \\
 \end{array}
 $$
 
@@ -269,14 +285,14 @@ $$
 in particular for $A := R(X)$ and $L := X$ for every object $X$ of $D$
 
 $$
-\theta^{-1}_{R(X),X} : \texttt{Arr}_C(R(X),R(X)) \to \texttt{Arr}_D(L(R(X)),X) 
+\theta^{-1}_{R(X),X} : \texttt{Arr}_C(R(X),R(X)) \to \texttt{Arr}_D(L(R(X)),X)
 $$
 
 So we define:
 
 $$
 \begin{array}{ll}
-\textsf{counit}_X := \theta_{X,L(X)}(\textsf{id}_X) \\ 
+\textsf{counit}_X := \theta_{X,L(X)}(\textsf{id}_X) \\
 \textsf{unit}_X := \theta^{-1}_{R(X),X}(\textsf{id}_X)
 \end{array}
 $$
@@ -285,12 +301,20 @@ $$
 
 It turns out that these satisfy some reasonable equations, called *triangle identities* or *zig-zag identities*:
 
+
+> $$
+> \begin{array}{ll}
+> \textsf{unit}_X : X \to R(L(X)) \\
+> \textsf{counit}_X : L(R(X)) \to X \\
+> \end{array}
+> $$
+
 1.
   $$
     \begin{array}{c}
       L(X) & \xrightarrow{L(\textsf{unit}_X)} & L(R(L(X))) &  \xrightarrow{\textsf{counit}_{L(X)}} & L(X) \\
-    \end{array} 
-    \\ 
+    \end{array}
+    \\
     =
     \\
     \begin{array}{c}
@@ -301,8 +325,8 @@ It turns out that these satisfy some reasonable equations, called *triangle iden
   $$
     \begin{array}{c}
       R(X) & \xrightarrow{\textsf{unit}_{R(X)}} & R(L(R(X))) & \xrightarrow{R(\textsf{counit}_X)}  & R(X) \\
-    \end{array} 
-    \\ 
+    \end{array}
+    \\
     =
     \\
     \begin{array}{c}
@@ -312,10 +336,10 @@ It turns out that these satisfy some reasonable equations, called *triangle iden
 
 We can express these purely using horizontal composition of natural transformations:
 
-1. $(\textsf{unit} * L) \,; (L * \textsf{counit}) = \textsf{id}_L$
-1. $(R * \textsf{unit}) \,; (\textsf{counit} * R) = \textsf{id}_R$
+1. $(\textsf{unit} * \textsf{id}_L) \,; (\textsf{id}_L * \textsf{counit}) = \textsf{id}_L$
+1. $(\textsf{id}_R * \textsf{unit}) \,; (\textsf{counit} * \textsf{id}_R) = \textsf{id}_R$
 
-#### Unit and counit + some equations characterize adjunctions.
+## Unit and counit + some equations characterize adjunctions.
 
 There is an equivalent presentation of adjunctions.
 
@@ -326,10 +350,16 @@ There is an equivalent presentation of adjunctions.
 
 *Sketch of proof.*
 
-Fix two functors $L : C \Rightarrow D$, $R : D \Rightarrow C$, and two objects $X$ in $C$ and $Y$ in $D$. 
+Fix two functors $L : C \Rightarrow D$, $R : D \Rightarrow C$, and two objects $X$ in $C$ and $Y$ in $D$.
 
 Imagine someone gives me $\textsf{unit}$ and $\textsf{counit}$ (and tells me the zig-zag identities).
 
+> $$
+> \begin{array}{ll}
+> \textsf{unit}_X : X \to R(L(X)) \\
+> \textsf{counit}_X : L(R(X)) \to X \\
+> \end{array}
+> $$
 Imagine someone gives me an arrow $f : X \to R(Y)$. I need to construct an arrow $L(X) \to Y$.
 
 Imagine someone gives me an arrow $g : L(X) \to Y$. I need to construct an arrow $X \to R(Y)$.
