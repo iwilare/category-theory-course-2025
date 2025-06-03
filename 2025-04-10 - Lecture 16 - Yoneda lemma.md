@@ -49,9 +49,9 @@ $$
 \end{array}
 $$
 
-**Graphical intuition for why it's called vertical intuition.**
+**Graphical intuition for why it's called vertical composition.**
 
-### Composition of natural transformations (also called "horizontal composition")
+### Another "composition" of natural transformations (also called "horizontal composition")
 
 Remember: we know how to compose functors together.
 

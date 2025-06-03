@@ -12,16 +12,83 @@ Monoidal categories do not come equipped by default with diagonal arrows $\delta
 
 We saw some examples of strict monoidal category.
 
-Given a symmetric strict monoidal category, the unit object and combine operations $(I,\otimes)$ are equivalent to the terminal object and the combine operation $(1,\times)$ if the following happens:
+Fox's theorem tells me sufficient (and necessary) conditions for the monoidal product to really be the *categorical product* (which *does* have a universal property, as we know), i.e., that
+
+$$A \otimes B \cong A \times B$$
+
+$$I \cong 1$$
+
+*Theorem.*
+Given a symmetric strict monoidal category, 1. the unit object $I$ is isomorphic to the terminal object $1$, and 2. the combine operation $A \otimes B$ is isomorphic to the product $A \times B$ precisely when the following things happen:
 
 1. Every object $A$ has two arrows
     - $\delta_A : A \to A \otimes A \hspace{3em}$ (think of it as $\textsf{duplicate} : A \to A \times A$)
     - $\varepsilon_A : A \to I \hspace{5.3em}$ (think of it as $!_A : A \to 1$)
+
+    In the language for string diagrams, we will represent $\delta_A$ these as:
+
+    ```
+                 A
+             ------
+            /
+     A     /
+    ------+
+           \
+            \    A
+             ------
+    ```
+    instead of
+
+    ```
+        +------+  A
+        |      |-----
+        |      |
+     A  |      |
+    ----| δ_A  |
+        |      |  A
+        |      |-----
+        |      |
+        +------+
+    ```
+
+    And we will represent $\varepsilon_A$ as
+
+
+    ```
+
+       A
+    --------+
+
+    ```
+    instead of
+
+    ```
+        +------+
+     A  |      |
+    ----| ε_A  |
+        |      |
+        +------+
+    ```
+
+    Remember! This arrow goes into $I$, which we already agreed we would not draw the wire for.
+
 2. Each $(A , \delta_A, \varepsilon_A)$ is a commutative comonoid, i.e., these somewhat intuitive equations hold:
     - Unitality left,
+    $$
+    (\varepsilon_A \otimes \textsf{id}_A) \,; \delta_A = \textsf{id}_A
+    $$
     - Unitality right,
+    $$
+    (\textsf{id}_A \otimes \varepsilon_A) \,; \delta_A = \textsf{id}_A
+    $$
     - Associativity,
+    $$
+    (\textsf{id}_A \otimes \delta_A) \,; \delta_A = (\delta_A \otimes \textsf{id}_A) \,; \delta_A
+    $$
     - Commutativity.
+    $$
+    \textsf{swap}_{A,A} \,; \delta_A = \delta_A
+    $$
 3. $\delta$ and $\varepsilon$ are "uniform" (i.e., well behaved w.r.t. monoidal structure):
   $$\delta_{A \otimes B} = (\delta_{A} \otimes \delta_{B}) \,; \textsf{id}_A \otimes \textsf{swap}_{A,B} \otimes \textsf{id}_B$$
   $$\varepsilon_{A \otimes B} = \varepsilon_{A} \otimes  \varepsilon_{B}$$
@@ -30,6 +97,7 @@ Given a symmetric strict monoidal category, the unit object and combine operatio
   $$f\,; \varepsilon_{Y} = \varepsilon_{X}$$
   (This last condition fails in many interesting monoidal categories!! It's more like a feature than a bug.)
 
+*Proof.* On the whiteboard, using string diagrams for monoidal categories.
 
 # Definition: monoid object $A$ in a monoidal category $(I,\otimes)$
 
@@ -44,7 +112,7 @@ Such that the following string diagrammatic equations are satisfied:
 
 1. $$(\textsf{unit} \otimes \textsf{id}_A) \,; \textsf{mul} = \textsf{id}_A$$
 2. $$(\textsf{id}_A \otimes \textsf{unit}) \,; \textsf{mul} = \textsf{id}_A$$
-3. $$ (\textsf{mul} \otimes \textsf{id}_A) \,; \textsf{mul} = (\textsf{id}_A \otimes \textsf{mul}) \,; \textsf{mul}$$
+3. $$(\textsf{mul} \otimes \textsf{id}_A) \,; \textsf{mul} = (\textsf{id}_A \otimes \textsf{mul}) \,; \textsf{mul}$$
 
 *(Definition.)* A *monoid object* is a choice of an object $A$ with a *monoid object structure*. (We have to do all this precise/delicate thing because monoid object structures are not unique!)
 

@@ -92,7 +92,7 @@ At the beginning we saw that we restricted our Rust programs to only programs th
         \textsf{special2} := \langle \textsf{snd}\,;\textsf{snd}  , \textsf{snd}\,;\textsf{fst} \rangle \\
             $$
     In a sense, projections also discarded data:
-    $$        \textsf{fst} : A \times B \longrightarrow A \\
+    $$\textsf{fst} : A \times B \longrightarrow A \\
             \textsf{snd} : A \times B \longrightarrow B \\
             ()_{A \times B} : A \times B \longrightarrow 1
     $$

@@ -22,7 +22,7 @@ Then, in a sense "$A$ and $B$ satisfy the same properties", because:
         f    │
     ╭──────╮ │
     |      ↓ ↓
-    B      A
+    B       A
     ↑      | │
     ╰──────╯ │
         g    │ j
@@ -165,7 +165,7 @@ What does the definition above explicitly say? It says that given two objects $A
     - $\textsf{inl} \,; p = l$, $\color{grey}{\qquad p \,; \textsf{fst} = l}$
     - $\textsf{inr} \,; p = r$. $\color{grey}{\qquad p \,; \textsf{snd} = r}$
 
-    Since the choice of $p$ depends on the $f$ and $g$ that you gave me, we will instead write the arrow $p$ that *you* must pick as
+    Since the choice of $p$ depends on the $l$ and $r$ that you gave me, we will instead write the arrow $p$ that *you* must pick as
     $$[ l , r ] : P \to H.$$
     We will sometimes also denote it as $\textsf{cases}_{A,B} : P \to H$.
     With this notation, the equations above become the following:

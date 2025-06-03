@@ -247,4 +247,4 @@ fn program2(a: A) -> C {
 
 This means that whatever equation you can derive using string diagrams you can derive using the algebraic language (which is, really, the only one that exists and has been defined formally.)
 
-### Theorem (partly by Joyal and Street ~1970, partly by other people, starting from Lambek ~1970). Reasoning with 1. string diagrams, 2.  pasting diagrams, 3. the term language and program equivalence, are all equivalent/equiexpressive.
+### Theorem (partly by Joyal and Street 1991, partly by other people, starting from Lambek ~1970). Reasoning with 1. string diagrams, 2.  pasting diagrams, 3. the term language and program equivalence, are all equivalent/equiexpressive.

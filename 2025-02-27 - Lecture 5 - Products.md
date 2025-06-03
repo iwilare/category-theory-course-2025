@@ -108,7 +108,7 @@ An object $P$ is said to be *a product of $A$ and $B$* if the following conditio
     - $p \,; \textsf{fst} = l$,
     - $p \,; \textsf{snd} = r$.
 
-    Since the choice of $p$ depends on the $f$ and $g$ that you gave me, we will instead write the arrow $p$ that *you* must pick as
+    Since the choice of $p$ depends on the $l$ and $r$ that you gave me, we will instead write the arrow $p$ that *you* must pick as
     $$\langle l , r \rangle : H \to P.$$
     A less-mathy notation for this is to instead denote the map above as $\textsf{pairing}_{l,r} : H \to P.$
 
