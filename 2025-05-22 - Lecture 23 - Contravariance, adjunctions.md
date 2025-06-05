@@ -223,11 +223,11 @@ there is an isomorphism $$\texttt{Arr}_D(L^\textsf{op}(-),=) \cong \texttt{Arr}_
 
 Explicitly, there are two natural transformations $\theta,\theta^{-1}$. between functors $[C^\textsf{op} \times D,\text{Prog}]$ which compose to the identity.
 
-- $\theta : \texttt{Arr}_D(L^\textsf{op}(-),=) \to \texttt{Arr}_C(-,R(=))$
-- $\theta^{-1} : \texttt{Arr}_D(L^\textsf{op}(-),=) \to \texttt{Arr}_C(-,R(=))$
+- $\theta : \texttt{Arr}_D(L^\textsf{op}(-),=) \longrightarrow \texttt{Arr}_C(-,R(=))$
+- $\theta^{-1} : \texttt{Arr}_C(-,R(=)) \longrightarrow \texttt{Arr}_D(L^\textsf{op}(-),=)$
 - such that $\theta\,;\theta^{-1} = \textsf{id}$,  $\theta^{-1}\,;\theta = \textsf{id}$.
 
-Since these are natural transformations, they are families of arrows 
+Since these are natural transformations, they are families of arrows
 
 $$
 \theta_{A,B} : \texttt{Arr}_D(L(A),B) \to \texttt{Arr}_C(A,R(B)) \\
